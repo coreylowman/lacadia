@@ -41,7 +41,7 @@ Player *mage_new(GameWorld *world){
     self->stance = 0;
     self->on_switch_stance = mage_on_switch_stance;
 
-    self->asset_id = game_world_get_asset_id(world, "assets/lacadia_mage");    
+    self->base_object->asset_id = game_world_get_asset_id(world, "assets/lacadia_mage");    
 
     return self;
 }

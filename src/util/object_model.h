@@ -3,10 +3,13 @@
 
 #include <stdlib.h>
 
+#include "rect.h"
+
 typedef struct {    
     size_t num_floats;
     float *vertices;
     float *colors;
+    Rect bounding_box;
 } ObjectModel;
 
 ObjectModel *obj_model_from_file(const char *filename);

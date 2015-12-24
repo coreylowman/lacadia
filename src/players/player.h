@@ -7,29 +7,26 @@
 #include "util/array_list.h"
 #include "abilities/ability.h"
 #include "effects/effect.h"
-#include "util/mat4.h"
 
 typedef struct Player {
     GameObject *base_object;
     
-    Stats stats;
-
+    //abilities
     Ability abilities[4];
 
+    //stats stuff and things that affect them
+    Stats stats;
     ArrayList *effects; //ArrayList<Effect *>
 
+    //generic object methods
     int stance;
     void (*on_switch_stance)(struct Player *self);
-
-    int asset_id;
-    Mat4 model_matrix;
 } Player;
 
 Player *player_new(GameWorld *world);
 void player_free(Player *self);
 
 void player_update(Player *self, double dt);
-void player_render(Player *self);
 
 void player_use_ability(Player *self, int ability_index);
 

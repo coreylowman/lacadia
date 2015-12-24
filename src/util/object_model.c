@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <float.h>
 #include "lodepng.h"
 #include "object_model.h"
 #include "array_list.h"
@@ -136,10 +137,18 @@ ObjectModel *obj_model_from_file(const char *filename){
 
     Face *f;
     Vertex *v;
-    int j;
+    int j, k;
 	int a, b, c;
-	int x, y;
+	int tx, ty;
     float inv_255 = 1.0 / 255.0;
+
+    float min[3], max[3];
+    float q[3];
+    for(i = 0;i < 3;i++){
+        min[3] = FLT_MAX;
+        max[3] = FLT_MIN;
+    }
+
     for(i = 0;i < face_list->length;i++){
         f = face_list->data[i];
         for(j = 0;j < 3;j++){
@@ -147,13 +156,23 @@ ObjectModel *obj_model_from_file(const char *filename){
 			b = a + 1;
 			c = a + 2;
             v = vertex_list->data[f->vertex_indices[j] - 1];
-            self->vertices[a] = v->x * 0.25;
-            self->vertices[b] = v->y * 0.25;
-            self->vertices[c] = v->z * 0.25;
+
+            q[0] = v->x * 0.25;
+            q[1] = v->y * 0.25;
+            q[2] = v->z * 0.25;
+
+            self->vertices[a] = q[0];
+            self->vertices[b] = q[1];
+            self->vertices[c] = q[2];
+
+            for(k = 0;k < 3;k++){
+                if(q[i] < min[i]) min[i] = q[i];
+                if(q[i] > max[i]) max[i] = q[i];
+            }
 
 			v = texture_list->data[f->texture_indices[j] - 1];
-			x = v->x * png_width;
-            y = v->y * png_height;			
+			tx = v->x * png_width;
+            ty = v->y * png_height;			
             self->colors[a] = png_data[4 * png_width * y + 4 * x + 0] * inv_255; //r
             self->colors[b] = png_data[4 * png_width * y + 4 * x + 1] * inv_255; //b
             self->colors[c] = png_data[4 * png_width * y + 4 * x + 2] * inv_255; //g
@@ -165,6 +184,14 @@ ObjectModel *obj_model_from_file(const char *filename){
     array_list_free(vertex_list);
     array_list_free(texture_list);
     array_list_free(normal_list);
+
+    self->bounding_box.x = (max[0] + min[0]) * 0.5;
+    self->bounding_box.y = (max[1] + min[1]) * 0.5;
+    self->bounding_box.z = (max[2] + min[2]) * 0.5;
+
+    self->bounding_box.width = (max[0] - min[0]) * 0.5;
+    self->bounding_box.height = (max[1] - min[1]) * 0.5;
+    self->bounding_box.length = (max[2] - min[2]) * 0.5;
 
     return self;
 }

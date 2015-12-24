@@ -37,7 +37,3 @@ void enemy_update(Enemy *self, double dt){
         }
     }
 }
-
-void enemy_render(Enemy *self){
-    
-}

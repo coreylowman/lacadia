@@ -32,3 +32,7 @@ void game_object_update(GameObject *self, double dt){
 	self->position.y += self->direction.y * dt;
 	self->position.z += self->direction.z * dt;
 }
+
+void game_object_render(GameObject *self){
+    game_world_draw_asset(self->world, self->asset_id, self->model_matrix);
+}

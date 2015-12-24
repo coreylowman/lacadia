@@ -27,6 +27,7 @@ void game_world_update(GameWorld *self, double dt);
 void game_world_render(GameWorld *self, Shader shader);
 
 int game_world_get_asset_id(GameWorld *self, const char *name);
+Rect game_world_get_asset_aabb(GameWorld *self, int asset_id);
 
 //use to copy verts & colors into vertices/colors array list
 //will then draw the whole thing in render

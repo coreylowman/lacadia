@@ -15,6 +15,8 @@ list(APPEND UTIL_SOURCES
     mat4.h
     rect.c
     rect.h
+    log.c
+    log.h
     string_helpers.c
     string_helpers.h
     shaders.c

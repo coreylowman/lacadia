@@ -11,5 +11,6 @@ Enemy *bug_new(GameWorld *world);
 void bug_free(Enemy *self);
 
 void bug_update(Enemy *self, double dt);
+void bug_on_collide(Enemy *self, GameObject *object);
 
 #endif

@@ -8,7 +8,7 @@ Player *player_new(GameWorld *world){
     self->base_object = game_object_new(world, GAME_OBJECT_TYPE_PLAYER);
     self->effects = array_list_new(effect_free);
 
-    mat4_ident(&self->model_matrix);
+    mat4_ident(&self->base_object->model_matrix);
 
     return self;
 }
@@ -37,10 +37,6 @@ void player_update(Player *self, double dt){
             array_list_remove_at(self->effects, i);
         }
     }
-}
-
-void player_render(Player *self){
-	game_world_draw_asset(self->base_object->world, self->asset_id, self->model_matrix);
 }
 
 void player_use_ability(Player *self, int i){

@@ -13,33 +13,15 @@
 
 extern Mat4 MAT4_IDENT;
 
-static float model_matrix[] = {
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-};
-
-static float triangle_vertices[] = {
-	-1.0, 0.0, 0.0,
-	0.0, 1.0, 0.0,
-	1.0, 0.0, 0.0
-};
-
-static float triangle_colors[] = {
-	1.0, 0.0, 0.0,
-	1.0, 0.0, 0.0,
-	1.0, 0.0, 0.0
-};
-
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
     self->spells = array_list_new(spell_free);
     self->enemies = array_list_new(enemy_free);
 
-	self->num_assets = 2;
+	self->num_assets = 3;
 	self->asset_names[0] = "assets/lacadia_mage";
-	self->asset_names[1] = "assets/fireball";
+    self->asset_names[1] = "assets/fireball";
+	self->asset_names[2] = "assets/box";
 
     int i;
     for(i = 0;i < self->num_assets;i++){
@@ -128,14 +110,14 @@ void game_world_render(GameWorld *self, Shader shader){
 	Enemy *e;
 
     //gather updates to the vertices
-    player_render(self->player);
+    game_object_render(self->player->base_object);
     for(i = 0;i < self->spells->length;i++){
         s = self->spells->data[i];
-        spell_render(s);
+        game_object_render(s->base_object);
     }
 	for (i = 0; i < self->enemies->length; i++){
 		e = self->enemies->data[i];
-		enemy_render(e);
+		game_object_render(e->base_object);
 	}
 	
     for(i = 0;i < self->num_assets;i++){
@@ -173,6 +155,10 @@ int game_world_get_asset_id(GameWorld *self, const char *name){
             return i;
     }
     return -1;
+}
+
+Rect game_world_get_asset_aabb(GameWorld *self, int asset_id){
+    return self->asset_models[asset_id]->bounding_box;
 }
 
 void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix){
