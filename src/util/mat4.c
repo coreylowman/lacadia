@@ -83,10 +83,26 @@ void mat4_scale3(Mat4 *mat, float *scale){
     mat->data[15] = mat->data[15];
 }
 
-void mat4_translate(Mat4 *mat, float *trans){
-    mat->mat[3][0] += trans[0];
-    mat->mat[7][1] += trans[1];
-    mat->mat[11][2] += trans[2];
+void mat4_translate(Mat4 *mat, Vec3 pos){
+    float x = pos.data[0], y = pos.data[1], z = pos.data[2],
+        a00, a01, a02, a03,
+        a10, a11, a12, a13,
+        a20, a21, a22, a23;
+
+    a00 = mat->data[0]; a01 = mat->data[1]; a02 = mat->data[2]; a03 = mat->data[3];
+    a10 = mat->data[4]; a11 = mat->data[5]; a12 = mat->data[6]; a13 = mat->data[7];
+    a20 = mat->data[8]; a21 = mat->data[9]; a22 = mat->data[10]; a23 = mat->data[11];
+
+    mat->data[12] += a00 * x + a10 * y + a20 * z;
+    mat->data[13] += a01 * x + a11 * y + a21 * z;
+    mat->data[14] += a02 * x + a12 * y + a22 * z;
+    mat->data[15] += a03 * x + a13 * y + a23 * z;
+}
+
+void mat4_rotate(Mat4 *mat, Vec3 direction){
+    mat4_rotate_x(mat, direction.x);
+    mat4_rotate_y(mat, direction.y);
+    mat4_rotate_z(mat, direction.z);
 }
 
 void mat4_rotate_x(Mat4 *mat, float rads){

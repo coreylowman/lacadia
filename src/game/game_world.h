@@ -1,16 +1,17 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
-#include "shaders.h"
-#include "array_list.h"
-#include "object_model.h"
+#include "util/array_list.h"
+#include "util/set.h"
+#include "util/object_model.h"
+#include "util/shaders.h"
 
-#define MAX_ASSETS 10
+#define MAX_ASSETS 20
 
-typedef struct {
+typedef struct GameWorld {
     void *player;
-    ArrayList *spells; //ArrayList<Spell *>
-    ArrayList *enemies; //ArrayList<Enemy *>
+    Set *spells; //Set<Spell *>
+    Set *enemies; //Set<Enemy *>
 
     int num_assets;
     char *asset_names[MAX_ASSETS];

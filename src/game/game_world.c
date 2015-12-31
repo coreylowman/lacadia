@@ -2,27 +2,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glew.h>
-#include "game_world.h"
-#include "array_list.h"
-#include "abilities/spell.h"
+
 #include "players/player.h"
 #include "enemies/enemy.h"
-#include "rect.h"
+#include "util/array_list.h"
+#include "util/rect.h"
+#include "util/string_helpers.h"
 #include "game_object.h"
-#include "string_helpers.h"
+#include "spell.h"
+#include "game_world.h"
 
 extern Mat4 MAT4_IDENT;
 
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
-    self->spells = array_list_new(spell_free);
-    self->enemies = array_list_new(enemy_free);
+    self->spells = set_new(spell_free);
+    self->enemies = set_new(enemy_free);
 
-	self->num_assets = 3;
-	self->asset_names[0] = "assets/lacadia_mage";
-    self->asset_names[1] = "assets/fireball";
-	self->asset_names[2] = "assets/box";
-
+	self->num_assets = 5;
+	self->asset_names[0] = "assets/box";
+    self->asset_names[1] = "assets/bug";
+    self->asset_names[2] = "assets/fireball";
+    self->asset_names[3] = "assets/icicle";
+    self->asset_names[4] = "assets/lacadia_mage";
+    
     int i;
     for(i = 0;i < self->num_assets;i++){
         self->asset_models[i] = obj_model_from_file(self->asset_names[i]);        
@@ -59,8 +62,8 @@ GameWorld *game_world_new(){
 }
 
 void game_world_free(GameWorld *self){
-    array_list_free(self->spells);
-    array_list_free(self->enemies);
+    set_free(self->spells);
+    set_free(self->enemies);
 
 	int i;
 	for (i = 0; i < self->num_assets; i++){
@@ -75,33 +78,35 @@ void game_world_update(GameWorld *self, double dt){
     int i, j;
     Spell *s;
     Enemy *e;
+
     player_update(self->player, dt);
+
     for(i = 0;i < self->spells->length;i++){
+        if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
-		spell_update(s, dt);
+        spell_update(s, dt);
     }
+
     for(i = 0;i < self->enemies->length;i++){
+        if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
         enemy_update(e, dt);
     }
 
     for(i = 0;i < self->spells->length;i++){
+        if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
         for(j = 0;j < self->enemies->length;j++){
+            if(self->enemies->data[j] == NULL) continue;
             e = self->enemies->data[j];
-            if(rect_intersects(s->base_object->bounding_box, e->base_object->bounding_box)){
-				s->on_collide(s, e->base_object, ((Player *)self->player)->base_object);
-				if (s->destroy_on_collide){
-					s->base_object->destroy = 1;
-				}
+
+            if(rect_intersects(s->collidable.bounding_box, e->collidable.bounding_box)){
+                s->collidable.on_collide(s->base_object, e->base_object);
+                e->collidable.on_collide(e->base_object, s->base_object);
             }
         }
+
     }
-	for (i = self->spells->length - 1; i >= 0; i--){
-		s = self->spells->data[i];
-		if (s->base_object->destroy)
-			array_list_remove_at(self->spells, i);
-	}
 }
 
 void game_world_render(GameWorld *self, Shader shader){
@@ -110,14 +115,17 @@ void game_world_render(GameWorld *self, Shader shader){
 	Enemy *e;
 
     //gather updates to the vertices
-    game_object_render(self->player->base_object);
+	Player *p = self->player;
+    renderable_object_render(p->renderable, self);
     for(i = 0;i < self->spells->length;i++){
+        if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
-        game_object_render(s->base_object);
+        renderable_object_render(s->renderable, self);
     }
 	for (i = 0; i < self->enemies->length; i++){
+        if(self->enemies->data[i] == NULL) continue;
 		e = self->enemies->data[i];
-		game_object_render(e->base_object);
+		renderable_object_render(e->renderable, self);
 	}
 	
     for(i = 0;i < self->num_assets;i++){

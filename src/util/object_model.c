@@ -145,8 +145,8 @@ ObjectModel *obj_model_from_file(const char *filename){
     float min[3], max[3];
     float q[3];
     for(i = 0;i < 3;i++){
-        min[3] = FLT_MAX;
-        max[3] = FLT_MIN;
+        min[i] = FLT_MAX;
+        max[i] = FLT_MIN;
     }
 
     for(i = 0;i < face_list->length;i++){
@@ -166,16 +166,16 @@ ObjectModel *obj_model_from_file(const char *filename){
             self->vertices[c] = q[2];
 
             for(k = 0;k < 3;k++){
-                if(q[i] < min[i]) min[i] = q[i];
-                if(q[i] > max[i]) max[i] = q[i];
+                if(q[k] < min[k]) min[k] = q[k];
+                if(q[k] > max[k]) max[k] = q[k];
             }
 
 			v = texture_list->data[f->texture_indices[j] - 1];
 			tx = v->x * png_width;
-            ty = v->y * png_height;			
-            self->colors[a] = png_data[4 * png_width * y + 4 * x + 0] * inv_255; //r
-            self->colors[b] = png_data[4 * png_width * y + 4 * x + 1] * inv_255; //b
-            self->colors[c] = png_data[4 * png_width * y + 4 * x + 2] * inv_255; //g
+            ty = v->y * png_height;
+            self->colors[a] = png_data[4 * png_width * ty + 4 * tx + 0] * inv_255; //r
+            self->colors[b] = png_data[4 * png_width * ty + 4 * tx + 1] * inv_255; //b
+            self->colors[c] = png_data[4 * png_width * ty + 4 * tx + 2] * inv_255; //g
         }
     }
 

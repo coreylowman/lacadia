@@ -5,26 +5,22 @@ list(APPEND UTIL_SOURCES
     axis.h
     camera.c
     camera.h
-    game_object.c
-    game_object.h
-    game_world.c
-    game_world.h
     inputs.c
     inputs.h
     mat4.c
     mat4.h
-    rect.c
-    rect.h
-    log.c
-    log.h
-    string_helpers.c
-    string_helpers.h
-    shaders.c
-    shaders.h
-    vec3.c
-    vec3.h
     object_model.c
     object_model.h
+    rect.c
+    rect.h
+    set.c
+    set.h
+    shaders.c
+    shaders.h
+    string_helpers.c
+    string_helpers.h
+    vec3.c
+    vec3.h
 )
 
 add_library(util OBJECT ${UTIL_SOURCES})

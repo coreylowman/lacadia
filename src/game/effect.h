@@ -1,7 +1,7 @@
 #ifndef EFFECT_H
 #define EFFECT_H
 
-#include "util/game_object.h"
+#include "game/affectable_object.h"
 
 typedef enum {
     BURN,
@@ -26,9 +26,9 @@ typedef struct Effect{
 
     //generic object methods
     //apply -> update -> ... -> update -> on_end
-    void (*apply)(struct Effect *self, GameObject *obj, double dt);
-    void (*update)(struct Effect *self, double dt);
-    void (*on_end)(struct Effect *self, GameObject *obj, double dt);
+    void (*on_apply)(struct Effect *self, struct AffectableObject *obj, double dt);
+    void (*on_update)(struct Effect *self, struct AffectableObject *obj, double dt);
+    void (*on_end)(struct Effect *self, struct AffectableObject *obj, double dt);
 } Effect;
 
 Effect *effect_new();

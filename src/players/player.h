@@ -1,12 +1,16 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "util/game_world.h"
-#include "util/game_object.h"
-#include "util/stats.h"
+#include "game/game_world.h"
+#include "game/game_object.h"
+#include "game/stats.h"
+#include "game/renderable_object.h"
+#include "game/moveable_object.h"
+#include "game/collidable_object.h"
+#include "game/affectable_object.h"
 #include "util/array_list.h"
-#include "abilities/ability.h"
-#include "effects/effect.h"
+#include "game/ability.h"
+#include "game/effect.h"
 
 typedef struct Player {
     GameObject *base_object;
@@ -14,9 +18,10 @@ typedef struct Player {
     //abilities
     Ability abilities[4];
 
-    //stats stuff and things that affect them
-    Stats stats;
-    ArrayList *effects; //ArrayList<Effect *>
+    RenderableObject renderable;
+    MoveableObject moveable;
+    AffectableObject affectable;
+    CollidableObject collidable;
 
     //generic object methods
     int stance;

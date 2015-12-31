@@ -1,7 +1,7 @@
 #ifndef MAGE_H
 #define MAGE_H
 
-#include "util/game_world.h"
+#include "game/game_world.h"
 #include "player.h"
 
 Player *mage_new(GameWorld *world);

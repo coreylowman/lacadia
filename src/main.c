@@ -8,9 +8,8 @@
 #include "util/inputs.h"
 #include "util/camera.h"
 #include "util/shaders.h"
-#include "util/game_world.h"
+#include "game/game_world.h"
 #include "util/axis.h"
-#include "util/log.h"
 #include "players/player.h"
 #include "players/mage.h"
 #include "enemies/enemy.h"
@@ -30,7 +29,6 @@ static Axis axis;
 
 static double mouse_start_pos[2];
 
-LOG_TYPE log_type = NONE; //log everything
 GameWorld *world;
 Player *player;
 

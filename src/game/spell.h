@@ -1,14 +1,19 @@
 #ifndef SPELL_H
 #define SPELL_H
 
-#include "util/game_world.h"
-#include "util/game_object.h"
+#include "game/game_world.h"
+#include "game/game_object.h"
+#include "game/collidable_object.h"
+#include "game/moveable_object.h"
+#include "game/renderable_object.h"
 
 typedef struct Spell {
     GameObject *base_object;
 
-    int destroy_on_collide;
-    void (*on_collide)(struct Spell *self, GameObject *object, GameObject *user);
+    CollidableObject collidable;
+    MoveableObject moveable;
+    RenderableObject renderable;
+
     void (*on_update)(struct Spell *self, double dt);
 } Spell;
 

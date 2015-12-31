@@ -16,20 +16,20 @@ typedef struct Camera {
     //perspective projection parameters
     float fov;
     float aspect_ratio;
-    float zNear, zFar;
+    float z_near, z_far;
 
     float speed;
 } Camera;
 
 void camera_init(Camera *camera, int width, int height);
 
-void get_forwards_dir(Camera camera, Vec3 *out_dir);
-void get_side_dir(Camera camera, Vec3 *out_dir);
+Vec3 camera_get_forwards(Camera camera);
+Vec3 camera_get_sideways(Camera camera);
 
 void move_forwards(Camera *camera, double dt, float direction);
-void strafe(Camera *camera, double dt, float direction);
-void rotate_view(Camera *camera, double side_amt, double up_amt);
 void move_vertically(Camera *camera, double dt, float direction);
+void rotate_view(Camera *camera, double side_amt, double up_amt);
+void strafe(Camera *camera, double dt, float direction);
 
 void update_view_matrix(Camera *camera);
 void update_projection_matrix(Camera *camera);
