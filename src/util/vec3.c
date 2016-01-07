@@ -1,6 +1,10 @@
 #include <math.h>
 #include "vec3.h"
 
+Vec3 VEC3_UNIT_X = { .data = {1, 0, 0} };
+Vec3 VEC3_UNIT_Y = { .data = {0, 1, 0} };
+Vec3 VEC3_UNIT_Z = { .data = {0, 0, 1} };
+
 void vec3_cross(Vec3 *out, Vec3 vec1, Vec3 vec2){
     out->data[0] = vec1.data[1] * vec2.data[2] - vec1.data[2] * vec2.data[1];
     out->data[1] = vec1.data[2] * vec2.data[0] - vec1.data[0] * vec2.data[2];

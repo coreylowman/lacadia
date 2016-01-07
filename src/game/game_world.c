@@ -109,6 +109,14 @@ void game_world_update(GameWorld *self, double dt){
     }
 }
 
+void game_world_add_spell(GameWorld *self, void *s){
+    set_add(self->spells, s);
+}
+
+void game_world_add_enemy(GameWorld *self, void *e){
+    set_add(self->enemies, e);
+}
+
 void game_world_render(GameWorld *self, Shader shader){
     int i;
     Spell *s;
