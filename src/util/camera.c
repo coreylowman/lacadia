@@ -22,8 +22,8 @@ void camera_init(Camera *camera, int width, int height){
 
     camera->speed = 5.0;
 
-    update_view_matrix(camera);
-    update_projection_matrix(camera);
+    camera_update_view_matrix(camera);
+    camera_update_projection_matrix(camera);
 }
 
 Vec3 camera_get_forwards(Camera camera){
@@ -51,7 +51,7 @@ Vec3 camera_get_sideways(Camera camera){
     return sideways;
 }
 
-void move_forwards(Camera *camera, double dt, float direction){
+void camera_move_forwards(Camera *camera, double dt, float direction){
     int i;
     Vec3 forwards;
     for (i = 0; i < 3; i++) {
@@ -64,7 +64,7 @@ void move_forwards(Camera *camera, double dt, float direction){
     }
 }
 
-void strafe(Camera *camera, double dt, float direction){
+void camera_strafe(Camera *camera, double dt, float direction){
     int i;
     Vec3 forwards, sideways;
 
@@ -82,7 +82,7 @@ void strafe(Camera *camera, double dt, float direction){
     }
 }
 
-void rotate_view(Camera *camera, double side_amt, double up_amt){
+void camera_rotate_view(Camera *camera, double side_amt, double up_amt){
     int i;
     Vec3 forwards, sideways;
 
@@ -99,17 +99,39 @@ void rotate_view(Camera *camera, double side_amt, double up_amt){
 }
 
 
-void move_vertically(Camera *camera, double dt, float direction){
+void camera_move_vertically(Camera *camera, double dt, float direction){
     camera->look_at.data[1] += camera->speed * direction * dt;
     camera->location.data[1] += camera->speed * direction * dt;
 }
 
-void update_view_matrix(Camera *camera){
+void camera_update_view_matrix(Camera *camera){
 	mat4_ident(&camera->view_matrix);
     mat4_lookat(&camera->view_matrix, camera->location, camera->look_at, camera->up);
 }
 
-void update_projection_matrix(Camera *camera){
+void camera_update_projection_matrix(Camera *camera){
     mat4_ident(&camera->projection_matrix);
     mat4_persp(&camera->projection_matrix, camera->fov, camera->aspect_ratio, camera->z_near, camera->z_far);
 }
+
+void camera_handle_inputs(Camera *camera, double dt, Inputs inputs){
+    if (inputs.space_down) { //move vertically
+        double dir = inputs.space_shift_down ? -1.0 : 1.0;
+        camera_move_vertically(camera, dt, dir);
+    }
+
+    if (inputs.left_mouse_down) {
+        double dx = inputs.mouse_vel[0] / 100.0;
+        double dy = -inputs.mouse_vel[1] / 100.0;
+        camera_rotate_view(camera, dx, dy);
+    }
+
+    if (inputs.w_down) camera_move_forwards(camera, dt, 1.0);
+    if (inputs.s_down) camera_move_forwards(camera, dt, -1.0);
+    if (inputs.a_down) camera_strafe(camera, dt, -1.0);
+    if (inputs.d_down) camera_strafe(camera, dt, 1.0);
+
+    camera_update_view_matrix(camera); 
+}
+
+

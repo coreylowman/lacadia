@@ -3,14 +3,14 @@
 
 #include "game/game_world.h"
 #include "game/game_object.h"
-#include "game/stats.h"
 #include "game/renderable_object.h"
 #include "game/moveable_object.h"
 #include "game/collidable_object.h"
 #include "game/affectable_object.h"
-#include "util/array_list.h"
 #include "game/ability.h"
 #include "game/effect.h"
+#include "util/array_list.h"
+#include "util/inputs.h"
 
 typedef struct Player {
     GameObject *base_object;
@@ -35,6 +35,12 @@ void player_update(Player *self, double dt);
 
 void player_use_ability(Player *self, int ability_index);
 
-void player_apply_effect(Player *self, Effect *e);
+void player_affect(Player *self, Effect *e);
+
+void player_move_forwards(Player *self, double dt, float direction);
+void player_turn(Player *self, double side_amt);
+void player_strafe(Player *self, double dt, float direction);
+
+void player_handle_inputs(Player *self, double dt, Inputs inputs);
 
 #endif

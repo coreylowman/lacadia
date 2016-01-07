@@ -8,8 +8,8 @@
 #include "util/inputs.h"
 #include "util/camera.h"
 #include "util/shaders.h"
-#include "game/game_world.h"
 #include "util/axis.h"
+#include "game/game_world.h"
 #include "players/player.h"
 #include "players/mage.h"
 #include "enemies/enemy.h"
@@ -107,30 +107,9 @@ static void update(double total_time){
     if (update_dt > 0.01) {
         last_update_seconds = total_time;
 
+        camera_handle_inputs(&camera, update_dt, inputs);
+        player_handle_inputs(player, update_dt, inputs);
         game_world_update(world, update_dt);
-
-        if (inputs.space_down) { //move vertically
-            double dir = inputs.space_shift_down ? -1.0 : 1.0;
-            move_vertically(&camera, update_dt, dir);
-        }
-
-        if (inputs.left_mouse_down) {
-            double mx, my;
-            glfwGetCursorPos(window, &mx, &my);
-            double dx = mx - mouse_start_pos[0];
-            double dy = my - mouse_start_pos[1];
-            rotate_view(&camera, dx / 100.0,-dy / 100.0);
-
-            mouse_start_pos[0] = mx;
-            mouse_start_pos[1] = my;
-        }
-
-        if (inputs.w_down) move_forwards(&camera, update_dt, 1.0);
-        if (inputs.s_down) move_forwards(&camera, update_dt, -1.0);
-        if (inputs.a_down) strafe(&camera, update_dt, -1.0);
-        if (inputs.d_down) strafe(&camera, update_dt, 1.0);
-
-        update_view_matrix(&camera);
     }
 }
 

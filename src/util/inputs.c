@@ -13,6 +13,13 @@ void update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		i->right_mouse_down = 0;
 	}
+
+    double x, y;
+    glfwGetCursorPos(w, &x, &y);
+    i->mouse_vel[0] = x - i->mouse_pos[0];
+    i->mouse_vel[1] = y - i->mouse_pos[1];
+    i->mouse_pos[0] = x;
+    i->mouse_pos[1] = y;
 }
 
 void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int action, int mod){
@@ -24,54 +31,26 @@ void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int actio
         i->numbers_pressed[j] = 0;
     }
 
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS){
-		i->numbers_pressed[1] = 1;
-	}
-	if (key == GLFW_KEY_2 && action == GLFW_PRESS){
-		i->numbers_pressed[2] = 1;
-	}
-	if (key == GLFW_KEY_3 && action == GLFW_PRESS){
-		i->numbers_pressed[3] = 1;
-	}
-	if (key == GLFW_KEY_4 && action == GLFW_PRESS){
-		i->numbers_pressed[4] = 1;
-	}
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) i->numbers_pressed[1] = 1;
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) i->numbers_pressed[2] = 1;
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) i->numbers_pressed[3] = 1;
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) i->numbers_pressed[4] = 1;
 
-    if(key == GLFW_KEY_P && action == GLFW_PRESS){
-        i->p_pressed = 1;
-    }
+    if(key == GLFW_KEY_P && action == GLFW_PRESS) i->p_pressed = 1;
+    if(key == GLFW_KEY_R && action == GLFW_PRESS) i->r_pressed = 1;
+    if(key == GLFW_KEY_L && action == GLFW_PRESS) i->l_pressed = 1;
 
-    if(key == GLFW_KEY_R && action == GLFW_PRESS){
-        i->r_pressed = 1;
-    }
+    if (key == GLFW_KEY_A && action == GLFW_PRESS) i->a_down = 1;
+    else if (key == GLFW_KEY_A && action == GLFW_RELEASE) i->a_down = 0;
 
-    if(key == GLFW_KEY_L && action == GLFW_PRESS){
-        i->l_pressed = 1;
-    }
-
-    if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-        i->a_down = 1;
-    }else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-        i->a_down = 0;
-    }
-
-    if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-        i->d_down = 1;
-    }else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-        i->d_down = 0;
-    }
+    if (key == GLFW_KEY_D && action == GLFW_PRESS) i->d_down = 1;
+    else if (key == GLFW_KEY_D && action == GLFW_RELEASE) i->d_down = 0;
     
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        i->w_down = 1;
-    }else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-        i->w_down = 0;
-    }
+    if (key == GLFW_KEY_W && action == GLFW_PRESS) i->w_down = 1;
+    else if (key == GLFW_KEY_W && action == GLFW_RELEASE) i->w_down = 0;
 
-    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        i->s_down = 1;
-    }else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-        i->s_down = 0;
-    }
+    if (key == GLFW_KEY_S && action == GLFW_PRESS) i->s_down = 1;
+    else if (key == GLFW_KEY_S && action == GLFW_RELEASE) i->s_down = 0;
 
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         if(mod == GLFW_MOD_SHIFT) i->space_shift_down = 1;
