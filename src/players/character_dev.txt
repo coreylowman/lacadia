@@ -1,0 +1,41 @@
+Mage: AoE damage dealer, uses ice/fire spells to lay waste to enemies
+Specialization: Ice
+Description: Slow build up to MASSIVE damage, focused on ice/frost/slows
+0. Passive: After not getting hit for a medium amount of time, create a small shield of ice around yourself and absorb a small amount of damage
+1.  Icicle – low cd, deals little damage and applies a stack of frost to the target
+    a.  Frost – each stack slows target by 10%, when reaches 4 stacks, it turns into permafrost
+    b. Permafrost – deals high damage instantly and slows target by 50% for 3 seconds
+2.  Ice Nova – medium cd, a wave of ice spreads out and deals little damage, but slows target immensely
+3.  Arctic Winds – medium cd, blasts targets in front of mage dealing medium damage, and stunning for a very short duration
+4.  Permafreeze – long cd, deals medium damage to enemies in a medium radius, deals high damage to enemies that are slowed by frost effects, and deals extremely high damage to targets affected by permafrost
+
+Specialization: Fire
+Description: Constant medium damage with heavy application of aoe burns, focused on fire/dot/spreading dots
+0.  Passive: Deals small damage to enemies in a small radius (increased damage to burn victims)
+1.  Fireball – low-medium cd, deals moderate damage and applies a burn to the target
+    a.  Burn – deals little damage over time
+2.  Wildfire – low-med cd, Causes all enemies in a medium radius around caster who are affected by burn, to spread burn to ALL targets within a small radius
+    a.  Spread resets timer on burn
+    b. Increases degree of burn by 1 on targets already affected by burn (degree makes it deal more damage)
+3.  Accelerate – medium cd, instantly finishes the duration of any burns on enemies around caster in a medium range, dealing the remaining damage instantly
+4.  Dragon’s Breath – medium cd, deals moderate fire damage in a cone in front of the caster, and applies a burn that deals moderate-heavy damage over time – this can be spread
+
+ 
+Ranger: A master of physical ranged weapon attacks, uses a bow/gun to destroy enemies from afar
+Specialization: Bow
+Description: Quick single target attacks, that get stronger as you keep attacking (hunting prey in a forest)
+0.  Passive: You deal slightly more damage to enemies with low health
+1.  Shoot Arrow- low cd, shoots a chargeable arrow that hits 1 target for increasing damage the longer you charge it
+2.  Poison Arrow- low cd, shoots an arrow that slows the target
+3.  Bear Trap – medium cd, immobilizes enemies who walk over it for short-medium duration and deals DoT
+4.  Camouflage – medium cd, disappears from sight for a short period, and increases the damage of the next attack by a moderate amount
+
+Specialization: Gun
+Description: Large explosive aoe attacks… BOOM BOOM BOOM
+0.  Passive: Your bullets explode into shrapnel in a small radius around your targets dealing small damage
+1.  Fire Gun– low-medium cd, fires a bullet that deals moderate damage
+2.  Sticky bomb – low-medium cd, fires a bomb that deals moderate damage to a target and upon detonation (second ability press), deals moderate aoe damage to things around target
+3.  Mine – medium cd, explodes and deals moderate AoE damage to enemies in a small radius
+4.  Snipe – medium-long cd, fires a powerful long range bullet that deals heavy damage to 1 target
+
+ 
