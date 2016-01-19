@@ -35,10 +35,10 @@ void camera_set_follow(Camera *camera, MoveableObject *follow){
 
 void camera_follow(Camera *camera){
 	if (camera->follow_target == NULL) return;
-	camera->look_at = vec3_add(camera->follow_target->position, camera->follow_target->direction);
-	//TODO... make this always be BEHIND the player's forward direction... so -direction?
-	//instead of hardcoded 10 -10
-	camera->location = vec3_sub(camera->follow_target->position, (Vec3){ .x = 0, .y = -10, .z = 10 });
+	camera->look_at = camera->follow_target->position;
+	Vec3 behind = vec3_scale(camera->follow_target->direction, -10);
+	behind.y += 10;
+	camera->location = vec3_add(camera->follow_target->position, behind);
 	camera_update_view_matrix(camera);
 }
 
