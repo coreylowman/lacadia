@@ -27,7 +27,7 @@
 - [x] Model
 - [ ] Model Animations
 
-###### Hunter
+###### Ranger
 - [x] Spell Design
 - [ ] Spell Implementation
 - [ ] Model
