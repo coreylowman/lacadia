@@ -19,12 +19,12 @@ GameWorld *game_world_new(){
     self->spells = set_new(spell_free);
     self->enemies = set_new(enemy_free);
 
-	self->num_assets = 5;
-	self->asset_names[0] = "assets/box";
-    self->asset_names[1] = "assets/bug";
-    self->asset_names[2] = "assets/fireball";
-    self->asset_names[3] = "assets/icicle";
-    self->asset_names[4] = "assets/lacadia_mage";
+	self->num_assets = 1;
+	// self->asset_names[0] = "assets/box";
+    // self->asset_names[1] = "assets/bug";
+    // self->asset_names[2] = "assets/fireball";
+    // self->asset_names[3] = "assets/icicle";
+    self->asset_names[0] = "assets/lacadia_mage";
     
     int i;
     for(i = 0;i < self->num_assets;i++){

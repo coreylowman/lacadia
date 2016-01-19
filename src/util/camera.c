@@ -36,8 +36,8 @@ void camera_set_follow(Camera *camera, MoveableObject *follow){
 void camera_follow(Camera *camera){
 	if (camera->follow_target == NULL) return;
 	camera->look_at = camera->follow_target->position;
-	Vec3 behind = vec3_scale(camera->follow_target->direction, -10);
-	behind.y += 10;
+	Vec3 behind = vec3_scale(camera->follow_target->direction, -20);
+	behind.y += 20;
 	camera->location = vec3_add(camera->follow_target->position, behind);
 	camera_update_view_matrix(camera);
 }

@@ -19,13 +19,16 @@ void player_free(Player *self){
 }
 
 void player_update(Player *self, double dt){
+	//update affectable
     affectable_object_update(&self->affectable, dt);
-    //moveable_object_update(&self->moveable, dt);
+
+	//update renderable model matrix
 	mat4_ident(&self->renderable.model_matrix);
 	mat4_translate(&self->renderable.model_matrix, self->moveable.position);
-	mat4_rotate_y(&self->renderable.model_matrix, -acos(self->moveable.direction.z));
-	printf("%f\n", self->moveable.direction.z);
-    //TODO update renderable.model_matrix
+	float rotation = atan(self->moveable.direction.x / self->moveable.direction.z);
+	if (self->moveable.direction.z <= 0.0)
+		rotation += 3.14159265359;
+	mat4_rotate_y(&self->renderable.model_matrix, rotation);
 }
 
 void player_use_ability(Player *self, int i){

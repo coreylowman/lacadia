@@ -45,7 +45,7 @@ static void mouse_position_callback(GLFWwindow *w, double x, double y){
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod){
     update_keys(&inputs, window, key, scancode, action, mod);
     int i;
-    for(i = 1;i < 5;i++){
+    for(i = 1;i < 5;i++)
         if(inputs.numbers_pressed[i]) player_use_ability(player, i - 1);
 
     if (inputs.l_pressed){
@@ -153,6 +153,9 @@ int main(int argc, char *argv[]){
     //player
     player = mage_new(world);
     world->player = player;
+
+	camera.follow_target = &player->moveable;
+	camera_follow(&camera);
 
     total_time = glfwGetTime();
     last_update_seconds = total_time;
