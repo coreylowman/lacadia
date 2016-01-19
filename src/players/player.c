@@ -45,7 +45,7 @@ void player_turn(Player *self, double side_amt){
     int i;
     Vec3 sideways;
 
-    vec3_cross(&sideways, self->moveable.direction, VEC3_UNIT_Y);
+    sideways = vec3_cross(self->moveable.direction, VEC3_UNIT_Y);
     vec3_normalize(&sideways);
 
     for(i = 0;i < 3;i++)
@@ -57,7 +57,7 @@ void player_strafe(Player *self, double dt, float direction){
     float speed = self->moveable.speed;
     Vec3 sideways;
 
-    vec3_cross(&sideways, self->moveable.direction, VEC3_UNIT_Y);
+    sideways = vec3_cross(self->moveable.direction, VEC3_UNIT_Y);
     vec3_normalize(&sideways);
 
     for(i = 0;i < 3;i++)

@@ -21,6 +21,8 @@ list(APPEND UTIL_SOURCES
     string_helpers.h
     vec3.c
     vec3.h
+    obb.c
+    obb.h
 )
 
 add_library(util OBJECT ${UTIL_SOURCES})

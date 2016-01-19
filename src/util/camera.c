@@ -45,7 +45,7 @@ Vec3 camera_get_sideways(Camera camera){
     }
     vec3_normalize(&forwards);
 
-    vec3_cross(&sideways, forwards, camera.up);
+    sideways = vec3_cross(forwards, camera.up);
     vec3_normalize(&sideways);
 
     return sideways;
@@ -73,7 +73,7 @@ void camera_strafe(Camera *camera, double dt, float direction){
     }
     vec3_normalize(&forwards);
 
-    vec3_cross(&sideways, forwards, camera->up);
+    sideways = vec3_cross(forwards, camera->up);
     vec3_normalize(&sideways);
 
     for (i = 0; i < 3; i++) {
@@ -91,7 +91,7 @@ void camera_rotate_view(Camera *camera, double side_amt, double up_amt){
     }
     vec3_normalize(&forwards);
 
-    vec3_cross(&sideways, forwards, camera->up);
+    sideways = vec3_cross(forwards, camera->up);
     vec3_normalize(&sideways);
 
     for (i = 0; i < 3; i++)

@@ -6,7 +6,7 @@
 #include "players/player.h"
 #include "enemies/enemy.h"
 #include "util/array_list.h"
-#include "util/rect.h"
+#include "util/obb.h"
 #include "util/string_helpers.h"
 #include "game_object.h"
 #include "spell.h"
@@ -100,7 +100,7 @@ void game_world_update(GameWorld *self, double dt){
             if(self->enemies->data[j] == NULL) continue;
             e = self->enemies->data[j];
 
-            if(rect_intersects(s->collidable.bounding_box, e->collidable.bounding_box)){
+            if(obb_intersects(s->collidable.bounding_box, e->collidable.bounding_box)){
                 s->collidable.on_collide(s->base_object, e->base_object);
                 e->collidable.on_collide(e->base_object, s->base_object);
             }

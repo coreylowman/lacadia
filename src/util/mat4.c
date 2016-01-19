@@ -181,10 +181,10 @@ void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up){
     }
     vec3_normalize(&f);
 
-    vec3_cross(&s, f, up);
+    s = vec3_cross(f, up);
     vec3_normalize(&s);
 
-    vec3_cross(&u, s, f);
+    u = vec3_cross(s, f);
 
 	mat->data[0] = s.data[0];
     mat->data[1] = s.data[1];
