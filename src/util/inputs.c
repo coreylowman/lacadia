@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "inputs.h"
 
 void update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
@@ -13,13 +14,13 @@ void update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		i->right_mouse_down = 0;
 	}
+}
 
-    double x, y;
-    glfwGetCursorPos(w, &x, &y);
-    i->mouse_vel[0] = x - i->mouse_pos[0];
-    i->mouse_vel[1] = y - i->mouse_pos[1];
-    i->mouse_pos[0] = x;
-    i->mouse_pos[1] = y;
+void update_mouse_position(Inputs *i, GLFWwindow *w, double x, double y){
+	i->mouse_vel[0] = x - i->mouse_pos[0];
+	i->mouse_vel[1] = y - i->mouse_pos[1];
+	i->mouse_pos[0] = x;
+	i->mouse_pos[1] = y;
 }
 
 void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int action, int mod){

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "player.h"
 
 extern Vec3 VEC3_UNIT_Y;
@@ -22,7 +23,8 @@ void player_update(Player *self, double dt){
     //moveable_object_update(&self->moveable, dt);
 	mat4_ident(&self->renderable.model_matrix);
 	mat4_translate(&self->renderable.model_matrix, self->moveable.position);
-	mat4_rotate(&self->renderable.model_matrix, self->moveable.direction);
+	mat4_rotate_y(&self->renderable.model_matrix, -acos(self->moveable.direction.z));
+	printf("%f\n", self->moveable.direction.z);
     //TODO update renderable.model_matrix
 }
 
@@ -50,6 +52,8 @@ void player_turn(Player *self, double side_amt){
 
     for(i = 0;i < 3;i++)
         self->moveable.direction.data[i] += side_amt * sideways.data[i];
+
+	vec3_normalize(&self->moveable.direction);
 }
 
 void player_strafe(Player *self, double dt, float direction){
@@ -60,8 +64,8 @@ void player_strafe(Player *self, double dt, float direction){
     sideways = vec3_cross(self->moveable.direction, VEC3_UNIT_Y);
     vec3_normalize(&sideways);
 
-    for(i = 0;i < 3;i++)
-        self->moveable.position.data[i] += dt * speed * direction * sideways.data[i];
+	for (i = 0; i < 3; i++)
+		self->moveable.position.data[i] += dt * speed * direction * sideways.data[i];
 }
 
 void player_handle_inputs(Player *self, double dt, Inputs inputs){

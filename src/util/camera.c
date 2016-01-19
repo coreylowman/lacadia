@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "camera.h"
 
 extern Mat4 MAT4_IDENT;
@@ -5,7 +6,7 @@ extern Mat4 MAT4_IDENT;
 void camera_init(Camera *camera, int width, int height){
 	camera->location.x = 0;
     camera->location.y = 10;
-    camera->location.z = 10;
+    camera->location.z = -10;
 
     camera->look_at.x = 0;
     camera->look_at.y = 0;
@@ -22,8 +23,23 @@ void camera_init(Camera *camera, int width, int height){
 
     camera->speed = 5.0;
 
+	camera->follow_target = NULL;
+
     camera_update_view_matrix(camera);
     camera_update_projection_matrix(camera);
+}
+
+void camera_set_follow(Camera *camera, MoveableObject *follow){
+	camera->follow_target = follow;
+}
+
+void camera_follow(Camera *camera){
+	if (camera->follow_target == NULL) return;
+	camera->look_at = vec3_add(camera->follow_target->position, camera->follow_target->direction);
+	//TODO... make this always be BEHIND the player's forward direction... so -direction?
+	//instead of hardcoded 10 -10
+	camera->location = vec3_sub(camera->follow_target->position, (Vec3){ .x = 0, .y = -10, .z = 10 });
+	camera_update_view_matrix(camera);
 }
 
 Vec3 camera_get_forwards(Camera camera){
@@ -115,7 +131,9 @@ void camera_update_projection_matrix(Camera *camera){
 }
 
 void camera_handle_inputs(Camera *camera, double dt, Inputs inputs){
-    if (inputs.space_down) { //move vertically
+	if (camera->follow_target != NULL) return;
+
+	if (inputs.space_down) { //move vertically
         double dir = inputs.space_shift_down ? -1.0 : 1.0;
         camera_move_vertically(camera, dt, dir);
     }
@@ -131,7 +149,7 @@ void camera_handle_inputs(Camera *camera, double dt, Inputs inputs){
     if (inputs.a_down) camera_strafe(camera, dt, -1.0);
     if (inputs.d_down) camera_strafe(camera, dt, 1.0);
 
-    camera_update_view_matrix(camera); 
+    camera_update_view_matrix(camera);
 }
 
 

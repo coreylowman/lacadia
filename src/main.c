@@ -38,8 +38,11 @@ static void mouse_callback(GLFWwindow *w,int button, int action, int mods)
 	if (inputs.left_mouse_down) glfwGetCursorPos(w, &mouse_start_pos[0], &mouse_start_pos[1]);
 }
 
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod)
-{
+static void mouse_position_callback(GLFWwindow *w, double x, double y){
+	update_mouse_position(&inputs, w, x, y);
+}
+
+static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod){
     update_keys(&inputs, window, key, scancode, action, mod);
     int i;
     for(i = 1;i < 5;i++){
@@ -47,6 +50,12 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
             player_use_ability(player, i - 1);
         }
     }
+	if (inputs.l_pressed){
+		if (camera.follow_target == NULL)
+			camera.follow_target = &player->moveable;
+		else
+			camera.follow_target = NULL;
+	}
 }
 
 void window_size_callback (GLFWwindow* window, int _width, int _height) {
@@ -72,6 +81,7 @@ static void init_glfw(){
 
     //callbacks
     glfwSetMouseButtonCallback(window, mouse_callback);
+	glfwSetCursorPosCallback(window, mouse_position_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
     
@@ -107,9 +117,13 @@ static void update(double total_time){
     if (update_dt > 0.01) {
         last_update_seconds = total_time;
 
-        camera_handle_inputs(&camera, update_dt, inputs);
         player_handle_inputs(player, update_dt, inputs);
+		camera_handle_inputs(&camera, update_dt, inputs);
+		camera_follow(&camera);
         game_world_update(world, update_dt);
+
+		inputs.mouse_vel[0] = 0;
+		inputs.mouse_vel[1] = 0;
     }
 }
 

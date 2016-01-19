@@ -6,6 +6,8 @@
 #include "array_list.h"
 #include "mat4.h"
 
+#define OBJECT_MODEL_SCALE 0.05
+
 typedef struct {
     unsigned int vertex_indices[3];
     unsigned int texture_indices[3];
@@ -157,9 +159,9 @@ ObjectModel *obj_model_from_file(const char *filename){
 			c = a + 2;
             v = vertex_list->data[f->vertex_indices[j] - 1];
 
-            q[0] = v->x * 0.25;
-            q[1] = v->y * 0.25;
-            q[2] = v->z * 0.25;
+            q[0] = v->x * OBJECT_MODEL_SCALE;
+            q[1] = v->y * OBJECT_MODEL_SCALE;
+            q[2] = v->z * OBJECT_MODEL_SCALE;
 
             self->vertices[a] = q[0];
             self->vertices[b] = q[1];

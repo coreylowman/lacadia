@@ -68,8 +68,8 @@ Player *mage_new(GameWorld *world){
     //todo set bounding box in collidable
     //todo create collidable?
     //todo set position and speed in moveable
-	self->moveable.speed = 1.0;
-	self->moveable.direction = (Vec3) { .data = { 1, 0, 0 } };
+	self->moveable.speed = 5.0;
+	self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
 	self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
 
     //todo model_matrix in renderable

@@ -9,6 +9,14 @@ Vec3 vec3_from3f(float x, float y, float z){
     return (Vec3){ .x = x, .y = y, .z = z};
 }
 
+Vec3 vec3_add(Vec3 v1, Vec3 v2){
+    Vec3 out;
+    out.x = v1.x + v2.x;
+    out.y = v1.y + v2.y;
+    out.z = v1.z + v2.z;
+    return out;
+}
+
 Vec3 vec3_sub(Vec3 v1, Vec3 v2){
 	Vec3 out;
 	out.x = v1.x - v2.x;
