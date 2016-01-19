@@ -35,27 +35,25 @@ Player *player;
 static void mouse_callback(GLFWwindow *w,int button, int action, int mods)
 {
     update_mouse(&inputs, w, button, action, mods);
-	if (inputs.left_mouse_down) glfwGetCursorPos(w, &mouse_start_pos[0], &mouse_start_pos[1]);
+    if (inputs.left_mouse_down) glfwGetCursorPos(w, &mouse_start_pos[0], &mouse_start_pos[1]);
 }
 
 static void mouse_position_callback(GLFWwindow *w, double x, double y){
-	update_mouse_position(&inputs, w, x, y);
+    update_mouse_position(&inputs, w, x, y);
 }
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod){
     update_keys(&inputs, window, key, scancode, action, mod);
     int i;
     for(i = 1;i < 5;i++){
-        if(inputs.numbers_pressed[i]){
-            player_use_ability(player, i - 1);
-        }
+        if(inputs.numbers_pressed[i]) player_use_ability(player, i - 1);
+
+    if (inputs.l_pressed){
+        if (camera.follow_target == NULL)
+            camera.follow_target = &player->moveable;
+        else
+            camera.follow_target = NULL;
     }
-	if (inputs.l_pressed){
-		if (camera.follow_target == NULL)
-			camera.follow_target = &player->moveable;
-		else
-			camera.follow_target = NULL;
-	}
 }
 
 void window_size_callback (GLFWwindow* window, int _width, int _height) {
@@ -70,8 +68,7 @@ static void init_glfw(){
 
     window = glfwCreateWindow(width, height, "lacadia", NULL, NULL);
     
-    if (!window)
-    {
+    if (!window){
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
@@ -81,7 +78,7 @@ static void init_glfw(){
 
     //callbacks
     glfwSetMouseButtonCallback(window, mouse_callback);
-	glfwSetCursorPosCallback(window, mouse_position_callback);
+    glfwSetCursorPosCallback(window, mouse_position_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
     
@@ -118,12 +115,14 @@ static void update(double total_time){
         last_update_seconds = total_time;
 
         player_handle_inputs(player, update_dt, inputs);
-		camera_handle_inputs(&camera, update_dt, inputs);
-		camera_follow(&camera);
+        if(camera.follow_target == NULL)
+            camera_handle_inputs(&camera, update_dt, inputs);
+	else
+	    camera_follow(&camera);
         game_world_update(world, update_dt);
 
-		inputs.mouse_vel[0] = 0;
-		inputs.mouse_vel[1] = 0;
+	inputs.mouse_vel[0] = 0;
+	inputs.mouse_vel[1] = 0;
     }
 }
 
@@ -132,11 +131,11 @@ static void render(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(shader.program);
 
-	glUniformMatrix4fv(shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
-	glUniformMatrix4fv(shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
+    glUniformMatrix4fv(shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
+    glUniformMatrix4fv(shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
 
     axis_render(axis, shader);
-	game_world_render(world, shader);
+    game_world_render(world, shader);
 }
 
 int main(int argc, char *argv[]){
@@ -180,7 +179,8 @@ int main(int argc, char *argv[]){
     world->player = NULL;
     game_world_free(world);
     
-	_CrtDumpMemoryLeaks();
+    // for debugging only
+    _CrtDumpMemoryLeaks();
 
     return 0;
 }
