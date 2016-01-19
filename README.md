@@ -1,26 +1,24 @@
 # lacadia
 Rewrite of my 2D game lacadia (C# using monogame) into a 3D game in C using GLEW and GLFW
 
-I'm writing a majority of the engine. Using GLEW and GLFW for windowing/opengl helper functions. Other than that everything is written with a lot of help from online stuff. :P
+I'm writing a majority of the engine. Using GLEW and GLFW for windowing/opengl helper functions, and lodepng for loading/using pngs. Other than that everything is written with a lot of help from online stuff.
 
-There's still so much to do. What I have so far:
+### external/
+Contains all external libraries that are used.
 
-1. Simple obj model loader (reads in obj models that are exported from MagicaVoxel)
-2. Instanced Rendering *
-3. Moveable Camera
-4. Interfaces set up for spells/enemies/players and framework for how they interact
-5. Probably some other stuff that I'm not remembering. :P
+### shaders/
+Contains the shaders that are used with the game. These are copied into the output directory so the executable has them
 
-*This combined with the obj model loader will let me render a ton of models many times each witha different model matrix. Not really much I want to still do for rendering... just actually make the rest of the models!
+### src/
+Contains the source of the game
+##### src/enemies/
+Contains the code for the enemies of the game
+##### src/game/
+Contains the code for the game util structures and functions such as game_object, game_world, spells, effects, etc.
+##### src/players/
+Contains the code for the various playable characters in the game
+##### src/util/
+Contains the code for various utility structures such as camera, array_list, set, vec3, mat4, object_model, etc.
 
-Still left to do:
-
-1. Bounding boxes
-2. Collisions
-3. Character Movement
-4. Level Generation
-5. Enemy AI
-6. Character spells
-7. All models
-8. Animation
-9. much more that I'm not remembering
+### main.c
+The main entry point to the program. Handles setting up glfw, glew, shaders, camera, handles the input, and handles calling the various update functions for game_world, etc.
