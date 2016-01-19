@@ -33,6 +33,14 @@ Vec3 vec3_cross(Vec3 vec1, Vec3 vec2){
     return out;
 }
 
+Vec3 vec3_scale(Vec3 v, float scale){
+    Vec3 out;
+    out.x = v.x * scale;
+    out.y = v.y * scale;
+    out.z = v.z * scale;
+    return out;
+}
+
 float vec3_dot(Vec3 vec1, Vec3 vec2){
     float sum = 0;
     int i;
