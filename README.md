@@ -22,3 +22,16 @@ Contains the code for various utility structures such as camera, array_list, set
 
 ### main.c
 The main entry point to the program. Handles setting up glfw, glew, shaders, camera, handles the input, and handles calling the various update functions for game_world, etc.
+
+## Building
+#### Windows
+```
+> cd lacadia
+lacadia > mkdir build
+lacadia > cd build
+lacadia/build > cmake ../ -G "Visual Studio 12 2013"
+```
+Then open the visual studio solution file it generates and build it with that.
+
+#### Unix
+Not tested, but the cmake build should work. I make no promises about glew/glfw though.
