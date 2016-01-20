@@ -12,9 +12,11 @@ You deal slightly more damage to enemies with low health
 ##### II. Shoot Arrow
 cooldown | damage | type | applies
 --- | --- | --- | ---
-low | [low,med] | single hit | -
+very low | [low,med] | single hit | -
 
-Shoots a chargeable arrow that hits 1 target for increasing damage the longer you charge it
+First press: Starts to draw an arrow back to shoot.
+Second press: Shoots the arrow hitting 1 target for damage based on how long it was charged for.
+(If shift is pressed when this ability is used, it shoots instantly, allowing you to hold the button down for continuous firing.)
 
 
 ##### III. Poison Arrow
@@ -38,7 +40,7 @@ cooldown | damage | type | applies
 --- | --- | --- | ---
 medium | - | - | Damage Buff, Stealth
 
-Disappears from sight for a short period, and increases the damage of the next attack by a medium amount
+Disappears from sight for a short period, and increases the damage of the next attack by a medium amount. Camouflage ends when you shoot an arrow (you can charge an arrow in camouflage).
 
 
 ---
@@ -56,29 +58,29 @@ cooldown | damage | type | applies
 --- | --- | --- | ---
 low-medium | medium | single hit | -
 
-Fires a bullet that deals medium damage
+Fires a bullet that hits 1 target dealing medium damage
 
 
 ##### III. Sticky Bomb
 cooldown | damage | type | applies
 --- | --- | --- | ---
-low-medium | medium | single hit | Detonation Bomb
+medium | medium | single hit | Detonation Bomb
 
-Fires a bomb that deals moderate damage to a target and upon detonation (second ability press), deals moderate aoe damage to things around target
+Fires a bomb that deals small-medium damage to a target and upon detonation (second ability press), deals medium aoe damage to things around target
 
 
 ##### IV. Mine
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium | medium | instant aoe | -
+medium | high | instant aoe | -
 
-Explodes and deals moderate AoE damage to enemies in a small radius
+Explodes and deals high AoE damage to enemies in a small-medium radius
 
 
 ##### V. Snipe
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium-long | heavy | single target | -
+medium-long | very high | single target | -
 
-Fires a powerful long range bullet that deals heavy damage to 1 target
+Fires a powerful long range bullet that deals very high damage to 1 target
 
