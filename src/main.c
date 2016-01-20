@@ -32,6 +32,8 @@ static double mouse_start_pos[2];
 GameWorld *world;
 Player *player;
 
+extern Mat4 MAT4_IDENT;
+
 static void mouse_callback(GLFWwindow *w,int button, int action, int mods)
 {
     update_mouse(&inputs, w, button, action, mods);
@@ -114,15 +116,16 @@ static void update(double total_time){
     if (update_dt > 0.01) {
         last_update_seconds = total_time;
 
-        player_handle_inputs(player, update_dt, inputs);
         if(camera.follow_target == NULL)
             camera_handle_inputs(&camera, update_dt, inputs);
-	else
-	    camera_follow(&camera);
+		else{
+			player_handle_inputs(player, update_dt, inputs);
+			camera_follow(&camera);
+		}
         game_world_update(world, update_dt);
 
-	inputs.mouse_vel[0] = 0;
-	inputs.mouse_vel[1] = 0;
+		inputs.mouse_vel[0] = 0;
+		inputs.mouse_vel[1] = 0;
     }
 }
 
@@ -136,6 +139,8 @@ static void render(){
 
     axis_render(axis, shader);
     game_world_render(world, shader);
+
+	obb_debug_render(player->collidable.bounding_box);
 }
 
 int main(int argc, char *argv[]){

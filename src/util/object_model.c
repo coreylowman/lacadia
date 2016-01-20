@@ -8,6 +8,10 @@
 
 #define OBJECT_MODEL_SCALE 0.05
 
+extern Vec3 VEC3_UNIT_X;
+extern Vec3 VEC3_UNIT_Y;
+extern Vec3 VEC3_UNIT_Z;
+
 typedef struct {
     unsigned int vertex_indices[3];
     unsigned int texture_indices[3];
@@ -187,13 +191,17 @@ ObjectModel *obj_model_from_file(const char *filename){
     array_list_free(texture_list);
     array_list_free(normal_list);
 
-    self->bounding_box.x = (max[0] + min[0]) * 0.5;
-    self->bounding_box.y = (max[1] + min[1]) * 0.5;
-    self->bounding_box.z = (max[2] + min[2]) * 0.5;
+    self->bounding_box.center.x = (max[0] + min[0]) * 0.5;
+    self->bounding_box.center.y = (max[1] + min[1]) * 0.5;
+    self->bounding_box.center.z = (max[2] + min[2]) * 0.5;
 
-    self->bounding_box.width = (max[0] - min[0]) * 0.5;
-    self->bounding_box.height = (max[1] - min[1]) * 0.5;
-    self->bounding_box.length = (max[2] - min[2]) * 0.5;
+    self->bounding_box.radius.x = (max[0] - min[0]) * 0.5;
+    self->bounding_box.radius.y = (max[1] - min[1]) * 0.5;
+    self->bounding_box.radius.z = (max[2] - min[2]) * 0.5;
+
+    self->bounding_box.axis[0] = VEC3_UNIT_X;
+    self->bounding_box.axis[1] = VEC3_UNIT_Y;
+    self->bounding_box.axis[2] = VEC3_UNIT_Z;
 
     return self;
 }

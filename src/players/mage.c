@@ -64,17 +64,15 @@ Player *mage_new(GameWorld *world){
     // self->abilities[3] = dragons_breath_ability;
 
     //todo set up stats in affectable
-
-    //todo set bounding box in collidable
-    //todo create collidable?
-    //todo set position and speed in moveable
-	self->moveable.speed = 5.0;
-	self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
-	self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
+    self->moveable.speed = 5.0;
+    self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
+    self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
 
     //todo model_matrix in renderable
     self->renderable.asset_id = game_world_get_asset_id(world, "assets/lacadia_mage");
     mat4_ident(&self->renderable.model_matrix);
+
+    self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
     
     self->stance = 0;
     self->on_switch_stance = mage_on_switch_stance;

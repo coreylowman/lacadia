@@ -5,6 +5,7 @@
 #include "util/set.h"
 #include "util/object_model.h"
 #include "util/shaders.h"
+#include "util/obb.h"
 
 #define MAX_ASSETS 20
 
@@ -31,7 +32,7 @@ void game_world_update(GameWorld *self, double dt);
 void game_world_render(GameWorld *self, Shader shader);
 
 int game_world_get_asset_id(GameWorld *self, const char *name);
-Rect game_world_get_asset_aabb(GameWorld *self, int asset_id);
+Obb game_world_get_asset_obb(GameWorld *self, int asset_id);
 
 //use to copy verts & colors into vertices/colors array list
 //will then draw the whole thing in render

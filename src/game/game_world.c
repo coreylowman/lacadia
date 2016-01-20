@@ -173,7 +173,7 @@ int game_world_get_asset_id(GameWorld *self, const char *name){
     return -1;
 }
 
-Rect game_world_get_asset_aabb(GameWorld *self, int asset_id){
+Obb game_world_get_asset_obb(GameWorld *self, int asset_id){
     return self->asset_models[asset_id]->bounding_box;
 }
 

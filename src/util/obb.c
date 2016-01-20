@@ -1,9 +1,10 @@
 #include <math.h>
 #include "obb.h"
+#include <GL/glew.h>
+#include <GL/glfw3.h>
 
 //from
 //http://clb.demon.fi/MathGeoLib/nightly/docs/OBB.cpp_code.html#926
-
 int obb_intersects(Obb a, Obb b){
     int i, j;
     Vec3 R[3];
@@ -96,3 +97,57 @@ int obb_intersects(Obb a, Obb b){
     // No separating axis exists, so the two OBB don't intersect.
     return 1;
 }
+
+void obb_debug_render(Obb a){
+	Vec3 max = a.center;
+	Vec3 min = a.center;
+	int i;
+	for (i = 0; i < 3; i++){
+		max.data[i] += a.radius.data[i];
+		min.data[i] -= a.radius.data[i];
+	}
+
+    glBegin(GL_LINES);
+	
+	glVertex3f(1.0, 1.0, 1.0);
+	glVertex3f(10.0, 1.0, 1.0);
+
+	/*glVertex3f(min.x, min.y, min.z);
+    glVertex3f(max.x, min.y, min.z);
+
+    glVertex3f(min.x, min.y, min.z);
+	glVertex3f(min.x, max.y, min.z);
+
+    glVertex3f(min.x, min.y, min.z);
+    glVertex3f(min.x, min.y, max.z);*/
+
+    /*glVertex3f(max.x, min.y, min.z);
+    glVertex3f(min.x, max.y, min.z);
+
+    glVertex3f(max.x, min.y, min.z);
+    glVertex3f(min.x, min.y, max.z);
+
+    glVertex3f(min.x, max.y, min.z);
+    glVertex3f(max.x, min.y, min.z);
+
+    glVertex3f(min.x, max.y, min.z);
+    glVertex3f(min.x, min.y, max.z);
+
+    glVertex3f(min.x, min.y, max.z);
+    glVertex3f(max.x, min.y, min.z);
+
+    glVertex3f(min.x, min.y, max.z);
+    glVertex3f(min.x, max.y, min.z);
+
+    glVertex3f(max.x, max.y, max.z);
+    glVertex3f(min.x, max.y, max.z);
+
+    glVertex3f(max.x, max.y, max.z);
+    glVertex3f(max.x, min.y, max.z);
+
+    glVertex3f(max.x, max.y, max.z);
+    glVertex3f(max.x, max.y, min.z);*/
+
+    glEnd();
+}
+

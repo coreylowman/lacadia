@@ -10,5 +10,6 @@ typedef struct {
 } Obb;
 
 int obb_intersects(Obb a, Obb b);
+void obb_debug_render(Obb a);
 
 #endif
