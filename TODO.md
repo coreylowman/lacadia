@@ -17,6 +17,11 @@
 - [ ] Level generation
 - [ ] Level rendering
 - [ ] Skeletal Animation
+- [ ] Main Screen UI
+- [ ] Character Selection Screen UI
+- [ ] Game UI
+- [ ] Floating Text
+- [ ] Floating Healthbar
 
 #### Characters
 - [x] Movement
