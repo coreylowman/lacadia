@@ -21,7 +21,7 @@ void camera_init(Camera *camera, int width, int height){
     camera->z_near = 0.1;
     camera->z_far = 100.0;
 
-    camera->speed = 5.0;
+    camera->speed = 25.0;
 
 	camera->follow_target = NULL;
 
@@ -111,7 +111,7 @@ void camera_rotate_view(Camera *camera, double side_amt, double up_amt){
     vec3_normalize(&sideways);
 
     for (i = 0; i < 3; i++)
-        camera->look_at.data[i] += side_amt * sideways.data[i] + up_amt * camera->up.data[i];
+        camera->look_at.data[i] += 5.0 * side_amt * sideways.data[i] + 5.0 * up_amt * camera->up.data[i];
 }
 
 

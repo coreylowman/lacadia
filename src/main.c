@@ -24,6 +24,7 @@ static int draw_count;
 
 static Inputs inputs;
 static Shader shader;
+static Shader line_shader;
 static Camera camera;
 static Axis axis;
 
@@ -140,6 +141,9 @@ static void render(){
     axis_render(axis, shader);
     game_world_render(world, shader);
 
+    glUseProgram(line_shader.program);
+	glUniformMatrix4fv(shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
+	glUniformMatrix4fv(shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
 	obb_debug_render(player->collidable.bounding_box);
 }
 
@@ -150,6 +154,7 @@ int main(int argc, char *argv[]){
     init_glfw();
     init_glew();
     init_shaders(&shader, "vertex_shader.glsl", "fragment_shader.glsl");
+    init_shaders(&line_shader, "line_vertex_shader.glsl", "line_fragment_shader.glsl");
     camera_init(&camera, width, height);
     axis_init(&axis);
 
@@ -183,10 +188,10 @@ int main(int argc, char *argv[]){
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    player_free(world->player);
-    world->player = NULL;
-    game_world_free(world);
-    
+	world->player = NULL;
+	game_world_free(world);
+	player_free(player);
+
     // for debugging only
     _CrtDumpMemoryLeaks();
 

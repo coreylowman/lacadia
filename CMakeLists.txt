@@ -15,6 +15,8 @@ add_subdirectory(src/enemies)
 set(GLEW_RUNTIME ${LACADIA_SOURCE_DIR}/external/glew/bin/Release/Win32/glew32.dll)
 set(VERTEX_SHADER ${LACADIA_SOURCE_DIR}/shaders/vertex_shader.glsl)
 set(FRAGMENT_SHADER ${LACADIA_SOURCE_DIR}/shaders/fragment_shader.glsl)
+set(LINE_VERTEX_SHADER ${LACADIA_SOURCE_DIR}/shaders/line_vertex_shader.glsl)
+set(LINE_FRAGMENT_SHADER ${LACADIA_SOURCE_DIR}/shaders/line_fragment_shader.glsl)
 
 list(APPEND LACADIA_SOURCES
     src/main.c
@@ -44,6 +46,14 @@ add_custom_command(TARGET lacadia
 add_custom_command(TARGET lacadia
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FRAGMENT_SHADER} $<TARGET_FILE_DIR:lacadia>
+)
+add_custom_command(TARGET lacadia
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LINE_VERTEX_SHADER} $<TARGET_FILE_DIR:lacadia>
+)
+add_custom_command(TARGET lacadia
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LINE_FRAGMENT_SHADER} $<TARGET_FILE_DIR:lacadia>
 )
 add_custom_command(TARGET lacadia
     PRE_BUILD

@@ -29,6 +29,11 @@ void player_update(Player *self, double dt){
 	if (self->moveable.direction.z <= 0.0)
 		rotation += 3.14159265359;
 	mat4_rotate_y(&self->renderable.model_matrix, rotation);
+
+	//update collidable
+	self->collidable.bounding_box.center = self->moveable.position;
+	self->collidable.bounding_box.center.y += self->collidable.bounding_box.radius.y;
+	obb_rotate_y(&self->collidable.bounding_box, rotation);
 }
 
 void player_use_ability(Player *self, int i){

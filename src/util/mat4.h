@@ -12,6 +12,9 @@ typedef union {
         float m20, m21, m22, m23;
         float m30, m31, m32, m33;
     };
+    struct {
+        float x, y, z, w;
+    } vec[4];
 } Mat4;
 
 void mat4_ident(Mat4 *mat);

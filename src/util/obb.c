@@ -98,46 +98,64 @@ int obb_intersects(Obb a, Obb b){
     return 1;
 }
 
+void obb_rotate_y(Obb *self, float rads){
+	float s = sin(rads), c = cos(rads);
+
+	self->axis[0].data[0] = c;
+	self->axis[0].data[1] = 0;
+	self->axis[0].data[2] = s;
+
+	self->axis[2].data[0] = -s;
+	self->axis[2].data[1] = 0;
+	self->axis[2].data[2] = c;
+}
+
+//TODO figure this out?
+// not rotating correctly
 void obb_debug_render(Obb a){
-	Vec3 max = a.center;
-	Vec3 min = a.center;
-	int i;
-	for (i = 0; i < 3; i++){
-		max.data[i] += a.radius.data[i];
-		min.data[i] -= a.radius.data[i];
-	}
+	Vec3 rx = vec3_scale(a.axis[0], a.radius.x);
+	Vec3 ry = vec3_scale(a.axis[1], a.radius.y);
+	Vec3 rz = vec3_scale(a.axis[2], a.radius.z);
+	Vec3 r = vec3_add(rx, vec3_add(ry, rz));
+	Vec3 max = vec3_add(a.center, r);
+	Vec3 min = vec3_sub(a.center, r);
+
+    //max = transform_to_world(a, max);
+    //min = transform_to_world(a, min);
+
+	/*glBegin(GL_POINTS);
+	glVertex3f(max.x, max.y, max.z);
+	glVertex3f(min.x, min.y, min.z);
+	glEnd();*/
 
     glBegin(GL_LINES);
-	
-	glVertex3f(1.0, 1.0, 1.0);
-	glVertex3f(10.0, 1.0, 1.0);
 
-	/*glVertex3f(min.x, min.y, min.z);
+	glVertex3f(min.x, min.y, min.z);
     glVertex3f(max.x, min.y, min.z);
 
     glVertex3f(min.x, min.y, min.z);
 	glVertex3f(min.x, max.y, min.z);
 
     glVertex3f(min.x, min.y, min.z);
-    glVertex3f(min.x, min.y, max.z);*/
+    glVertex3f(min.x, min.y, max.z);
 
     /*glVertex3f(max.x, min.y, min.z);
-    glVertex3f(min.x, max.y, min.z);
+    glVertex3f(max.x, max.y, min.z);
 
     glVertex3f(max.x, min.y, min.z);
-    glVertex3f(min.x, min.y, max.z);
+    glVertex3f(max.x, min.y, max.z);
 
     glVertex3f(min.x, max.y, min.z);
-    glVertex3f(max.x, min.y, min.z);
+    glVertex3f(max.x, max.y, min.z);
 
     glVertex3f(min.x, max.y, min.z);
-    glVertex3f(min.x, min.y, max.z);
+    glVertex3f(min.x, max.y, max.z);
 
     glVertex3f(min.x, min.y, max.z);
-    glVertex3f(max.x, min.y, min.z);
+    glVertex3f(max.x, min.y, max.z);
 
     glVertex3f(min.x, min.y, max.z);
-    glVertex3f(min.x, max.y, min.z);
+    glVertex3f(min.x, max.y, max.z);*/
 
     glVertex3f(max.x, max.y, max.z);
     glVertex3f(min.x, max.y, max.z);
@@ -146,8 +164,9 @@ void obb_debug_render(Obb a){
     glVertex3f(max.x, min.y, max.z);
 
     glVertex3f(max.x, max.y, max.z);
-    glVertex3f(max.x, max.y, min.z);*/
+    glVertex3f(max.x, max.y, min.z);
 
     glEnd();
 }
+
 

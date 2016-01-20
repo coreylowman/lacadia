@@ -9,7 +9,9 @@ typedef struct {
     Vec3 axis[3];
 } Obb;
 
+
 int obb_intersects(Obb a, Obb b);
 void obb_debug_render(Obb a);
+void obb_rotate_y(Obb *self, float rads);
 
 #endif
