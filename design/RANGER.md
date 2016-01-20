@@ -9,7 +9,7 @@ Quick single target attacks, that get stronger as you keep attacking (hunting pr
 You deal slightly more damage to enemies with low health
 
 
-##### II. Icicle
+##### II. Shoot Arrow
 cooldown | damage | type | applies
 --- | --- | --- | ---
 low | [low,med] | single hit | -
