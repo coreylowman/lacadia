@@ -79,7 +79,7 @@ Causes all enemies in a medium radius around caster who are affected by burn or 
 ##### IV. Accelerate
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium-long | depends | instant aoe | -
+long | depends | instant aoe | -
 
 All enemies affected by burn in a medium radius around the caster, are instantly dealt the remaining damage of the burn
 
