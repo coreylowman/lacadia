@@ -4,11 +4,11 @@
 - [x] Moveable Camera
 - [x] Follow Camera
 - [x] Interfaces set up for spells/enemies/players and framework for how they interact
-- [x] Oriented Bounding Boxes intersection
-- [ ] Obbs generation
-- [ ] Obbs rotation
-- [ ] Obbs movement
-- [ ] Obbs debug drawing
+- [ ] Oriented Bounding Boxes intersection
+- [x] Obbs generation
+- [x] Obbs rotation
+- [x] Obbs movement
+- [x] Obbs debug drawing
 - [x] Collisions using Obbs
 - [ ] Optimized structure for collision instead of doing O(n^2)
 - [ ] Lights
