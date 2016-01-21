@@ -113,7 +113,7 @@ void obb_rotate_y(Obb *self, float rads){
 }
 
 void obb_debug_render(Obb a){
-    int i;
+    int i, ti;
     Vec3 r = VEC3_ZERO;
     Vec3 rs[3];
     for(i = 0;i < 3;i++) rs[i] = vec3_scale(a.axis[i], 2 * a.radius.data[i]);
@@ -124,29 +124,21 @@ void obb_debug_render(Obb a){
 
     glBegin(GL_LINES);
 
-    for(i = 0;i < 3;i++){
-        glVertex3f(min.x, min.y, min.z);
-        glVertex3f(min.x + rs[i].x, min.y + rs[i].y, min.z + rs[i].z);
-    }
-
 	for (i = 0; i < 3; i++){
+		ti = (i + 1) % 3;
+
+		glVertex3f(min.x, min.y, min.z);
+		glVertex3f(min.x + rs[i].x, min.y + rs[i].y, min.z + rs[i].z);
+
 		glVertex3f(max.x, max.y, max.z);
 		glVertex3f(max.x - rs[i].x, max.y - rs[i].y, max.z - rs[i].z);
-	}
 
-	for (i = 0; i < 2; i++){
 		glVertex3f(min.x + rs[i].x, min.y + rs[i].y, min.z + rs[i].z);
-		glVertex3f(max.x - rs[i+1].x, max.y - rs[i+1].y, max.z - rs[i+1].z);
-	}
-	glVertex3f(min.x + rs[2].x, min.y + rs[2].y, min.z + rs[2].z);
-	glVertex3f(max.x - rs[0].x, max.y - rs[0].y, max.z - rs[0].z);
+		glVertex3f(max.x - rs[ti].x, max.y - rs[ti].y, max.z - rs[ti].z);
 
-	for (i = 0; i < 2; i++){
-		glVertex3f(min.x + rs[i+1].x, min.y + rs[i+1].y, min.z + rs[i+1].z);
+		glVertex3f(min.x + rs[ti].x, min.y + rs[ti].y, min.z + rs[ti].z);
 		glVertex3f(max.x - rs[i].x, max.y - rs[i].y, max.z - rs[i].z);
 	}
-	glVertex3f(min.x + rs[0].x, min.y + rs[0].y, min.z + rs[0].z);
-	glVertex3f(max.x - rs[2].x, max.y - rs[2].y, max.z - rs[2].z);
 
     glEnd();
 }
