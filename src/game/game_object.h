@@ -7,6 +7,7 @@ typedef enum {
     GAME_OBJECT_TYPE_PLAYER,
     GAME_OBJECT_TYPE_ENEMY,
     GAME_OBJECT_TYPE_SPELL,
+    GAME_OBJECT_TYPE_WALL,
 } GameObjectType;
 
 typedef struct {
