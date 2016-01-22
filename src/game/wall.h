@@ -1,6 +1,7 @@
 #ifndef WALL_H
 #define WALL_H
 
+#include "game_world.h"
 #include "game_object.h"
 #include "collidable_object.h"
 
