@@ -17,6 +17,8 @@ list(APPEND GAME_SOURCES
     spell.c
     spell.h
     stats.h
+    wall.h
+    wall.c
 )
 
 add_library(game OBJECT ${GAME_SOURCES})
