@@ -11,7 +11,7 @@ Wall *wall_new(GameWorld *world){
     return self;
 }
 
-void wall_free(World *self){
+void wall_free(Wall *self){
     game_object_free(self->base);
     free(self);
 }
