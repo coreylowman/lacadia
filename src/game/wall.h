@@ -3,6 +3,7 @@
 
 #include "game_world.h"
 #include "game_object.h"
+#include "renderable_object.h"
 #include "collidable_object.h"
 
 typedef struct {
@@ -12,7 +13,7 @@ typedef struct {
 } Wall;
 
 Wall *wall_new(GameWorld *world);
-void wall_free(World *self);
+void wall_free(Wall *self);
 
 void wall_on_collide(GameObject *self, GameObject *other);
 
