@@ -4,7 +4,7 @@
 - [x] Moveable Camera
 - [x] Follow Camera
 - [x] Interfaces set up for spells/enemies/players and framework for how they interact
-- [ ] Oriented Bounding Boxes intersection
+- [x] Oriented Bounding Boxes intersection
 - [x] Obbs generation
 - [x] Obbs rotation
 - [x] Obbs movement
@@ -44,7 +44,7 @@
 - [ ] Model
 - [ ] Model Animations
 
-###### Rogue
+###### Assassin
 - [ ] Spell Design
 - [ ] Spell Implementation
 - [ ] Model
