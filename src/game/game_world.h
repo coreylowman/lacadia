@@ -14,6 +14,10 @@ typedef struct GameWorld {
     Set *spells; //Set<Spell *>
     Set *enemies; //Set<Enemy *>
 
+    Set *collidables; //Set<CollidableObject *>
+    //the ith element is the index in spells/enemies of the ith collidable
+    Set *indices; //Set<int *>
+
     int num_assets;
     char *asset_names[MAX_ASSETS];
     ObjectModel *asset_models[MAX_ASSETS];
@@ -30,6 +34,7 @@ void game_world_add_enemy(GameWorld *self, void *e);
 
 void game_world_update(GameWorld *self, double dt);
 void game_world_render(GameWorld *self, Shader shader);
+void game_world_debug_render(GameWorld *self, Shader shader);
 
 int game_world_get_asset_id(GameWorld *self, const char *name);
 Obb game_world_get_asset_obb(GameWorld *self, int asset_id);

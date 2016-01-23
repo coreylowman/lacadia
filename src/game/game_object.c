@@ -10,7 +10,7 @@ GameObject *game_object_new(GameWorld *world, GameObjectType type){
 
     self->world = world;
 
-	self->_destroy = 0;
+	self->destroy = 0;
 
     return self;
 }

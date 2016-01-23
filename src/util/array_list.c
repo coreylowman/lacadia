@@ -8,7 +8,7 @@ ArrayList *array_list_new(void (*free_element)(void *element)){
     array->length = 0;
     array->capacity = 16;
     array->data = malloc(array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = 0;i < array->capacity;i++){
         array->data[i] = NULL;
     }
@@ -21,7 +21,7 @@ ArrayList_f *array_list_new_f(){
     array->length = 0;
     array->capacity = 16;
     array->data = malloc(array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = 0;i < array->capacity;i++){
         array->data[i] = 0;
     }
@@ -33,7 +33,7 @@ ArrayList_i *array_list_new_i(){
     array->length = 0;
     array->capacity = 16;
     array->data = malloc(array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = 0;i < array->capacity;i++){
         array->data[i] = 0;
     }
@@ -45,7 +45,7 @@ ArrayList_s *array_list_new_s(){
     array->length = 0;
     array->capacity = 16;
     array->data = malloc(array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = 0;i < array->capacity;i++){
         array->data[i] = 0;
     }
@@ -57,7 +57,7 @@ ArrayList_m4 *array_list_new_m4(){
     array->length = 0;
     array->capacity = 16;
     array->data = malloc(array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = 0;i < array->capacity;i++){
         array->data[i] = MAT4_IDENT;
     }
@@ -68,7 +68,7 @@ void array_list_free(void *data){
 	if (data == NULL) return;
 
     ArrayList *array = (ArrayList *)data;
-    size_t i;
+    int i;
     for(i = 0;i < array->length;i++){
         array->free_element(array->data[i]);
     }
@@ -108,41 +108,41 @@ void array_list_free_m4(void *data){
     free(array);
 }
 
-void array_list_grow_f(ArrayList_f *array, size_t sz){
+void array_list_grow_f(ArrayList_f *array, int sz){
     array->capacity += sz;
 
     array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = array->capacity - sz;i < array->capacity;i++){
         array->data[i] = 0;
     }
 }
 
-void array_list_grow_i(ArrayList_i *array, size_t sz){
+void array_list_grow_i(ArrayList_i *array, int sz){
     array->capacity += sz;
 
     array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = array->capacity - sz;i < array->capacity;i++){
         array->data[i] = 0;
     }
 }
 
-void array_list_grow_s(ArrayList_s *array, size_t sz){
+void array_list_grow_s(ArrayList_s *array, int sz){
     array->capacity += sz;
 
     array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = array->capacity - sz;i < array->capacity;i++){
         array->data[i] = 0;
     }
 }
 
-void array_list_grow_m4(ArrayList_m4 *array, size_t sz){
+void array_list_grow_m4(ArrayList_m4 *array, int sz){
     array->capacity += sz;
 
     array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    size_t i;
+    int i;
     for(i = array->capacity - sz;i < array->capacity;i++){
         array->data[i] = MAT4_IDENT;
     }
@@ -150,7 +150,7 @@ void array_list_grow_m4(ArrayList_m4 *array, size_t sz){
 
 void array_list_push(ArrayList *array, void *data){
     if(array->length == array->capacity){
-        size_t i = array->capacity;
+        int i = array->capacity;
         array->capacity = 2 * array->capacity;
         array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
         for(;i < array->capacity;i++){
@@ -163,7 +163,7 @@ void array_list_push(ArrayList *array, void *data){
 
 void array_list_push_f(ArrayList_f *array, float data){
     if(array->length == array->capacity){
-        size_t i = array->capacity;
+        int i = array->capacity;
         array->capacity = 2 * array->capacity;
         array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
         for(;i < array->capacity;i++){
@@ -176,7 +176,7 @@ void array_list_push_f(ArrayList_f *array, float data){
 
 void array_list_push_i(ArrayList_i *array, int data){
     if(array->length == array->capacity){
-        size_t i = array->capacity;
+        int i = array->capacity;
         array->capacity = 2 * array->capacity;
         array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
         for(;i < array->capacity;i++){
@@ -189,7 +189,7 @@ void array_list_push_i(ArrayList_i *array, int data){
 
 void array_list_push_s(ArrayList_s *array, short data){
     if(array->length == array->capacity){
-        size_t i = array->capacity;
+        int i = array->capacity;
         array->capacity = 2 * array->capacity;
         array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
         for(;i < array->capacity;i++){
@@ -202,7 +202,7 @@ void array_list_push_s(ArrayList_s *array, short data){
 
 void array_list_push_m4(ArrayList_m4 *array, Mat4 data){
     if(array->length == array->capacity){
-        size_t i = array->capacity;
+        int i = array->capacity;
         array->capacity = 2 * array->capacity;
         array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
         for(;i < array->capacity;i++){
@@ -213,10 +213,10 @@ void array_list_push_m4(ArrayList_m4 *array, Mat4 data){
     array->length += 1;
 }
 
-void array_list_remove_at(ArrayList *array, size_t index){
+void array_list_remove_at(ArrayList *array, int index){
     if(index >= array->length) return;
 
-    size_t i;
+    int i;
     array->free_element(array->data[index]);
     for(i = index + 1;i < array->length;i++){
         array->data[i - 1] = array->data[i];
@@ -225,10 +225,10 @@ void array_list_remove_at(ArrayList *array, size_t index){
     array->length = array->length - 1;
 }
 
-void array_list_remove_at_f(ArrayList_f *array, size_t index){
+void array_list_remove_at_f(ArrayList_f *array, int index){
     if(index >= array->length) return;
 
-    size_t i;
+    int i;
     for(i = index + 1;i < array->length;i++){
         array->data[i - 1] = array->data[i];
     }
@@ -236,10 +236,10 @@ void array_list_remove_at_f(ArrayList_f *array, size_t index){
     array->length = array->length - 1;
 }
 
-void array_list_remove_at_i(ArrayList_i *array, size_t index){
+void array_list_remove_at_i(ArrayList_i *array, int index){
     if(index >= array->length) return;
 
-    size_t i;
+    int i;
     for(i = index + 1;i < array->length;i++){
         array->data[i - 1] = array->data[i];
     }
@@ -247,10 +247,10 @@ void array_list_remove_at_i(ArrayList_i *array, size_t index){
     array->length = array->length - 1;
 }
 
-void array_list_remove_at_s(ArrayList_s *array, size_t index){
+void array_list_remove_at_s(ArrayList_s *array, int index){
     if(index >= array->length) return;
 
-    size_t i;
+    int i;
     for(i = index + 1;i < array->length;i++){
         array->data[i - 1] = array->data[i];
     }
@@ -258,10 +258,10 @@ void array_list_remove_at_s(ArrayList_s *array, size_t index){
     array->length = array->length - 1;
 }
 
-void array_list_remove_at_m4(ArrayList_m4 *array, size_t index){
+void array_list_remove_at_m4(ArrayList_m4 *array, int index){
     if(index >= array->length) return;
 
-    size_t i;
+    int i;
     for(i = index + 1;i < array->length;i++){
         array->data[i - 1] = array->data[i];
     }

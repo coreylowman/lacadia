@@ -5,6 +5,8 @@
 Enemy *enemy_new(GameWorld *world){
     Enemy *self = malloc(sizeof(*self));
     self->base_object = game_object_new(world, GAME_OBJECT_TYPE_ENEMY);
+    self->base_object->container = self;
+
 	self->affectable.effects = set_new(effect_free);    
     return self;
 }
@@ -20,5 +22,6 @@ void enemy_update(Enemy *self, double dt){
     self->on_update(self, dt);
     affectable_object_update(&self->affectable, dt);
     moveable_object_update(&self->moveable, dt);
-    //TODO update renderable.model_matrix
+    renderable_object_update(&self->renderable, self->moveable);
+    collidable_object_update(&self->collidable, self->moveable);
 }

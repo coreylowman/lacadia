@@ -11,20 +11,27 @@
 #include "game_object.h"
 #include "spell.h"
 #include "game_world.h"
+#include "collidable_object.h"
 
 extern Mat4 MAT4_IDENT;
+
+static void null_free(void *data){
+
+}
 
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
     self->spells = set_new(spell_free);
     self->enemies = set_new(enemy_free);
+    self->collidables = set_new(null_free); //these collidables are pointers to other objects collidables... this set doesn't have ownership
+    self->indices = set_new(free);
 
-	self->num_assets = 1;
-	// self->asset_names[0] = "assets/box";
-    // self->asset_names[1] = "assets/bug";
-    // self->asset_names[2] = "assets/fireball";
-    // self->asset_names[3] = "assets/icicle";
-    self->asset_names[0] = "assets/lacadia_mage";
+	self->num_assets = 5;
+	self->asset_names[0] = "assets/box";
+    self->asset_names[1] = "assets/bug";
+    self->asset_names[2] = "assets/fireball";
+    self->asset_names[3] = "assets/icicle";
+    self->asset_names[4] = "assets/lacadia_mage";
     
     int i;
     for(i = 0;i < self->num_assets;i++){
@@ -64,6 +71,8 @@ GameWorld *game_world_new(){
 void game_world_free(GameWorld *self){
     set_free(self->spells);
     set_free(self->enemies);
+    set_free(self->collidables);
+    set_free(self->indices);
 
 	int i;
 	for (i = 0; i < self->num_assets; i++){
@@ -74,10 +83,28 @@ void game_world_free(GameWorld *self){
     free(self);
 }
 
+static void destroy_collidable(GameWorld *self, int i){
+    int index = *(int *)self->indices->data[i];
+	CollidableObject *c = self->collidables->data[i];
+    switch(c->self->type){
+        case GAME_OBJECT_TYPE_SPELL:
+            spell_free(self->spells->data[index]);
+            self->spells->data[index] = NULL;
+            break;
+        case GAME_OBJECT_TYPE_ENEMY:
+            enemy_free(self->enemies->data[index]);
+            self->enemies->data[index] = NULL;
+            break;
+    }
+    set_remove_at(self->collidables, i);
+    set_remove_at(self->indices, i);
+}
+
 void game_world_update(GameWorld *self, double dt){
     int i, j;
     Spell *s;
     Enemy *e;
+    CollidableObject *c1, *c2;
 
     player_update(self->player, dt);
 
@@ -93,28 +120,44 @@ void game_world_update(GameWorld *self, double dt){
         enemy_update(e, dt);
     }
 
-    for(i = 0;i < self->spells->length;i++){
-        if(self->spells->data[i] == NULL) continue;
-        s = self->spells->data[i];
-        for(j = 0;j < self->enemies->length;j++){
-            if(self->enemies->data[j] == NULL) continue;
-            e = self->enemies->data[j];
+    for(i = 0;i < self->collidables->length - 1;i++){
+        if(self->collidables->data[i] == NULL) continue;
+        c1 = self->collidables->data[i];
+        for(j = i + 1;j < self->collidables->length;j++){
+            if(self->collidables->data[j] == NULL) continue;
+            c2 = self->collidables->data[j];
 
-            if(obb_intersects(s->collidable.bounding_box, e->collidable.bounding_box)){
-                s->collidable.on_collide(s->base_object, e->base_object);
-                e->collidable.on_collide(e->base_object, s->base_object);
+            if(obb_intersects(c1->bounding_box, c2->bounding_box)){
+                c1->on_collide(c1->self, c2->self);
+                c2->on_collide(c2->self, c1->self);
+
+                if(c1->self->destroy){
+                    destroy_collidable(self, i);
+                    break;
+                }
+                if(c2->self->destroy){
+                    destroy_collidable(self, j);
+                    continue;
+                }
             }
         }
-
     }
 }
 
 void game_world_add_spell(GameWorld *self, void *s){
-    set_add(self->spells, s);
+    Spell *spell = s;
+    int *index = malloc(sizeof(*index));
+    *index	= set_add(self->spells, s);
+    set_add(self->collidables, &spell->collidable);
+    set_add(self->indices, index);
 }
 
 void game_world_add_enemy(GameWorld *self, void *e){
-    set_add(self->enemies, e);
+    Enemy *enemy = e;
+    int *index = malloc(sizeof(*index));
+    *index = set_add(self->enemies, e);
+    set_add(self->collidables, &enemy->collidable);
+    set_add(self->indices, index);
 }
 
 void game_world_render(GameWorld *self, Shader shader){
@@ -161,6 +204,26 @@ void game_world_render(GameWorld *self, Shader shader){
         glBindVertexArray(0);
 
 		self->asset_model_matrices[i]->length = 0;
+    }
+}
+
+void game_world_debug_render(GameWorld *self, Shader shader){
+    int i;
+    Spell *s;
+    Enemy *e;
+
+    //gather updates to the vertices
+    Player *p = self->player;
+    collidable_object_render(p->collidable);
+    for(i = 0;i < self->spells->length;i++){
+        if(self->spells->data[i] == NULL) continue;
+        s = self->spells->data[i];
+        collidable_object_render(s->collidable);
+    }
+    for (i = 0; i < self->enemies->length; i++){
+        if(self->enemies->data[i] == NULL) continue;
+        e = self->enemies->data[i];
+        collidable_object_render(e->collidable);
     }
 }
 

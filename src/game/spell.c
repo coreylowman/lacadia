@@ -5,8 +5,7 @@
 Spell *spell_new(GameWorld *world){
     Spell *self = malloc(sizeof(*self));
     self->base_object = game_object_new(world, GAME_OBJECT_TYPE_SPELL);
-    
-    
+    self->base_object->container = self;
     return self;
 }
 
@@ -18,5 +17,6 @@ void spell_free(Spell *self){
 void spell_update(Spell *self, double dt){
     self->on_update(self, dt);
     moveable_object_update(&self->moveable, dt);
-    //TODO update renderable.model_matrix
+    renderable_object_update(&self->renderable, self->moveable);
+    collidable_object_update(&self->collidable, self->moveable);
 }

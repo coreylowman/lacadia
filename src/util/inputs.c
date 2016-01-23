@@ -27,6 +27,8 @@ void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int actio
     i->p_pressed = 0;
     i->r_pressed = 0;
     i->l_pressed = 0;
+    i->e_pressed = 0;
+
     int j;
     for(j = 0;j < 10;j++){
         i->numbers_pressed[j] = 0;
@@ -40,6 +42,7 @@ void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int actio
     if(key == GLFW_KEY_P && action == GLFW_PRESS) i->p_pressed = 1;
     if(key == GLFW_KEY_R && action == GLFW_PRESS) i->r_pressed = 1;
     if(key == GLFW_KEY_L && action == GLFW_PRESS) i->l_pressed = 1;
+    if(key == GLFW_KEY_E && action == GLFW_PRESS) i->e_pressed = 1;
 
     if (key == GLFW_KEY_A && action == GLFW_PRESS) i->a_down = 1;
     else if (key == GLFW_KEY_A && action == GLFW_RELEASE) i->a_down = 0;

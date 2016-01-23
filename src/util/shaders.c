@@ -18,7 +18,7 @@ static void print_program_info_log(GLuint program) {
     printf("program info log for GL index %i:\n%s", program, log);
 }
 
-static int parse_file_into_str (const char* file_name, char* shader_str, int max_len){
+static int parse_file_into_str (const char* file_name, char* shader_str, size_t max_len){
     FILE* file = fopen (file_name , "r");
     if (!file) {
         fprintf(stderr,"ERROR: opening file for reading: %s\n", file_name);
@@ -45,7 +45,6 @@ int init_shaders(Shader *shader,
 	const char *fragment_shader_loc)
 {
 	int params = -1;
-	int length;
 	char vertex_shader_source[1024 * 256];
 	char fragment_shader_source[1024 * 256];
 	const GLchar *p;

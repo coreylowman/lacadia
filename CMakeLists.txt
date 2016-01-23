@@ -37,7 +37,7 @@ target_include_directories(lacadia
 target_link_libraries(lacadia
     ${OPENGL_LIBRARIES}
     ${LACADIA_SOURCE_DIR}/external/glew/lib/Release/Win32/glew32.lib
-    ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2013/glfw3.lib
+    ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2015/glfw3.lib
 )
 add_custom_command(TARGET lacadia
     PRE_BUILD

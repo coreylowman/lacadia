@@ -57,6 +57,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
         else
             camera.follow_target = NULL;
     }
+
+    if(inputs.e_pressed){
+        game_world_add_enemy(world, bug_new(world, (Vec3) { .data = { 1, 0, 0 } } ));
+    }
 }
 
 void window_size_callback (GLFWwindow* window, int _width, int _height) {
@@ -144,7 +148,7 @@ static void render(){
     glUseProgram(line_shader.program);
 	glUniformMatrix4fv(shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
 	glUniformMatrix4fv(shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
-	obb_debug_render(player->collidable.bounding_box);
+	game_world_debug_render(world, line_shader);
 }
 
 int main(int argc, char *argv[]){
@@ -159,7 +163,6 @@ int main(int argc, char *argv[]){
     axis_init(&axis);
 
     world = game_world_new();
-
     //player
     player = mage_new(world);
     world->player = player;

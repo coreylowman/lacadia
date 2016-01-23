@@ -2,25 +2,30 @@
 #include "mage.h"
 #include "game/spell.h"
 #include "game/ability.h"
+#include "game/fireball.h"
+
+extern Ability fireball_ability;
 
 Player *mage_new(GameWorld *world){
     Player *self = player_new(world);
     //todo init abilities
-    // self->abilities[0] = fireball_ability;
+    self->abilities[0] = fireball_ability;
     // self->abilities[1] = spread_burn_ability;
     // self->abilities[2] = teleport_ability;
     // self->abilities[3] = dragons_breath_ability;
 
     //todo set up stats in affectable
+
     self->moveable.speed = 5.0;
     self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
     self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
 
-    //todo model_matrix in renderable
     self->renderable.asset_id = game_world_get_asset_id(world, "assets/lacadia_mage");
-    mat4_ident(&self->renderable.model_matrix);
+    renderable_object_update(&self->renderable, self->moveable);
 
+    self->collidable.self = self->base_object;
     self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
+    collidable_object_update(&self->collidable, self->moveable);
     
     self->stance = 0;
     self->on_switch_stance = mage_on_switch_stance;

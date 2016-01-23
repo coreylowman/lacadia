@@ -11,7 +11,7 @@ typedef struct {
 
 
 int obb_intersects(Obb a, Obb b);
-void obb_debug_render(Obb a);
+void obb_render(Obb a);
 void obb_rotate_y(Obb *self, float rads);
 
 #endif

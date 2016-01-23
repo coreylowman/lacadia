@@ -26,6 +26,7 @@ typedef struct Player {
     //generic object methods
     int stance;
     void (*on_switch_stance)(struct Player *self);
+    void (*on_collide)(GameObject *self, GameObject *other);
 } Player;
 
 Player *player_new(GameWorld *world);
@@ -35,12 +36,13 @@ void player_update(Player *self, double dt);
 
 void player_use_ability(Player *self, int ability_index);
 
-void player_affect(Player *self, Effect *e);
+void player_affect(Player *self, Effect *e, double dt);
 
 void player_move_forwards(Player *self, double dt, float direction);
 void player_turn(Player *self, double side_amt);
 void player_strafe(Player *self, double dt, float direction);
 
 void player_handle_inputs(Player *self, double dt, Inputs inputs);
+void player_on_collide(GameObject *self, GameObject *other);
 
 #endif

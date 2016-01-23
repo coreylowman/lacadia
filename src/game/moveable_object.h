@@ -7,8 +7,12 @@ typedef struct {
     Vec3 position;
     Vec3 direction;
     float speed;
+
+    Vec3 last_move;
 } MoveableObject;
 
 void moveable_object_update(MoveableObject *self, double dt);
+void moveable_object_reverse(MoveableObject *self);
+float moveable_object_get_y_rotation(MoveableObject self);
 
 #endif

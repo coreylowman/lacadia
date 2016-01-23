@@ -14,12 +14,13 @@ typedef struct {
     //type so we can pass around GameObject * but know what it needs to be
     //cast as
     GameObjectType type;
-
+    void *container;
+    
     //a reference to the gameworld it is currently in
     GameWorld *world;
 
     //set to true if this object should be destroyed
-    int _destroy;
+    int destroy;
 } GameObject;
 
 GameObject *game_object_new(GameWorld *world, GameObjectType type);

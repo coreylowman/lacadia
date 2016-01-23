@@ -112,7 +112,7 @@ void obb_rotate_y(Obb *self, float rads){
 	self->axis[2].data[2] = c;
 }
 
-void obb_debug_render(Obb a){
+void obb_render(Obb a){
     int i, ti;
     Vec3 r = VEC3_ZERO;
     Vec3 rs[3];

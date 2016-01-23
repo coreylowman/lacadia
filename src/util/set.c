@@ -8,11 +8,11 @@ static SetStack *set_stack_new(){
     return self;
 }
 
-static size_t set_stack_pop(SetStack *self){
+static int set_stack_pop(SetStack *self){
     return self->data[--self->length];
 }
  
-static void set_stack_push(SetStack *self, size_t n){
+static void set_stack_push(SetStack *self, int n){
     if(self->length == self->capacity){
         self->capacity *= 2;
         self->data = realloc(self->data, self->capacity * sizeof(*(self->data)));
@@ -40,8 +40,9 @@ Set *set_new(void (*elem_free)(void *p)){
 }
 
 void set_free(Set *self){
-    size_t i;
+    int i;
     for(i = 0;i < self->length;i++){
+        if(self->data[i] == NULL) continue;
         self->elem_free(self->data[i]);
     }
     free(self->data);
@@ -49,20 +50,23 @@ void set_free(Set *self){
     free(self);
 }
  
-void set_add(Set *self, void *elem){
+int set_add(Set *self, void *elem){
     self->num_elements++;
     if(self->available_indices->length > 0){
-        self->data[set_stack_pop(self->available_indices)] = elem;
+        int index = set_stack_pop(self->available_indices);
+        self->data[index] = elem;
+        return index;
     }else{
         if(self->length == self->capacity){
             self->capacity *= 2;
             self->data = realloc(self->data, self->capacity * sizeof(*(self->data)));
         }
         self->data[self->length++] = elem;
+        return self->length - 1;
     }
 }
  
-void set_remove_at(Set *self, size_t i){
+void set_remove_at(Set *self, int i){
     if(self->data[i] == NULL) return;
     self->num_elements--;
     self->elem_free(self->data[i]);

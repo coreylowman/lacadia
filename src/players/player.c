@@ -8,6 +8,7 @@ extern Vec3 VEC3_UNIT_Y;
 Player *player_new(GameWorld *world){
     Player *self = malloc(sizeof(*self));
     self->base_object = game_object_new(world, GAME_OBJECT_TYPE_PLAYER);
+    self->base_object->container = self;
     self->affectable.effects = set_new(effect_free);
     return self;
 }
@@ -19,29 +20,19 @@ void player_free(Player *self){
 }
 
 void player_update(Player *self, double dt){
-	//update affectable
+	//note: don't update moveable here, because movement is controlled through
+    //  player input. we just assume moveable is up to date
     affectable_object_update(&self->affectable, dt);
-
-	//update renderable model matrix
-	mat4_ident(&self->renderable.model_matrix);
-	mat4_translate(&self->renderable.model_matrix, self->moveable.position);
-	float rotation = atan(self->moveable.direction.x / self->moveable.direction.z);
-	if (self->moveable.direction.z <= 0.0)
-		rotation += 3.14159265359;
-	mat4_rotate_y(&self->renderable.model_matrix, rotation);
-
-	//update collidable
-	self->collidable.bounding_box.center = self->moveable.position;
-	self->collidable.bounding_box.center.y += self->collidable.bounding_box.radius.y;
-	obb_rotate_y(&self->collidable.bounding_box, rotation);
+    renderable_object_update(&self->renderable, self->moveable);
+    collidable_object_update(&self->collidable, self->moveable);
 }
 
 void player_use_ability(Player *self, int i){
-    self->abilities[i].on_use(self->base_object->world, self);
+    self->abilities[i].on_use(self->base_object->world, self->base_object);
 }
 
-void player_affect(Player *self, Effect *e){
-    affectable_object_affect(&self->affectable, e);
+void player_affect(Player *self, Effect *e, double dt){
+    affectable_object_affect(&self->affectable, e, dt);
 }
 
 void player_move_forwards(Player *self, double dt, float direction){
@@ -91,5 +82,12 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
     if (inputs.s_down) player_move_forwards(self, dt, -1.0);
     if (inputs.a_down) player_strafe(self, dt, -1.0);
     if (inputs.d_down) player_strafe(self, dt, 1.0);
+}
+
+void player_on_collide(GameObject *self, GameObject *other){
+	Player *player = (Player *)self;
+    if(other->type == GAME_OBJECT_TYPE_WALL){
+        moveable_object_reverse(&player->moveable);
+    }
 }
 

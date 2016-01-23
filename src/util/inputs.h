@@ -9,7 +9,7 @@ typedef struct {
     
 	int left_mouse_down, right_mouse_down;
 
-    int p_pressed, r_pressed, l_pressed;
+    int e_pressed, p_pressed, r_pressed, l_pressed;
 	int numbers_pressed[10];
 
     double mouse_pos[2];
