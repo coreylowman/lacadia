@@ -6,7 +6,8 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 
     self->target = world->player;
 
-    //TODO set up stats in affectable
+    self->affectable.stats.max_health = 100;
+    affectable_object_init(&self->affectable);
 
     self->moveable.speed = 0.0;
     self->moveable.position = position;
@@ -27,7 +28,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 
 
 void bug_on_update(Enemy *self, double dt){
-
+    //affectable_object_print(self->affectable);
 }
 
 void bug_on_collide(GameObject *self, GameObject *object){

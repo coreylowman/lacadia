@@ -123,9 +123,20 @@ void game_world_update(GameWorld *self, double dt){
     for(i = 0;i < self->collidables->length - 1;i++){
         if(self->collidables->data[i] == NULL) continue;
         c1 = self->collidables->data[i];
+
+        if(c1->self->destroy){
+            destroy_collidable(self, i);
+            continue;
+        }
+
         for(j = i + 1;j < self->collidables->length;j++){
             if(self->collidables->data[j] == NULL) continue;
             c2 = self->collidables->data[j];
+            
+            if(c2->self->destroy){
+                destroy_collidable(self, j);
+                continue;
+            }
 
             if(obb_intersects(c1->bounding_box, c2->bounding_box)){
                 c1->on_collide(c1->self, c2->self);
@@ -140,6 +151,7 @@ void game_world_update(GameWorld *self, double dt){
                     continue;
                 }
             }
+
         }
     }
 }

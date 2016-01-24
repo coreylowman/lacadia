@@ -10,7 +10,9 @@ typedef struct AffectableObject {
     Set *effects; //Set<Effect *>
 } AffectableObject;
 
-void affectable_object_affect(struct AffectableObject *self, struct Effect *effect, double dt);
+void affectable_object_init(struct AffectableObject *self);
+void affectable_object_affect(struct AffectableObject *self, struct Effect *effect);
 void affectable_object_update(struct AffectableObject *self, double dt);
+void affectable_object_print(struct AffectableObject self);
 
 #endif

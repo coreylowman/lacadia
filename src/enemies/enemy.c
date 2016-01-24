@@ -7,7 +7,6 @@ Enemy *enemy_new(GameWorld *world){
     self->base_object = game_object_new(world, GAME_OBJECT_TYPE_ENEMY);
     self->base_object->container = self;
 
-	self->affectable.effects = set_new(effect_free);    
     return self;
 }
 
@@ -24,4 +23,13 @@ void enemy_update(Enemy *self, double dt){
     moveable_object_update(&self->moveable, dt);
     renderable_object_update(&self->renderable, self->moveable);
     collidable_object_update(&self->collidable, self->moveable);
+
+    if(self->affectable.stats.health <= 0.0){
+        self->base_object->destroy = 1;
+    }
+}
+
+float enemy_damage(Enemy *self, float damage){
+    self->affectable.stats.health -= damage;
+    return damage;
 }
