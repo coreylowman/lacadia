@@ -26,6 +26,5 @@ Enemy *enemy_new(GameWorld *world);
 void enemy_free(Enemy *self);
 
 void enemy_update(Enemy *self, double dt);
-float enemy_damage(Enemy *self, float damage);
 
 #endif

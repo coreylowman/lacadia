@@ -28,8 +28,3 @@ void enemy_update(Enemy *self, double dt){
         self->base_object->destroy = 1;
     }
 }
-
-float enemy_damage(Enemy *self, float damage){
-    self->affectable.stats.health -= damage;
-    return damage;
-}

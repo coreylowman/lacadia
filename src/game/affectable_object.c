@@ -20,6 +20,7 @@ void affectable_object_update(AffectableObject *self, double dt){
     for(i = 0;i < self->effects->length;i++){
         if(self->effects->data[i] == NULL) continue;
         e = self->effects->data[i];
+
         e->on_update(e, self, dt);
         if(e->is_over(e))
             e->on_end(e, self);
@@ -32,6 +33,7 @@ void affectable_object_render(AffectableObject self, GameWorld *world){
     for(i = 0;i < self.effects->length;i++){
         if(self.effects->data[i] == NULL) continue;
         e = self.effects->data[i];
+
         e->on_render(e, world);
     }
 }
@@ -42,5 +44,10 @@ void affectable_object_print(AffectableObject self){
     // printf("regen: %f %f\n", self.stats.regen, self.stats.max_regen);
     // printf("power: %f %f\n", self.stats.power, self.stats.max_power);
     // printf("lifesteal: %f %f\n", self.stats.lifesteal, self.stats.max_lifesteal);
+}
+
+float affectable_object_damage(struct AffectableObject *self, float amt){
+    self->stats.health -= amt;
+    return amt;
 }
 

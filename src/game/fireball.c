@@ -48,7 +48,7 @@ void fireball_update(Spell *self, double dt){
 void fireball_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other->container;
-        enemy_damage(enemy, 1);
+        affectable_object_damage(&enemy->affectable, 1);
 		affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
     }
     self->destroy = 1;
@@ -98,7 +98,7 @@ void burn_on_apply(Effect *self, AffectableObject *affectable){
 
 void burn_on_update(Effect *self, AffectableObject *affectable, double dt){
     BurnData *data = self->data;
-    affectable->stats.health -= dt * data->degree * data->dps;
+    affectable_object_damage(affectable, dt * data->degree * data->dps);
     self->duration -= dt;
     particle_system_update(data->particle_system, dt);
 }
