@@ -12,4 +12,3 @@ Effect *effect_new(EffectType type, float duration){
 void effect_free(Effect *self){
     self->on_free(self);
 }
-

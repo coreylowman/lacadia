@@ -3,25 +3,27 @@ list(APPEND GAME_SOURCES
     ability.h
     affectable_object.c
     affectable_object.h
-    collidable_object.h
     collidable_object.c
+    collidable_object.h
     effect.c
     effect.h
+    fireball.c
+    fireball.h
     game_object.c
     game_object.h
     game_world.c
     game_world.h
     moveable_object.c
     moveable_object.h
+    particle_system.c
+    particle_system.h
     renderable_object.c
     renderable_object.h
     spell.c
     spell.h
     stats.h
-    wall.h
     wall.c
-    fireball.c
-    fireball.h
+    wall.h
 )
 
 add_library(game OBJECT ${GAME_SOURCES})

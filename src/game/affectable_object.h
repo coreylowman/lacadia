@@ -4,6 +4,7 @@
 #include "stats.h"
 #include "util/set.h"
 #include "game/effect.h"
+#include "game/game_world.h"
 
 typedef struct AffectableObject {
     Stats stats;
@@ -13,6 +14,7 @@ typedef struct AffectableObject {
 void affectable_object_init(struct AffectableObject *self);
 void affectable_object_affect(struct AffectableObject *self, struct Effect *effect);
 void affectable_object_update(struct AffectableObject *self, double dt);
+void affectable_object_render(struct AffectableObject self, GameWorld *world);
 void affectable_object_print(struct AffectableObject self);
 
 #endif

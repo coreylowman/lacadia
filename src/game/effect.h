@@ -2,6 +2,7 @@
 #define EFFECT_H
 
 #include "game/affectable_object.h"
+#include "game/game_world.h"
 
 typedef enum {
     EFFECT_TYPE_SHIELD,
@@ -32,6 +33,7 @@ typedef struct Effect{
     //apply -> update -> ... -> update -> on_end
     void (*on_apply)(struct Effect *self, struct AffectableObject *obj);
     void (*on_update)(struct Effect *self, struct AffectableObject *obj, double dt);
+    void (*on_render)(struct Effect *self, GameWorld *world);
     void (*on_end)(struct Effect *self, struct AffectableObject *obj);
     void (*on_free)(struct Effect *self);
     int (*is_over)(struct Effect *self);

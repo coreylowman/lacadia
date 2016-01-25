@@ -26,12 +26,13 @@ GameWorld *game_world_new(){
     self->collidables = set_new(null_free); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
 
-	self->num_assets = 5;
+	self->num_assets = 6;
 	self->asset_names[0] = "assets/box";
     self->asset_names[1] = "assets/bug";
     self->asset_names[2] = "assets/fireball";
     self->asset_names[3] = "assets/icicle";
     self->asset_names[4] = "assets/lacadia_mage";
+    self->asset_names[5] = "assets/burn_particle";
     
     int i;
     for(i = 0;i < self->num_assets;i++){
@@ -189,6 +190,7 @@ void game_world_render(GameWorld *self, Shader shader){
         if(self->enemies->data[i] == NULL) continue;
 		e = self->enemies->data[i];
 		renderable_object_render(e->renderable, self);
+        affectable_object_render(e->affectable, self);
 	}
 	
     for(i = 0;i < self->num_assets;i++){

@@ -4,6 +4,7 @@
 #include "fireball.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
+#include "particle_system.h"
 
 Ability fireball_ability = {
     .cooldown = 0,
@@ -48,7 +49,7 @@ void fireball_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other->container;
         enemy_damage(enemy, 1);
-		affectable_object_affect(&enemy->affectable, burn_new(1, 4));
+		affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
     }
     self->destroy = 1;
 }
@@ -56,18 +57,21 @@ void fireball_on_collide(GameObject *self, GameObject *other){
 typedef struct {
     int degree;
     float dps;
+    ParticleSystem *particle_system;
 } BurnData;
 
-Effect *burn_new(float dmg, float duration){
+Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float duration){
     Effect *self = effect_new(EFFECT_TYPE_BURN, duration);
     
     self->data = malloc(sizeof(BurnData));
 	BurnData *data = self->data;
 	data->degree = 1;
 	data->dps = dmg;
+    data->particle_system = particle_system_new(world, target, "assets/burn_particle", 32, duration, duration * 0.2);
     
     self->on_apply = burn_on_apply;
     self->on_update = burn_on_update;
+    self->on_render = burn_on_render;
     self->on_end = burn_on_end;
     self->on_free = burn_on_free;
     self->is_over = burn_is_over;
@@ -96,6 +100,12 @@ void burn_on_update(Effect *self, AffectableObject *affectable, double dt){
     BurnData *data = self->data;
     affectable->stats.health -= dt * data->degree * data->dps;
     self->duration -= dt;
+    particle_system_update(data->particle_system, dt);
+}
+
+void burn_on_render(Effect *self, GameWorld *world){
+	BurnData *data = self->data;
+	particle_system_render(data->particle_system);
 }
 
 void burn_on_end(Effect *self, AffectableObject *affectable){
@@ -110,6 +120,8 @@ void burn_on_end(Effect *self, AffectableObject *affectable){
 }
 
 void burn_on_free(Effect *self){
+    BurnData *data = self->data;
+    particle_system_free(data->particle_system);
     free(self->data);
     free(self);
 }
