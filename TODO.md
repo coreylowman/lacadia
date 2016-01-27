@@ -45,7 +45,7 @@
 - [ ] Model Animations
 
 ###### Assassin
-- [ ] Spell Design
+- [x] Spell Design
 - [ ] Spell Implementation
 - [ ] Model
 - [ ] Model Animations

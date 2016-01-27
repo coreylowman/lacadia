@@ -50,7 +50,7 @@ Large explosive aoe attacks… BOOM BOOM BOOM
 
 
 ##### I. Passive
-Your bullets explode into shrapnel in a small radius around your targets dealing small damage
+Your attacks explode into shrapnel in a small radius around your targets dealing small damage over medium time
 
 
 ##### II. Fire Gun
