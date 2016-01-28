@@ -88,7 +88,7 @@ void burn_on_apply(Effect *self, AffectableObject *affectable){
 		if (e->type == EFFECT_TYPE_BURN) {
 			e->duration = e->max_duration;
 			BurnData *data = e->data;
-			data->degree = min(data->degree + 1, 3);
+			// data->degree = min(data->degree + 1, 3);
 			effect_free(self);
 			return;
 		}

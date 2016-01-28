@@ -55,6 +55,9 @@ Injects a single target in front of you with toxin
 Does nothing for a medium-long time and then deals very high damage. Applying other poisons to a target affected with toxin reduce the time for it to take effect
 
 
+---
+
+
 ### Assassin
 Specializes in quickly killing a target by exposing wounds and then quickly dealing a lot of damage to them
 

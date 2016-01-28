@@ -25,10 +25,18 @@ void player_update(Player *self, double dt){
     affectable_object_update(&self->affectable, dt);
     renderable_object_update(&self->renderable, self->moveable);
     collidable_object_update(&self->collidable, self->moveable);
+
+    int i;
+    for(i = 0;i < 4;i++){
+        self->abilities[i].cooldown = max(self->abilities[i].cooldown - dt, 0);
+    }
 }
 
 void player_use_ability(Player *self, int i){
-    self->abilities[i].on_use(self->base_object->world, self->base_object);
+    if(self->abilities[i].cooldown <= 0.0){
+        self->abilities[i].on_use(self->base_object->world, self->base_object);
+        self->abilities[i].cooldown = self->abilities[i].max_cooldown;
+    }
 }
 
 void player_affect(Player *self, Effect *e, double dt){

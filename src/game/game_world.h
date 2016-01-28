@@ -6,6 +6,7 @@
 #include "util/object_model.h"
 #include "util/shaders.h"
 #include "util/obb.h"
+#include "enemies/enemy.h"
 
 #define MAX_ASSETS 20
 
@@ -42,5 +43,7 @@ Obb game_world_get_asset_obb(GameWorld *self, int asset_id);
 //use to copy verts & colors into vertices/colors array list
 //will then draw the whole thing in render
 void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix);
+
+void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy));
 
 #endif

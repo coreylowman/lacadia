@@ -226,7 +226,6 @@ void game_world_debug_render(GameWorld *self, Shader shader){
     Spell *s;
     Enemy *e;
 
-    //gather updates to the vertices
     Player *p = self->player;
     collidable_object_render(p->collidable);
     for(i = 0;i < self->spells->length;i++){
@@ -256,4 +255,24 @@ Obb game_world_get_asset_obb(GameWorld *self, int asset_id){
 
 void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix){
     array_list_push_m4(self->asset_model_matrices[asset_id], model_matrix);
+}
+
+static int vec3_within_dist(Vec3 a, Vec3 b, float r){
+    return vec3_dot(a, b) < r * r;
+}
+
+void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy)){
+    CollidableObject *collidable;
+    GameObject *object;
+    int i;
+    for(i = 0;i < self->collidables->length;i++){
+        if(self->collidables->data[i] == NULL) continue;
+        collidable = self->collidables->data[i];
+        if(vec3_within_dist(collidable->bounding_box.center, position, radius)){
+            object = collidable->self;
+            if(object->type == GAME_OBJECT_TYPE_ENEMY){
+                fn(self, (Enemy *)object->container);
+            }
+        }
+    }
 }
