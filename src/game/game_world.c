@@ -87,7 +87,7 @@ void game_world_free(GameWorld *self){
 static void destroy_collidable(GameWorld *self, int i){
     int index = *(int *)self->indices->data[i];
 	CollidableObject *c = self->collidables->data[i];
-    switch(c->self->type){
+    switch(c->container->type){
         case GAME_OBJECT_TYPE_SPELL:
             spell_free(self->spells->data[index]);
             self->spells->data[index] = NULL;
@@ -125,7 +125,7 @@ void game_world_update(GameWorld *self, double dt){
         if(self->collidables->data[i] == NULL) continue;
         c1 = self->collidables->data[i];
 
-        if(c1->self->destroy){
+        if(c1->container->destroy){
             destroy_collidable(self, i);
             continue;
         }
@@ -134,20 +134,20 @@ void game_world_update(GameWorld *self, double dt){
             if(self->collidables->data[j] == NULL) continue;
             c2 = self->collidables->data[j];
             
-            if(c2->self->destroy){
+            if(c2->container->destroy){
                 destroy_collidable(self, j);
                 continue;
             }
 
-            if(obb_intersects(c1->bounding_box, c2->bounding_box)){
-                c1->on_collide(c1->self, c2->self);
-                c2->on_collide(c2->self, c1->self);
+            if(c1->is_colliding(*c1, *c2) && c2->is_colliding(*c2, *c1)){
+                c1->on_collide(c1->container, c2->container);
+                c2->on_collide(c2->container, c1->container);
 
-                if(c1->self->destroy){
+                if(c1->container->destroy){
                     destroy_collidable(self, i);
                     break;
                 }
-                if(c2->self->destroy){
+                if(c2->container->destroy){
                     destroy_collidable(self, j);
                     continue;
                 }
@@ -269,7 +269,7 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
         if(self->collidables->data[i] == NULL) continue;
         collidable = self->collidables->data[i];
         if(vec3_within_dist(collidable->bounding_box.center, position, radius)){
-            object = collidable->self;
+            object = collidable->container;
             if(object->type == GAME_OBJECT_TYPE_ENEMY){
                 fn(self, (Enemy *)object->container);
             }

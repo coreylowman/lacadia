@@ -37,8 +37,17 @@ target_include_directories(lacadia
 target_link_libraries(lacadia
     ${OPENGL_LIBRARIES}
     ${LACADIA_SOURCE_DIR}/external/glew/lib/Release/Win32/glew32.lib
+)
+if(MSVC12)
+target_link_libraries(lacadia
+    ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2013/glfw3.lib
+)
+elseif(MSVC14)
+target_link_libraries(lacadia
     ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2015/glfw3.lib
 )
+endif()
+
 add_custom_command(TARGET lacadia
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${VERTEX_SHADER} $<TARGET_FILE_DIR:lacadia>

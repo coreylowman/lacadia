@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "affectable_object.h"
 
 void affectable_object_init(AffectableObject *self){

@@ -1,6 +1,8 @@
 list(APPEND GAME_SOURCES
     ability.c
     ability.h
+    burn.c
+    burn.h
     affectable_object.c
     affectable_object.h
     collidable_object.c
@@ -24,6 +26,8 @@ list(APPEND GAME_SOURCES
     stats.h
     wall.c
     wall.h
+    wildfire.c
+    wildfire.h
 )
 
 add_library(game OBJECT ${GAME_SOURCES})

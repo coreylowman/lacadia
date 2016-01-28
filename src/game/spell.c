@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "spell.h"
+#include "util/obb.h"
+
 
 Spell *spell_new(GameWorld *world){
     Spell *self = malloc(sizeof(*self));
@@ -19,4 +21,12 @@ void spell_update(Spell *self, double dt){
     moveable_object_update(&self->moveable, dt);
     renderable_object_update(&self->renderable, self->moveable);
     collidable_object_update(&self->collidable, self->moveable);
+}
+
+int spell_is_colliding_with_target(CollidableObject self, CollidableObject other){
+    Spell *spell = self.container->container;
+    if(spell->target == other.container){
+        return obb_intersects(self.bounding_box, other.bounding_box);
+    }
+    return 0;
 }

@@ -6,12 +6,14 @@
 #include "util/object_model.h"
 #include "util/shaders.h"
 #include "util/obb.h"
-#include "enemies/enemy.h"
 
 #define MAX_ASSETS 20
 
+typedef struct Player Player;
+typedef struct Enemy Enemy;
+
 typedef struct GameWorld {
-    void *player;
+    Player *player;
     Set *spells; //Set<Spell *>
     Set *enemies; //Set<Enemy *>
 
