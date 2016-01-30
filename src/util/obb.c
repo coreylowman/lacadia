@@ -17,7 +17,7 @@ int obb_intersects(Obb a, Obb b){
    
     Vec3 t = vec3_sub(b.center, a.center);
     // Express the translation vector in a's coordinate frame.
-    t = vec3_from3f(vec3_dot(t, a.axis[0]), vec3_dot(t, a.axis[1]), vec3_dot(t, a.axis[2]));
+    t = vec3_from_3f(vec3_dot(t, a.axis[0]), vec3_dot(t, a.axis[1]), vec3_dot(t, a.axis[2]));
 
     Vec3 absR[3];
     for(i = 0; i < 3; i++)

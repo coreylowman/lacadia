@@ -23,6 +23,7 @@ void camera_init(Camera *camera, int width, int height){
 
     camera->speed = 25.0;
 
+    camera->follow_location = camera->location;
 	camera->follow_target = NULL;
 
     camera_update_view_matrix(camera);
@@ -35,10 +36,14 @@ void camera_set_follow(Camera *camera, MoveableObject *follow){
 
 void camera_follow(Camera *camera){
 	if (camera->follow_target == NULL) return;
-	camera->look_at = camera->follow_target->position;
+	
+    camera->look_at = vec3_add(camera->follow_target->position, vec3_scale(camera->follow_target->direction, 2.0));
 	Vec3 behind = vec3_scale(camera->follow_target->direction, -15);
 	behind.y += 7;
-	camera->location = vec3_add(camera->follow_target->position, behind);
+	camera->location = vec3_add(camera->follow_target->position, camera->follow_target->direction);
+	camera->look_at.y += 3;
+	camera->location.y += 3;
+
 	camera_update_view_matrix(camera);
 }
 
@@ -78,6 +83,7 @@ void camera_move_forwards(Camera *camera, double dt, float direction){
         camera->look_at.data[i] += camera->speed * direction * dt * forwards.data[i];
         camera->location.data[i] += camera->speed * direction * dt * forwards.data[i];
     }
+    camera->follow_location = camera->location;
 }
 
 void camera_strafe(Camera *camera, double dt, float direction){
@@ -96,6 +102,7 @@ void camera_strafe(Camera *camera, double dt, float direction){
         camera->look_at.data[i] += camera->speed * direction * dt * sideways.data[i];
         camera->location.data[i] += camera->speed * direction * dt * sideways.data[i];
     }
+    camera->follow_location = camera->location;
 }
 
 void camera_rotate_view(Camera *camera, double side_amt, double up_amt){
@@ -118,6 +125,7 @@ void camera_rotate_view(Camera *camera, double side_amt, double up_amt){
 void camera_move_vertically(Camera *camera, double dt, float direction){
     camera->look_at.data[1] += camera->speed * direction * dt;
     camera->location.data[1] += camera->speed * direction * dt;
+    camera->follow_location = camera->location;
 }
 
 void camera_update_view_matrix(Camera *camera){

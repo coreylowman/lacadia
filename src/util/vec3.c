@@ -6,7 +6,7 @@ Vec3 VEC3_UNIT_Y = { .data = {0, 1, 0} };
 Vec3 VEC3_UNIT_Z = { .data = {0, 0, 1} };
 Vec3 VEC3_ZERO = { .data = {0, 0, 0} };
 
-Vec3 vec3_from3f(float x, float y, float z){
+Vec3 vec3_from_3f(float x, float y, float z){
     return (Vec3){ .x = x, .y = y, .z = z};
 }
 
@@ -60,4 +60,10 @@ void vec3_normalize(Vec3 *self){
     self->x = x * inv_length;
     self->y = y * inv_length;
     self->z = z * inv_length;
+}
+
+int vec3_within_dist(Vec3 a, Vec3 b, float r){
+	float r2 = r * r;
+	Vec3 a_b = vec3_sub(a, b);
+    return vec3_dot(a_b, a_b) <= r2;
 }

@@ -38,13 +38,15 @@ target_link_libraries(lacadia
     ${OPENGL_LIBRARIES}
     ${LACADIA_SOURCE_DIR}/external/glew/lib/Release/Win32/glew32.lib
 )
-if(MSVC12)
-target_link_libraries(lacadia
-    ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2013/glfw3.lib
-)
-elseif(MSVC14)
+if(MSVC14)
+message("Using VS2015 version of glfw3")
 target_link_libraries(lacadia
     ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2015/glfw3.lib
+)
+elseif(MSVC12)
+message("Using VS2013 version of glfw3")
+target_link_libraries(lacadia
+    ${LACADIA_SOURCE_DIR}/external/glfw3/lib-vc2013/glfw3.lib
 )
 endif()
 

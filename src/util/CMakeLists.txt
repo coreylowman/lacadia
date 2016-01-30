@@ -23,6 +23,8 @@ list(APPEND UTIL_SOURCES
     vec3.h
     obb.c
     obb.h
+    random.c
+    random.h
 )
 
 add_library(util OBJECT ${UTIL_SOURCES})

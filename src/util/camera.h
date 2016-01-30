@@ -22,6 +22,7 @@ typedef struct Camera {
 
     float speed;
 
+    Vec3 follow_location;
 	MoveableObject *follow_target;
 } Camera;
 

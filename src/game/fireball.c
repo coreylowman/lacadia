@@ -52,9 +52,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
 }
 
 static void fireball_update(Spell *self, double dt){
-    moveable_object_update(&self->moveable, dt);
-    renderable_object_update(&self->renderable, self->moveable);
-    collidable_object_update(&self->collidable, self->moveable);
+    //just have to move
 }
 
 static void fireball_on_collide(GameObject *self, GameObject *other){

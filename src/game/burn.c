@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "burn.h"
+#include "util/random.h"
 
 //forward declarations
 static void burn_on_apply(Effect *self, AffectableObject *affectable);
@@ -11,6 +12,12 @@ static int burn_is_over(Effect *self);
 //end forward declarations
 
 
+static void burn_particle_init(Particle *p, Vec3 position, float duration){
+    p->position = vec3_add(position, random_length_vec3(2.0));
+    p->velocity = (Vec3) { .data = { 0, 1, 0 } };
+    p->duration = random_in_range(0, duration);
+}
+
 Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float duration){
     Effect *self = effect_new(EFFECT_TYPE_BURN, duration);
     
@@ -19,7 +26,8 @@ Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float dura
     data->degree = 1;
     data->dps = dmg;
     data->particle_system = particle_system_new(world, target, "assets/burn_particle", 32, duration, duration * 0.2);
-    
+    particle_system_set_particle_init(data->particle_system, burn_particle_init);
+
     self->on_apply = burn_on_apply;
     self->on_update = burn_on_update;
     self->on_render = burn_on_render;

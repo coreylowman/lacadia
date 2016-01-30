@@ -3,12 +3,14 @@
 #include <crtdbg.h>
 #include <Windows.h>
 #include <stdio.h>
+#include <time.h>
 #include <GL/glew.h>
 #include <GL/glfw3.h>
 #include "util/inputs.h"
 #include "util/camera.h"
 #include "util/shaders.h"
 #include "util/axis.h"
+#include "util/random.h"
 #include "game/game_world.h"
 #include "players/player.h"
 #include "players/mage.h"
@@ -59,7 +61,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     }
 
     if(inputs.e_pressed){
-        game_world_add_enemy(world, bug_new(world, (Vec3) { .data = { 1, 0, 0 } } ));
+        game_world_add_enemy(world, bug_new(world, vec3_add(player->moveable.position, random_unit_vec3())));
     }
 }
 
@@ -154,6 +156,8 @@ static void render(){
 int main(int argc, char *argv[]){
     double total_time = 0;
     double temp_time = 0;
+
+    srand(time(NULL));
 
     init_glfw();
     init_glew();
