@@ -1,8 +1,12 @@
-#include <math.h>
 #include "rect.h"
 
-int rect_intersects(Rect r1, Rect r2){
-    return abs(r1.x - r2.x) * 2 < (r1.width + r2.width)
-        && abs(r1.y - r2.y) * 2 < (r1.height + r2.height)
-        && abs(r1.z - r2.z) * 2 < (r1.length + r2.length);
+UIRect ui_rect_from_rect2(Rect2 rect){
+    UIRect output;
+    
+    output.x1 = rect.x; output.y1 = rect.y;
+    output.x2 = rect.x + rect.width; output.y2 = rect.y;
+    output.x3 = rect.x + rect.width; output.y3 = rect.y + rect.height;
+    output.x4 = rect.x; output.y4 = rect.y + rect.height;
+
+    return output;
 }

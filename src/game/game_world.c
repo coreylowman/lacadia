@@ -40,22 +40,22 @@ GameWorld *game_world_new(){
         self->asset_model_matrices[i] = array_list_new_m4();
     }
 
-    glGenVertexArrays(1, &self->vao);
-    glBindVertexArray(self->vao);
+    glGenVertexArrays(1, &self->asset_vao);
+    glBindVertexArray(self->asset_vao);
 	
-    glGenBuffers(3, &self->vbo[0]);
+    glGenBuffers(3, &self->asset_vbo[0]);
     
     //vertex data buffer object
-	glBindBuffer(GL_ARRAY_BUFFER, self->vbo[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
     //color data buffer object
-	glBindBuffer(GL_ARRAY_BUFFER, self->vbo[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
-	glBindBuffer(GL_ARRAY_BUFFER, self->vbo[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[2]);
     //instance model matrix buffer object
     for(i = 0;i < 4;i++){
         glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, 16 * sizeof(float), (void *)(4 * i * sizeof(float)));
@@ -65,6 +65,27 @@ GameWorld *game_world_new(){
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+
+    //ui vbo/vao
+    glGenVertexArrays(1, &self->ui_vao);
+    glBindVertexArray(self->ui_vao);
+    
+    glGenBuffers(2, &self->ui_vbo[0]);
+    
+    //vertex data buffer object
+    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[0]);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    //color data buffer object
+    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[1]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+	self->num_ui_rects = 0;
 
     return self;
 }
@@ -200,25 +221,41 @@ void game_world_render(GameWorld *self, Shader shader){
 		if (model_matrices->length == 0) continue;
 
         //upload vertices of model
-        glBindBuffer(GL_ARRAY_BUFFER, self->vbo[0]);
+        glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, model->num_floats * sizeof(float), &model->vertices[0], GL_STATIC_DRAW);
 
         //upload colors of model
-        glBindBuffer(GL_ARRAY_BUFFER, self->vbo[1]);
+        glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[1]);
         glBufferData(GL_ARRAY_BUFFER, model->num_floats * sizeof(float), &model->colors[0], GL_STATIC_DRAW);
 
         //upload instace model matrices
-        glBindBuffer(GL_ARRAY_BUFFER, self->vbo[2]);
+        glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[2]);
         glBufferData(GL_ARRAY_BUFFER, model_matrices->length * sizeof(Mat4), &model_matrices->data[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         
         //draw stuff
-        glBindVertexArray(self->vao);
+        glBindVertexArray(self->asset_vao);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, model->num_floats, model_matrices->length);
         glBindVertexArray(0);
 
 		self->asset_model_matrices[i]->length = 0;
     }
+}
+
+void game_world_render_ui(GameWorld *self, Shader shader){
+    //upload vertices of model
+    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, 8 * self->num_ui_rects * sizeof(float), &self->rects[0], GL_STATIC_DRAW);
+
+    //upload colors of model
+    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, 12 * self->num_ui_rects * sizeof(float), &self->rect_colors[0], GL_STATIC_DRAW);
+
+    glBindVertexArray(self->ui_vao);
+    glDrawArrays(GL_QUADS, 0, 4 * self->num_ui_rects);
+    glBindVertexArray(0);
+
+    self->num_ui_rects = 0;
 }
 
 void game_world_debug_render(GameWorld *self, Shader shader){
@@ -255,6 +292,20 @@ Obb game_world_get_asset_obb(GameWorld *self, int asset_id){
 
 void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix){
     array_list_push_m4(self->asset_model_matrices[asset_id], model_matrix);
+}
+
+void game_world_draw_rect(GameWorld *self, Rect2 rect, Vec3 color){
+    int i = self->num_ui_rects;
+    if(i < MAX_UI_RECTS){
+        self->rects[i] = ui_rect_from_rect2(rect);
+        self->rect_colors[4*i] = color;
+        self->rect_colors[4*i+1] = color;
+        self->rect_colors[4*i+2] = color;
+        self->rect_colors[4*i+3] = color;
+        self->num_ui_rects++;
+    }else{
+        printf("error! too many rects\n");
+    }
 }
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy)){

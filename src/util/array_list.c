@@ -108,46 +108,6 @@ void array_list_free_m4(void *data){
     free(array);
 }
 
-void array_list_grow_f(ArrayList_f *array, int sz){
-    array->capacity += sz;
-
-    array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = array->capacity - sz;i < array->capacity;i++){
-        array->data[i] = 0;
-    }
-}
-
-void array_list_grow_i(ArrayList_i *array, int sz){
-    array->capacity += sz;
-
-    array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = array->capacity - sz;i < array->capacity;i++){
-        array->data[i] = 0;
-    }
-}
-
-void array_list_grow_s(ArrayList_s *array, int sz){
-    array->capacity += sz;
-
-    array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = array->capacity - sz;i < array->capacity;i++){
-        array->data[i] = 0;
-    }
-}
-
-void array_list_grow_m4(ArrayList_m4 *array, int sz){
-    array->capacity += sz;
-
-    array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = array->capacity - sz;i < array->capacity;i++){
-        array->data[i] = MAT4_IDENT;
-    }
-}
-
 void array_list_push(ArrayList *array, void *data){
     if(array->length == array->capacity){
         int i = array->capacity;

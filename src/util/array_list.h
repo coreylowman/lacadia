@@ -51,11 +51,6 @@ void array_list_free_i(void *data);
 void array_list_free_s(void *data);
 void array_list_free_m4(void *data);
 
-void array_list_grow_f(ArrayList_f *array, int sz);
-void array_list_grow_i(ArrayList_i *array, int sz);
-void array_list_grow_s(ArrayList_s *array, int sz);
-void array_list_grow_m4(ArrayList_m4 *array, int sz);
-
 void array_list_push(ArrayList *array, void *data);
 void array_list_push_f(ArrayList_f *array, float data);
 void array_list_push_i(ArrayList_i *array, int data);
