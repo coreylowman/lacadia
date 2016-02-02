@@ -138,11 +138,7 @@ static void update(double total_time){
 }
 
 static void render(){
-    Mat4 pv_matrix;
-    mat4_mul(&pv_matrix, camera.projection_matrix, camera.view_matrix);
-    //mat4_transpose(&pv_matrix);
-    
-    world->world_to_screen = pv_matrix;
+    mat4_mul(&world->world_to_screen, camera.projection_matrix, camera.view_matrix);
     
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -38,7 +38,8 @@ void mat4_lookat(Mat4 *mat,Vec3 eye, Vec3 center, Vec3 up);
 
 int mat4_inverse(Mat4 *out_mat, Mat4 mat);
 
-void mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec);
+//returns the w componenet
+float mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec);
 
 void mat4_transpose(Mat4 *mat);
 

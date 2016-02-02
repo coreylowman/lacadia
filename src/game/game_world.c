@@ -27,12 +27,12 @@ GameWorld *game_world_new(){
     self->collidables = set_new(null_free); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
 
-	self->num_assets = 6;
+	self->num_assets = 2;
 	self->asset_names[0] = "assets/box";
-    self->asset_names[1] = "assets/bug";
-    self->asset_names[2] = "assets/fireball";
-    self->asset_names[3] = "assets/icicle";
-    self->asset_names[4] = "assets/lacadia_mage";
+	self->asset_names[1] = "assets/lacadia_mage";
+	self->asset_names[2] = "assets/bug";
+    self->asset_names[3] = "assets/fireball";
+    self->asset_names[4] = "assets/icicle";
     self->asset_names[5] = "assets/burn_particle";
     
     int i;
@@ -236,7 +236,7 @@ void game_world_render(GameWorld *self, Shader shader){
         
         //draw stuff
         glBindVertexArray(self->asset_vao);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, model->num_floats, model_matrices->length);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, model->num_floats / 3, model_matrices->length);
         glBindVertexArray(0);
 
 		self->asset_model_matrices[i]->length = 0;
@@ -293,7 +293,8 @@ int game_world_get_asset_id(GameWorld *self, const char *name){
         if(string_equals(self->asset_names[i], name))
             return i;
     }
-    return -1;
+	//default to default box
+    return 0;
 }
 
 Obb game_world_get_asset_obb(GameWorld *self, int asset_id){
@@ -336,8 +337,10 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
 Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Mat4 model_matrix, Vec3 world_coords){
     Vec3 output;
 	mat4_transpose(&model_matrix);
-    Mat4 mvp;
-    mat4_mul(&mvp, self->world_to_screen, model_matrix);
-    mat4_mul_vec3(&output, mvp, world_coords);
+	mat4_mul_vec3(&output, model_matrix, world_coords);
+    float w = mat4_mul_vec3(&output, self->world_to_screen, output);
+	output.x /= w;
+	output.y /= w;
+	output.z /= w;
     return output;
 }

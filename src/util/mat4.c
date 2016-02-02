@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include "mat4.h"
 
 Mat4 MAT4_IDENT = {
@@ -23,22 +24,22 @@ void mat4_mul(Mat4 *dest, Mat4 mat1, Mat4 mat2){
     b20 = mat2.data[8], b21 = mat2.data[9], b22 = mat2.data[10], b23 = mat2.data[11],
     b30 = mat2.data[12], b31 = mat2.data[13], b32 = mat2.data[14], b33 = mat2.data[15];
 
-    dest->data[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
-    dest->data[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
-    dest->data[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
-    dest->data[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
-    dest->data[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
-    dest->data[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
-    dest->data[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
-    dest->data[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
-    dest->data[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
-    dest->data[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
-    dest->data[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
-    dest->data[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
-    dest->data[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
-    dest->data[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
-    dest->data[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
-    dest->data[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
+    dest->data[0] = a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30;
+    dest->data[1] = a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31;
+    dest->data[2] = a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32;
+    dest->data[3] = a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33;
+    dest->data[4] = a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30;
+    dest->data[5] = a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31;
+    dest->data[6] = a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32;
+    dest->data[7] = a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33;
+    dest->data[8] = a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30;
+    dest->data[9] = a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31;
+    dest->data[10] = a20 * b02 + a21 * b12 + a22 * b22 + a23 * b32;
+    dest->data[11] = a20 * b03 + a21 * b13 + a22 * b23 + a23 * b33;
+    dest->data[12] = a30 * b00 + a31 * b10 + a32 * b20 + a33 * b30;
+    dest->data[13] = a30 * b01 + a31 * b11 + a32 * b21 + a33 * b31;
+    dest->data[14] = a30 * b02 + a31 * b12 + a32 * b22 + a33 * b32;
+    dest->data[15] = a30 * b03 + a31 * b13 + a32 * b23 + a33 * b33;
 }
 
 void mat4_scale(Mat4 *mat, float scale){
@@ -156,17 +157,27 @@ void mat4_copy(Mat4 *dest, Mat4 src){
         dest->data[i] = src.data[i];
 }
 
-static float radians(float degrees){
-	return degrees * 3.14159265 / 180.0;
-}
-
 void mat4_persp(Mat4 *mat, float fov, float aspect, float zNear, float zFar){
-    float tanHalf = tan(radians(fov) / 2.0);    
+	float tanHalf = tan(fov * 3.14159265358979323846 / 360.0);
+    mat->data[0] = 1 / (aspect * tanHalf);
+	mat->data[1] = 0;
+	mat->data[2] = 0;
+	mat->data[3] = 0;
 
-    mat->data[0] = 1 / (aspect * tanHalf); mat->data[1] = 0; mat->data[2] = 0; mat->data[3] = 0;
-    mat->data[4] = 0; mat->data[5] = 1 / tanHalf; mat->data[6] = 0; mat->data[7] = 0;
-    mat->data[8] = 0; mat->data[9] = 0; mat->data[10] = -(zFar + zNear) / (zFar - zNear); mat->data[11] = -(2 * zFar * zNear) / (zFar - zNear);
-    mat->data[12] = 0; mat->data[13] = 0; mat->data[14] = -1; mat->data[15] = 1;
+    mat->data[4] = 0;
+    mat->data[5] = 1 / tanHalf;
+    mat->data[6] = 0;
+    mat->data[7] = 0;
+
+    mat->data[8] = 0;
+    mat->data[9] = 0;
+    mat->data[10] = -(zFar + zNear) / (zFar - zNear);
+	mat->data[11] = -(2 * zFar * zNear) / (zFar - zNear);;
+
+    mat->data[12] = 0;
+    mat->data[13] = 0;
+	mat->data[14] = -1;
+    mat->data[15] = 0;
 }
 
 void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up){
@@ -176,11 +187,14 @@ void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up){
     for(i = 0;i < 3;i++){
         f.data[i] = center.data[i] - eye.data[i];
     }
+	//f is z
     vec3_normalize(&f);
 
+	//s is x
     s = vec3_cross(f, up);
     vec3_normalize(&s);
 
+	//u is y
     u = vec3_cross(s, f);
 
 	mat->data[0] = s.data[0];
@@ -197,6 +211,11 @@ void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up){
     mat->data[9] = -f.data[1];
     mat->data[10] = -f.data[2];
     mat->data[11] = vec3_dot(f, eye);
+
+	mat->data[12] = 0;
+	mat->data[13] = 0;
+	mat->data[14] = 0;
+	mat->data[15] = 1;
 }
 
 int mat4_inverse(Mat4 *out_mat, Mat4 self){
@@ -332,12 +351,14 @@ int mat4_inverse(Mat4 *out_mat, Mat4 self){
 	return 1;
 }
 
-void mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec){
+//returns the w component
+float mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec){
     int i;
 	float x = vec.x, y = vec.y, z = vec.z;
 	out_vec->x = mat.data[0] * x + mat.data[1] * y + mat.data[2] * z + mat.data[3];
 	out_vec->y = mat.data[4] * x + mat.data[5] * y + mat.data[6] * z + mat.data[7];
 	out_vec->z = mat.data[8] * x + mat.data[9] * y + mat.data[10] * z + mat.data[11];
+	return mat.data[12] * x + mat.data[13] * y + mat.data[14] * z + mat.data[15];
 }
 
 void mat4_transpose(Mat4 *mat){

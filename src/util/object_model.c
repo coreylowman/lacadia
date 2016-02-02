@@ -6,7 +6,7 @@
 #include "array_list.h"
 #include "mat4.h"
 
-#define OBJECT_MODEL_SCALE 0.05
+#define OBJECT_MODEL_SCALE 0.25
 
 extern Vec3 VEC3_UNIT_X;
 extern Vec3 VEC3_UNIT_Y;
@@ -137,6 +137,8 @@ ObjectModel *obj_model_from_file(const char *filename){
     }
 
     ObjectModel *self = malloc(sizeof(*self));
+	//3 vertices for each face
+	//3 floats for each vertex
     self->num_floats = 9 * face_list->length;
     self->vertices = malloc(self->num_floats * sizeof(float));
     self->colors = malloc(self->num_floats * sizeof(float));
