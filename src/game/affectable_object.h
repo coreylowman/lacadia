@@ -30,4 +30,6 @@ void affectable_object_print(struct AffectableObject self);
 
 float affectable_object_damage(struct AffectableObject *self, float amt);
 
+int affectable_object_index_of_effect(struct AffectableObject *self, enum EffectType type);
+
 #endif

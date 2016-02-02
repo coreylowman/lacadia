@@ -4,7 +4,7 @@
 #include "game/affectable_object.h"
 #include "game/game_world.h"
 
-typedef enum {
+typedef enum EffectType {
     EFFECT_TYPE_SHIELD,
     EFFECT_TYPE_SLOW,
     EFFECT_TYPE_STUN, //just need to make methods... no separate data req.

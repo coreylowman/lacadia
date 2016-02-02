@@ -107,28 +107,25 @@ static void wildfire_on_collide(GameObject *self, GameObject *other){
 		CollidableObject *collidable;
 		GameObject *object;
 
-		for (i = 0; i < enemy->affectable.effects->length; i++) {
-			if (enemy->affectable.effects->data[i] == NULL) continue;
-			e = enemy->affectable.effects->data[i];
+		i = affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN);
+		//was fired at enemies who are already affected by burn
+		//TODO what if the burn is already faded by the time it gets to the enemy?
+		e = enemy->affectable.effects->data[i];
+		data = e->data;
+		data->degree = min(3, data->degree);
+		e->duration = e->max_duration;
 
-			if (e->type == EFFECT_TYPE_BURN) {
-				data = e->data;
-				data->degree = min(3, data->degree);
-				e->duration = e->max_duration;
-
-				//search for enemies with 5 radius of this enemy
-			    for(j = 0;j < world->collidables->length;j++){
-			        if(world->collidables->data[j] == NULL) continue;
-			        collidable = world->collidables->data[j];
-			        object = collidable->container;
-			        if(object->type == GAME_OBJECT_TYPE_ENEMY
-			            && vec3_within_dist(collidable->bounding_box.center, enemy->collidable.bounding_box.center, 10)){
-			            wildfire_spread(world, (Enemy *)other->container, (Enemy *)object->container);
-			        }
-			    }
-				break;
-			}
-		}
+		//search for enemies with 5 radius of this enemy
+	    for(j = 0;j < world->collidables->length;j++){
+	        if(world->collidables->data[j] == NULL) continue;
+	        collidable = world->collidables->data[j];
+	        object = collidable->container;
+	        if(object->type == GAME_OBJECT_TYPE_ENEMY
+	            && vec3_within_dist(collidable->bounding_box.center, enemy->collidable.bounding_box.center, 10))
+	        {
+	            wildfire_spread(world, (Enemy *)other->container, (Enemy *)object->container);
+	        }
+	    }	    
 	}
 	self->destroy = 1;
 }
@@ -136,26 +133,12 @@ static void wildfire_on_collide(GameObject *self, GameObject *other){
 static void wildfire_spread_on_collide(GameObject *self, GameObject *other){
 	if (other->type == GAME_OBJECT_TYPE_ENEMY) {
 		Enemy *enemy = other->container;
-		int i, has_burn = 0;
-		Effect *e;
-
 		//have to check for a burn again, even though we only fired at ones
 		//without a burn on them, this spell could fire multiple spreads at the
 		//same target. so in the time it took this one to collide, another one
 		//could've already applied
-		for (i = 0; i < enemy->affectable.effects->length; i++) {
-			if (enemy->affectable.effects->data[i] == NULL) continue;
-			e = enemy->affectable.effects->data[i];
-
-			//return if it now has a burn on it
-			if (e->type == EFFECT_TYPE_BURN){
-				has_burn = 1;
-				break;
-			}
-		}
-
 		//if it doesn't have a burn, then apply one!
-		if (!has_burn){
+		if(affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN) == -1){
 			affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
 		}
 	}
@@ -163,33 +146,16 @@ static void wildfire_spread_on_collide(GameObject *self, GameObject *other){
 }
 
 static void wildfire_spread(GameWorld *world, Enemy *origin, Enemy *enemy){
-	int i;
-	Effect *e;
-	for (i = 0; i < enemy->affectable.effects->length; i++) {
-		if (enemy->affectable.effects->data[i] == NULL) continue;
-		e = enemy->affectable.effects->data[i];
-
-		if (e->type == EFFECT_TYPE_BURN) {
-			return;
-		}
+	if(affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN) == -1){
+		//if it doesn't have a burn on it, then shoot a wildfire spread at it 
+		game_world_add_spell(world, wildfire_spread_new(world, origin->base_object, enemy->base_object));
 	}
-
-	//if it doesn't have a burn on it, then shoot a wildfire spread at it 
-	game_world_add_spell(world, wildfire_spread_new(world, origin->base_object, enemy->base_object));
 }
 
 static void wildfire_apply(GameWorld *world, Enemy *enemy){
-	int i;
-	Effect *e;
-	for (i = 0; i < enemy->affectable.effects->length; i++) {
-		if (enemy->affectable.effects->data[i] == NULL) continue;
-		e = enemy->affectable.effects->data[i];
-
-		if (e->type == EFFECT_TYPE_BURN) {
-			//shoot a wildfire at it
-			game_world_add_spell(world, wildfire_new(world, world->player->base_object, enemy->base_object));
-			return;
-		}
+	if(affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN) != -1){
+		//if it already has a burn on it shoot a wildfire at it
+		game_world_add_spell(world, wildfire_new(world, world->player->base_object, enemy->base_object));
 	}
 }
 

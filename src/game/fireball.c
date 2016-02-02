@@ -59,7 +59,13 @@ static void fireball_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other->container;
         affectable_object_damage(&enemy->affectable, 1);
-		affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+        int i = affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN);
+        if(i == -1){
+		    affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+        }else{
+            Effect *e = enemy->affectable.effects->data[i];
+            e->duration = e->max_duration;
+        }
     }
     self->destroy = 1;
 }

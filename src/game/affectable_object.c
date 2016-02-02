@@ -71,3 +71,15 @@ float affectable_object_damage(struct AffectableObject *self, float amt){
     return amt;
 }
 
+int affectable_object_index_of_effect(struct AffectableObject *self, EffectType type){
+    int i;
+    Effect *e;
+    for (i = 0; i < self->effects->length; i++) {
+        if (self->effects->data[i] == NULL) continue;
+        e = self->effects->data[i];
+
+        if (e->type == EFFECT_TYPE_BURN) return i;
+    }
+    return -1;
+}
+
