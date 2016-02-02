@@ -63,7 +63,7 @@ void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix);
 
 void game_world_draw_rect(GameWorld *self, Rect2 rect, Vec3 color);
 
-Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Mat4 model_matrix, Vec3 world_coords);
+Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords);
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy));
 

@@ -28,6 +28,7 @@ list(APPEND GAME_SOURCES
     wall.h
     wildfire.c
     wildfire.h
+    colors.h
 )
 
 add_library(game OBJECT ${GAME_SOURCES})

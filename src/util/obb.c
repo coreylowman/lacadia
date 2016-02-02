@@ -5,6 +5,12 @@
 
 extern Vec3 VEC3_ZERO;
 
+Vec3 obb_top(Obb a){
+    Vec3 output = a.center;
+    output.y += a.radius.y;
+    return output;
+}
+
 //from
 //http://clb.demon.fi/MathGeoLib/nightly/docs/OBB.cpp_code.html#926
 int obb_intersects(Obb a, Obb b){

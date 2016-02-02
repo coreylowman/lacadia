@@ -247,10 +247,12 @@ void game_world_render_ui(GameWorld *self, Shader shader){
     int i;
     Enemy *e;
     Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
+    Vec3 healthbar_loc;
     for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
-        affectable_object_render_ui(e->affectable, e->renderable.model_matrix, e->moveable.position, self);
+        healthbar_loc = vec3_add(obb_top(e->collidable.bounding_box), above);
+        affectable_object_render_ui(e->affectable, healthbar_loc, self);
     }    
 
     //upload vertices of model
@@ -334,11 +336,9 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
     }
 }
 
-Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Mat4 model_matrix, Vec3 world_coords){
+Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords){
     Vec3 output;
-	mat4_transpose(&model_matrix);
-	mat4_mul_vec3(&output, model_matrix, world_coords);
-    float w = mat4_mul_vec3(&output, self->world_to_screen, output);
+    float w = mat4_mul_vec3(&output, self->world_to_screen, world_coords);
 	output.x /= w;
 	output.y /= w;
 	output.z /= w;
