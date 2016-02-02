@@ -7,6 +7,7 @@
 #include "util/shaders.h"
 #include "util/obb.h"
 #include "util/rect.h"
+#include "util/mat4.h"
 
 #define MAX_ASSETS 20
 #define MAX_UI_RECTS 20
@@ -35,6 +36,11 @@ typedef struct GameWorld {
     UIRect rects[MAX_UI_RECTS];
     Vec3 rect_colors[4 * MAX_UI_RECTS];
     unsigned int ui_vbo[2], ui_vao;
+
+
+    //matrix for converting world to screen
+    //this is just projection * view
+    Mat4 world_to_screen;
 } GameWorld;
 
 GameWorld *game_world_new();
@@ -56,6 +62,8 @@ Obb game_world_get_asset_obb(GameWorld *self, int asset_id);
 void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix);
 
 void game_world_draw_rect(GameWorld *self, Rect2 rect, Vec3 color);
+
+Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords);
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy));
 

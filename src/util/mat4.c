@@ -335,15 +335,42 @@ int mat4_inverse(Mat4 *out_mat, Mat4 self){
 	return 1;
 }
 
-void mat4_mul_vec4(Vec3 *out_vec, Mat4 mat, Vec3 vec){
+void mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec){
     int i;
-    for(i = 0;i < 4;i++){
+    for(i = 0;i < 3;i++){
         out_vec->data[i] = 0;
         out_vec->data[i] += mat.data[i * 4 + 0] * vec.data[0];
         out_vec->data[i] += mat.data[i * 4 + 1] * vec.data[1];
         out_vec->data[i] += mat.data[i * 4 + 2] * vec.data[2];
-        out_vec->data[i] += mat.data[i * 4 + 3] * vec.data[3];
+        out_vec->data[i] += mat.data[i * 4 + 3];
     }
 }
 
+void mat4_transpose(Mat4 *mat){
+    Mat4 output;
+    output.m00 = mat->m00;
+    output.m10 = mat->m01;
+    output.m20 = mat->m02;
+    output.m30 = mat->m03;
+
+    output.m01 = mat->m10;
+    output.m11 = mat->m11;
+    output.m21 = mat->m12;
+    output.m31 = mat->m13;
+
+    output.m02 = mat->m20;
+    output.m12 = mat->m21;
+    output.m22 = mat->m22;
+    output.m32 = mat->m23;
+
+    output.m03 = mat->m30;
+    output.m13 = mat->m31;
+    output.m23 = mat->m32;
+    output.m33 = mat->m33;
+
+    int i;
+    for(i = 0;i < 16;i++){
+        mat->data[i] = output.data[i];
+    }
+}
 

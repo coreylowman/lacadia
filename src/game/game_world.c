@@ -14,6 +14,7 @@
 #include "collidable_object.h"
 
 extern Mat4 MAT4_IDENT;
+extern Vec3 VEC3_UNIT_Y;
 
 static void null_free(void *data){
 
@@ -243,6 +244,15 @@ void game_world_render(GameWorld *self, Shader shader){
 }
 
 void game_world_render_ui(GameWorld *self, Shader shader){
+    int i;
+    Enemy *e;
+    Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
+    for (i = 0; i < self->enemies->length; i++){
+        if(self->enemies->data[i] == NULL) continue;
+        e = self->enemies->data[i];
+        affectable_object_render_ui(e->affectable, e->moveable.position, self);
+    }    
+
     //upload vertices of model
     glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, 8 * self->num_ui_rects * sizeof(float), &self->rects[0], GL_STATIC_DRAW);
@@ -321,4 +331,10 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
             fn(self, (Enemy *)object->container);
         }
     }
+}
+
+Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords){
+    Vec3 output;
+    mat4_mul_vec3(&output, self->world_to_screen, world_coords);
+    return output;
 }

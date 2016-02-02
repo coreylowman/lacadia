@@ -39,6 +39,17 @@ void affectable_object_render(AffectableObject self, GameWorld *world){
     }
 }
 
+void affectable_object_render_ui(AffectableObject self, Vec3 world_pos, GameWorld *world){
+    Vec3 screen_pos = game_world_world_coords_to_screen_coords(world, world_pos);
+    Rect2 healthbar;
+    healthbar.x = screen_pos.x;
+    healthbar.y = screen_pos.y;
+    healthbar.width = .1 * self.stats.health / self.stats.max_health;
+    healthbar.height = 0.05;
+    Vec3 color = (Vec3){ .data = { 1, 0, 0 } };
+    game_world_draw_rect(world, healthbar, color);
+}
+
 void affectable_object_print(AffectableObject self){
     printf("health: %f %f\n", self.stats.health, self.stats.max_health);
     // printf("speed: %f %f\n", self.stats.speed, self.stats.max_speed);

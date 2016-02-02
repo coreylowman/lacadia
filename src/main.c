@@ -62,7 +62,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     }
 
     if(inputs.e_pressed){
-        game_world_add_enemy(world, bug_new(world, vec3_add(player->moveable.position, random_unit_vec3())));
+        game_world_add_enemy(world, bug_new(world, player->moveable.position));
     }
 }
 
@@ -138,6 +138,12 @@ static void update(double total_time){
 }
 
 static void render(){
+    Mat4 pv_matrix;
+    mat4_mul(&pv_matrix, camera.projection_matrix, camera.view_matrix);
+    //mat4_transpose(&pv_matrix);
+    
+    world->world_to_screen = pv_matrix;
+    
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(shader.program);
