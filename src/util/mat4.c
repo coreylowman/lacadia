@@ -9,10 +9,7 @@ Mat4 MAT4_IDENT = {
 };
 
 void mat4_ident(Mat4 *mat){
-    mat->data[0] = 1;     mat->data[1] = 0;     mat->data[2] = 0;     mat->data[3] = 0;
-    mat->data[4] = 0;     mat->data[5] = 1;     mat->data[6] = 0;     mat->data[7] = 0;
-    mat->data[8] = 0;     mat->data[9] = 0;     mat->data[10] = 1;    mat->data[11] = 0;
-    mat->data[12] = 0;    mat->data[13] = 0;    mat->data[14] = 0;    mat->data[15] = 1;
+	*mat = MAT4_IDENT;
 }
 
 void mat4_mul(Mat4 *dest, Mat4 mat1, Mat4 mat2){
@@ -169,7 +166,7 @@ void mat4_persp(Mat4 *mat, float fov, float aspect, float zNear, float zFar){
     mat->data[0] = 1 / (aspect * tanHalf); mat->data[1] = 0; mat->data[2] = 0; mat->data[3] = 0;
     mat->data[4] = 0; mat->data[5] = 1 / tanHalf; mat->data[6] = 0; mat->data[7] = 0;
     mat->data[8] = 0; mat->data[9] = 0; mat->data[10] = -(zFar + zNear) / (zFar - zNear); mat->data[11] = -(2 * zFar * zNear) / (zFar - zNear);
-    mat->data[12] = 0; mat->data[13] = 0; mat->data[14] = -1; mat->data[15] = 0;
+    mat->data[12] = 0; mat->data[13] = 0; mat->data[14] = -1; mat->data[15] = 1;
 }
 
 void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up){
@@ -337,13 +334,10 @@ int mat4_inverse(Mat4 *out_mat, Mat4 self){
 
 void mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec){
     int i;
-    for(i = 0;i < 3;i++){
-        out_vec->data[i] = 0;
-        out_vec->data[i] += mat.data[i * 4 + 0] * vec.data[0];
-        out_vec->data[i] += mat.data[i * 4 + 1] * vec.data[1];
-        out_vec->data[i] += mat.data[i * 4 + 2] * vec.data[2];
-        out_vec->data[i] += mat.data[i * 4 + 3];
-    }
+	float x = vec.x, y = vec.y, z = vec.z;
+	out_vec->x = mat.data[0] * x + mat.data[1] * y + mat.data[2] * z + mat.data[3];
+	out_vec->y = mat.data[4] * x + mat.data[5] * y + mat.data[6] * z + mat.data[7];
+	out_vec->z = mat.data[8] * x + mat.data[9] * y + mat.data[10] * z + mat.data[11];
 }
 
 void mat4_transpose(Mat4 *mat){

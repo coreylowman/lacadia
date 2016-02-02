@@ -39,8 +39,8 @@ void affectable_object_render(AffectableObject self, GameWorld *world){
     }
 }
 
-void affectable_object_render_ui(AffectableObject self, Vec3 world_pos, GameWorld *world){
-    Vec3 screen_pos = game_world_world_coords_to_screen_coords(world, world_pos);
+void affectable_object_render_ui(AffectableObject self, Mat4 model_matrix, Vec3 world_pos, GameWorld *world){
+    Vec3 screen_pos = game_world_world_coords_to_screen_coords(world, model_matrix, world_pos);
     Rect2 healthbar;
     healthbar.x = screen_pos.x;
     healthbar.y = screen_pos.y;

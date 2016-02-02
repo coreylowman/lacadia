@@ -250,7 +250,7 @@ void game_world_render_ui(GameWorld *self, Shader shader){
     for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
-        affectable_object_render_ui(e->affectable, e->moveable.position, self);
+        affectable_object_render_ui(e->affectable, e->renderable.model_matrix, e->moveable.position, self);
     }    
 
     //upload vertices of model
@@ -333,8 +333,11 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
     }
 }
 
-Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords){
+Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Mat4 model_matrix, Vec3 world_coords){
     Vec3 output;
-    mat4_mul_vec3(&output, self->world_to_screen, world_coords);
+	mat4_transpose(&model_matrix);
+    Mat4 mvp;
+    mat4_mul(&mvp, self->world_to_screen, model_matrix);
+    mat4_mul_vec3(&output, mvp, world_coords);
     return output;
 }
