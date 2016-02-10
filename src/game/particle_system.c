@@ -60,7 +60,8 @@ void particle_system_render(ParticleSystem *self){
     for(i = 0;i < self->num_particles;i++){
         mat4_ident(&model_matrix);
         mat4_translate(&model_matrix, self->particles[i].position);
-		mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
+        mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
+        mat4_transpose(&model_matrix);
         self->renderable.model_matrix = model_matrix;
         renderable_object_render(self->renderable, self->world);
     }

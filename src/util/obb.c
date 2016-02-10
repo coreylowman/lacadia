@@ -11,6 +11,14 @@ Vec3 obb_top(Obb a){
     return output;
 }
 
+Vec3 obb_front(Obb a){
+    Vec3 output = a.center;
+    output.x += a.radius.z * a.axis[2].x;
+    output.y += a.radius.z * a.axis[2].y;
+    output.z += a.radius.z * a.axis[2].z;
+    return output;
+}
+
 //from
 //http://clb.demon.fi/MathGeoLib/nightly/docs/OBB.cpp_code.html#926
 int obb_intersects(Obb a, Obb b){

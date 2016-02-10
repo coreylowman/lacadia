@@ -81,6 +81,10 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
         // camera_move_vertically(camera, dt, dir);
     }
 
+    int i;
+    for(i = 1;i < 5;i++)
+        if(inputs.numbers_pressed[i]) player_use_ability(self, i - 1);
+
     if (inputs.left_mouse_down) {
         double dx = inputs.mouse_vel[0] / 100.0;
         player_turn(self, dx);

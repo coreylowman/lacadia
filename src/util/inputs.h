@@ -8,6 +8,7 @@ typedef struct {
     int space_down, space_shift_down;
     
 	int left_mouse_down, right_mouse_down;
+    int scroll_amount;
 
     int e_pressed, p_pressed, r_pressed, l_pressed;
 	int numbers_pressed[10];
@@ -16,8 +17,10 @@ typedef struct {
     double mouse_vel[2];
 } Inputs;
 
-void update_mouse_position(Inputs *i, GLFWwindow *w, double x, double y);
-void update_mouse(Inputs *i, GLFWwindow *w, int button, int action, int mods);
-void update_keys(Inputs *i, GLFWwindow *w, int key, int scancode, int action, int mod);
+void inputs_update_mouse_position(Inputs *i, GLFWwindow *w, double x, double y);
+void inputs_update_mouse(Inputs *i, GLFWwindow *w, int button, int action, int mods);
+void inputs_update_keys(Inputs *i, GLFWwindow *w, int key, int scancode, int action, int mod);
+void inputs_update_scroll(Inputs *i, GLFWwindow *w, double xoffset, double yoffset);
+void inputs_reset_frame(Inputs *i);
 
 #endif

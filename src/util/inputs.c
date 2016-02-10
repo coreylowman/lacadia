@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "inputs.h"
 
-void update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
+void inputs_update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
     if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
         i->left_mouse_down = 1;        
     } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
@@ -16,24 +16,14 @@ void update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
 	}
 }
 
-void update_mouse_position(Inputs *i, GLFWwindow *w, double x, double y){
+void inputs_update_mouse_position(Inputs *i, GLFWwindow *w, double x, double y){
 	i->mouse_vel[0] = x - i->mouse_pos[0];
 	i->mouse_vel[1] = y - i->mouse_pos[1];
 	i->mouse_pos[0] = x;
 	i->mouse_pos[1] = y;
 }
 
-void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int action, int mod){
-    i->p_pressed = 0;
-    i->r_pressed = 0;
-    i->l_pressed = 0;
-    i->e_pressed = 0;
-
-    int j;
-    for(j = 0;j < 10;j++){
-        i->numbers_pressed[j] = 0;
-    }
-
+void inputs_update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int action, int mod){
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) i->numbers_pressed[1] = 1;
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) i->numbers_pressed[2] = 1;
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) i->numbers_pressed[3] = 1;
@@ -63,4 +53,24 @@ void update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, int actio
         i->space_down = 0;
         i->space_shift_down = 0;
     }
+}
+
+void inputs_update_scroll(Inputs *i, GLFWwindow *w, double xoffset, double yoffset){
+    i->scroll_amount = yoffset;
+}
+
+void inputs_reset_frame(Inputs *i){
+    i->p_pressed = 0;
+    i->r_pressed = 0;
+    i->l_pressed = 0;
+    i->e_pressed = 0;
+
+    int j;
+    for(j = 0;j < 10;j++){
+        i->numbers_pressed[j] = 0;
+    }
+    
+    i->mouse_vel[0] = 0;
+    i->mouse_vel[1] = 0;
+    i->scroll_amount = 0;
 }

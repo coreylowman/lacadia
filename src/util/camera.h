@@ -22,22 +22,24 @@ typedef struct Camera {
 
     float speed;
 
-    Vec3 follow_location;
+    float follow_dist;
+    float target_height;
 	MoveableObject *follow_target;
 } Camera;
 
 void camera_init(Camera *camera, int width, int height);
 
-void camera_set_follow(Camera *camera, MoveableObject *follow);
-
-void camera_follow(Camera *camera);
+int camera_is_following(Camera camera);
+void camera_set_follow(Camera *camera, MoveableObject *follow, float height);
+void camera_follow(Camera *camera, double dt, Inputs inputs);
 
 Vec3 camera_get_forwards(Camera camera);
 Vec3 camera_get_sideways(Camera camera);
 
 void camera_move_forwards(Camera *camera, double dt, float direction);
 void camera_move_vertically(Camera *camera, double dt, float direction);
-void camera_rotate_view(Camera *camera, double side_amt, double up_amt);
+void camera_rotate_lookat(Camera *camera, double side_amt, double up_amt);
+void camera_rotate_around_lookat(Camera *camera, double side_amt, double up_amt);
 void camera_strafe(Camera *camera, double dt, float direction);
 
 void camera_update_view_matrix(Camera *camera);

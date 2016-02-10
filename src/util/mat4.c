@@ -46,61 +46,71 @@ void mat4_scale(Mat4 *mat, float scale){
     mat->data[0] = mat->data[0] * scale;
     mat->data[1] = mat->data[1] * scale;
     mat->data[2] = mat->data[2] * scale;
-    mat->data[3] = mat->data[3] * scale;
+
     mat->data[4] = mat->data[4] * scale;
     mat->data[5] = mat->data[5] * scale;
     mat->data[6] = mat->data[6] * scale;
-    mat->data[7] = mat->data[7] * scale;
+
     mat->data[8] = mat->data[8] * scale;
     mat->data[9] = mat->data[9] * scale;
     mat->data[10] = mat->data[10] * scale;
-    mat->data[11] = mat->data[11] * scale;
-    mat->data[12] = mat->data[12];
-    mat->data[13] = mat->data[13];
-    mat->data[14] = mat->data[14];
-    mat->data[15] = mat->data[15];
-}
-
-void mat4_scale3(Mat4 *mat, float *scale){
-    float x = scale[0], y = scale[1], z = scale[2];
-    mat->data[0] = mat->data[0] * x;
-    mat->data[1] = mat->data[1] * x;
-    mat->data[2] = mat->data[2] * x;
-    mat->data[3] = mat->data[3] * x;
-    mat->data[4] = mat->data[4] * y;
-    mat->data[5] = mat->data[5] * y;
-    mat->data[6] = mat->data[6] * y;
-    mat->data[7] = mat->data[7] * y;
-    mat->data[8] = mat->data[8] * z;
-    mat->data[9] = mat->data[9] * z;
-    mat->data[10] = mat->data[10] * z;
-    mat->data[11] = mat->data[11] * z;
-    mat->data[12] = mat->data[12];
-    mat->data[13] = mat->data[13];
-    mat->data[14] = mat->data[14];
-    mat->data[15] = mat->data[15];
 }
 
 void mat4_translate(Mat4 *mat, Vec3 pos){
-    float x = pos.data[0], y = pos.data[1], z = pos.data[2],
+    float x = pos.data[0], y = pos.data[1], z = pos.data[2];
+
+    mat->data[3] += x;
+    mat->data[7] += y;
+    mat->data[11] += z;
+}
+
+void mat4_rotate(Mat4 *mat, float rads, Vec3 axis){
+    double x = axis.x, y = axis.y, z = axis.z,
+        len = sqrt(x * x + y * y + z * z),
+        s, c, t,
         a00, a01, a02, a03,
         a10, a11, a12, a13,
-        a20, a21, a22, a23;
+        a20, a21, a22, a23,
+        b00, b01, b02,
+        b10, b11, b12,
+        b20, b21, b22;
+
+    if (!len) { return; }
+    if (len != 1.0) {
+        len = 1 / len;
+        x *= len;
+        y *= len;
+        z *= len;
+    }
+
+    s = sin(rads);
+    c = cos(rads);
+    t = 1 - c;
 
     a00 = mat->data[0]; a01 = mat->data[1]; a02 = mat->data[2]; a03 = mat->data[3];
     a10 = mat->data[4]; a11 = mat->data[5]; a12 = mat->data[6]; a13 = mat->data[7];
     a20 = mat->data[8]; a21 = mat->data[9]; a22 = mat->data[10]; a23 = mat->data[11];
 
-    mat->data[12] += a00 * x + a10 * y + a20 * z;
-    mat->data[13] += a01 * x + a11 * y + a21 * z;
-    mat->data[14] += a02 * x + a12 * y + a22 * z;
-    mat->data[15] += a03 * x + a13 * y + a23 * z;
-}
+    // Construct the elements of the rotation matrix
+    b00 = x * x * t + c; b01 = y * x * t + z * s; b02 = z * x * t - y * s;
+    b10 = x * y * t - z * s; b11 = y * y * t + c; b12 = z * y * t + x * s;
+    b20 = x * z * t + y * s; b21 = y * z * t - x * s; b22 = z * z * t + c;
 
-void mat4_rotate(Mat4 *mat, Vec3 direction){
-    mat4_rotate_x(mat, direction.x);
-    mat4_rotate_y(mat, direction.y);
-    mat4_rotate_z(mat, direction.z);
+    // Perform rotation-specific matrix multiplication
+    mat->data[0] = a00 * b00 + a10 * b01 + a20 * b02;
+    mat->data[1] = a01 * b00 + a11 * b01 + a21 * b02;
+    mat->data[2] = a02 * b00 + a12 * b01 + a22 * b02;
+    mat->data[3] = a03 * b00 + a13 * b01 + a23 * b02;
+
+    mat->data[4] = a00 * b10 + a10 * b11 + a20 * b12;
+    mat->data[5] = a01 * b10 + a11 * b11 + a21 * b12;
+    mat->data[6] = a02 * b10 + a12 * b11 + a22 * b12;
+    mat->data[7] = a03 * b10 + a13 * b11 + a23 * b12;
+
+    mat->data[8] = a00 * b20 + a10 * b21 + a20 * b22;
+    mat->data[9] = a01 * b20 + a11 * b21 + a21 * b22;
+    mat->data[10] = a02 * b20 + a12 * b21 + a22 * b22;
+    mat->data[11] = a03 * b20 + a13 * b21 + a23 * b22;
 }
 
 void mat4_rotate_x(Mat4 *mat, float rads){
@@ -124,15 +134,15 @@ void mat4_rotate_y(Mat4 *mat, float rads){
         a02 = mat->data[2], a03 = mat->data[3], a20 = mat->data[8],
         a21 = mat->data[9], a22 = mat->data[10], a23 = mat->data[11];
 
-    mat->data[0] = a00 * c + a20 * -s;
-    mat->data[1] = a01 * c + a21 * -s;
-    mat->data[2] = a02 * c + a22 * -s;
-    mat->data[3] = a03 * c + a23 * -s;
+    mat->data[0] = a00 * c + a20 * s;
+    mat->data[1] = a01 * c + a21 * s;
+    mat->data[2] = a02 * c + a22 * s;
+    mat->data[3] = a03 * c + a23 * s;
 
-    mat->data[8] = a00 * s + a20 * c;
-    mat->data[9] = a01 * s + a21 * c;
-    mat->data[10] = a02 * s + a22 * c;
-    mat->data[11] = a03 * s + a23 * c;
+    mat->data[8] = a00 * -s + a20 * c;
+    mat->data[9] = a01 * -s + a21 * c;
+    mat->data[10] = a02 * -s + a22 * c;
+    mat->data[11] = a03 * -s + a23 * c;
 }
 
 void mat4_rotate_z(Mat4 *mat, float rads){
@@ -363,25 +373,26 @@ float mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec){
 
 void mat4_transpose(Mat4 *mat){
     Mat4 output;
-    output.m00 = mat->m00;
-    output.m10 = mat->m01;
-    output.m20 = mat->m02;
-    output.m30 = mat->m03;
 
-    output.m01 = mat->m10;
-    output.m11 = mat->m11;
-    output.m21 = mat->m12;
-    output.m31 = mat->m13;
+    output.data[0] = mat->data[0];
+    output.data[1] = mat->data[4];
+    output.data[2] = mat->data[8];
+    output.data[3] = mat->data[12];
 
-    output.m02 = mat->m20;
-    output.m12 = mat->m21;
-    output.m22 = mat->m22;
-    output.m32 = mat->m23;
+    output.data[4] = mat->data[1];
+    output.data[5] = mat->data[5];
+    output.data[6] = mat->data[9];
+    output.data[7] = mat->data[13];
 
-    output.m03 = mat->m30;
-    output.m13 = mat->m31;
-    output.m23 = mat->m32;
-    output.m33 = mat->m33;
+    output.data[8] = mat->data[2];
+    output.data[9] = mat->data[6];
+    output.data[10] = mat->data[10];
+    output.data[11] = mat->data[14];
+
+    output.data[12] = mat->data[3];
+    output.data[13] = mat->data[7];
+    output.data[14] = mat->data[11];
+    output.data[15] = mat->data[15];
 
     int i;
     for(i = 0;i < 16;i++){

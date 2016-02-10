@@ -22,10 +22,9 @@ void mat4_ident(Mat4 *mat);
 void mat4_mul(Mat4 *dest, Mat4 mat1, Mat4 mat2);
 
 void mat4_scale(Mat4 *mat, float scale);
-void mat4_scale3(Mat4 *mat, float *scale);
 void mat4_translate(Mat4 *mat, Vec3 pos);
 
-void mat4_rotate(Mat4 *mat, Vec3 direction);
+void mat4_rotate(Mat4 *mat, float rads, Vec3 axis);
 void mat4_rotate_x(Mat4 *mat, float rads);
 void mat4_rotate_y(Mat4 *mat, float rads);
 void mat4_rotate_z(Mat4 *mat, float rads);

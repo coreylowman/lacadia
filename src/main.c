@@ -31,8 +31,6 @@ static Shader ui_shader;
 static Camera camera;
 static Axis axis;
 
-static double mouse_start_pos[2];
-
 GameWorld *world;
 Player *player;
 
@@ -40,30 +38,38 @@ extern Mat4 MAT4_IDENT;
 
 static void mouse_callback(GLFWwindow *w,int button, int action, int mods)
 {
-    update_mouse(&inputs, w, button, action, mods);
-    if (inputs.left_mouse_down) glfwGetCursorPos(w, &mouse_start_pos[0], &mouse_start_pos[1]);
+    inputs_update_mouse(&inputs, w, button, action, mods);
 }
 
 static void mouse_position_callback(GLFWwindow *w, double x, double y){
-    update_mouse_position(&inputs, w, x, y);
+	inputs_update_mouse_position(&inputs, w, x, y);
+}
+
+static void follow(){
+	camera_set_follow(&camera, &player->moveable, 0.75 * player->collidable.bounding_box.radius.y);
+}
+
+static void unfollow(){
+	camera_set_follow(&camera, NULL, 0);
 }
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod){
-    update_keys(&inputs, window, key, scancode, action, mod);
-    int i;
-    for(i = 1;i < 5;i++)
-        if(inputs.numbers_pressed[i]) player_use_ability(player, i - 1);
+    inputs_update_keys(&inputs, window, key, scancode, action, mod);
 
     if (inputs.l_pressed){
-        if (camera.follow_target == NULL)
-            camera.follow_target = &player->moveable;
-        else
-            camera.follow_target = NULL;
+		if (!camera_is_following(camera))
+			follow();
+		else
+			unfollow();
     }
 
     if(inputs.e_pressed){
         game_world_add_enemy(world, bug_new(world, player->moveable.position));
     }
+}
+
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+    inputs_update_scroll(&inputs, window, xoffset, yoffset);
 }
 
 void window_size_callback (GLFWwindow* window, int _width, int _height) {
@@ -91,6 +97,7 @@ static void init_glfw(){
     glfwSetCursorPosCallback(window, mouse_position_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     
     glfwGetFramebufferSize(window, &width, &height);
 
@@ -124,16 +131,16 @@ static void update(double total_time){
     if (update_dt > 0.01) {
         last_update_seconds = total_time;
 
-        if(camera.follow_target == NULL)
+        if(!camera_is_following(camera))
             camera_handle_inputs(&camera, update_dt, inputs);
 		else{
 			player_handle_inputs(player, update_dt, inputs);
-			camera_follow(&camera);
+			camera_follow(&camera, update_dt, inputs);
 		}
-        game_world_update(world, update_dt);
+        
+		game_world_update(world, update_dt);
 
-		inputs.mouse_vel[0] = 0;
-		inputs.mouse_vel[1] = 0;
+        inputs_reset_frame(&inputs);
     }
 }
 
@@ -178,8 +185,7 @@ int main(int argc, char *argv[]){
     
     world->player = player;
 
-	camera.follow_target = &player->moveable;
-	camera_follow(&camera);
+	follow();
 
     total_time = glfwGetTime();
     last_update_seconds = total_time;
