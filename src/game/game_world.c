@@ -27,7 +27,7 @@ GameWorld *game_world_new(){
     self->collidables = set_new(null_free); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
 
-	self->num_assets = 2;
+	self->num_assets = 6;
 	self->asset_names[0] = "assets/box";
 	self->asset_names[1] = "assets/lacadia_mage";
 	self->asset_names[2] = "assets/bug";

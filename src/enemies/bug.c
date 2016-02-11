@@ -8,7 +8,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 
     self->target = world->player->base_object;
 
-    self->affectable.stats.max_health = 100;
+    self->affectable.stats.max_health = 25;
     affectable_object_init(&self->affectable);
 
     self->moveable.speed = 0.0;
