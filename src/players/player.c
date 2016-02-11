@@ -20,12 +20,14 @@ void player_free(Player *self){
 }
 
 void player_update(Player *self, double dt){
-	//note: don't update moveable here, because movement is controlled through
+    self->passive(self, dt);
+
+    //note: don't update moveable here, because movement is controlled through
     //  player input. we just assume moveable is up to date
     affectable_object_update(&self->affectable, dt);
     renderable_object_update(&self->renderable, self->moveable);
     collidable_object_update(&self->collidable, self->moveable);
-
+    
     int i;
     for(i = 0;i < 4;i++){
         self->abilities[i].cooldown = max(self->abilities[i].cooldown - dt, 0);

@@ -23,9 +23,10 @@ void affectable_object_update(AffectableObject *self, double dt){
         if(self->effects->data[i] == NULL) continue;
         e = self->effects->data[i];
 
-        e->on_update(e, self, dt);
         if(e->is_over(e))
             e->on_end(e, self);
+        else
+            e->on_update(e, self, dt);
     }
 }
 

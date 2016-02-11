@@ -27,6 +27,7 @@ typedef struct Player {
     int stance;
     void (*on_switch_stance)(struct Player *self);
     void (*on_collide)(GameObject *self, GameObject *other);
+    void (*passive)(struct Player *self, double dt);
 } Player;
 
 Player *player_new(GameWorld *world);

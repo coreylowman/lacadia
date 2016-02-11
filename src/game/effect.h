@@ -44,7 +44,7 @@ typedef struct Effect{
     int  (*is_over)(struct Effect *self);
 
     //called when an effect ends, this handles removing itself from the
-    //affectable object, which may call the on_free method
+    //affectable object, which may call the effect_free/on_free method
     void (*on_end)(struct Effect *self, struct AffectableObject *obj);
     
     //called by effect_free

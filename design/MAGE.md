@@ -76,7 +76,7 @@ low-medium | - | instant aoe | burn
 Causes all enemies in a medium radius around caster who are affected by burn or soulburn, to spread it to all targets in a small radius around the affected target. Resets burn and increases the degree by 1 on those already affected by it. Does NOT reset soulburn.
 
 
-##### IV. Accelerate
+##### IV. Combust
 cooldown | damage | type | applies
 --- | --- | --- | ---
 long | depends | instant aoe | -
