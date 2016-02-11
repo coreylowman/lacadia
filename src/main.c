@@ -66,6 +66,14 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     if(inputs.e_pressed){
         game_world_add_enemy(world, bug_new(world, player->moveable.position));
     }
+
+    if(inputs.tab_pressed){
+        if(camera.follow_dist == 1.0){
+			camera.follow_dist = 10.0;
+        }else{
+            camera.follow_dist = 1.0;
+        }
+    }
 }
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){

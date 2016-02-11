@@ -11,6 +11,7 @@ typedef struct {
     int scroll_amount;
 
     int e_pressed, p_pressed, r_pressed, l_pressed;
+    int tab_pressed;
 	int numbers_pressed[10];
 
     double mouse_pos[2];
