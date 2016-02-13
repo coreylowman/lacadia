@@ -16,94 +16,14 @@ ArrayList *array_list_new(void (*free_element)(void *element)){
 	return array;
 }
 
-ArrayList_f *array_list_new_f(){
-    ArrayList_f *array = malloc(sizeof(*array));
-    array->length = 0;
-    array->capacity = 16;
-    array->data = malloc(array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = 0;i < array->capacity;i++){
-        array->data[i] = 0;
-    }
-    return array;
-}
-
-ArrayList_i *array_list_new_i(){
-    ArrayList_i *array = malloc(sizeof(*array));
-    array->length = 0;
-    array->capacity = 16;
-    array->data = malloc(array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = 0;i < array->capacity;i++){
-        array->data[i] = 0;
-    }
-    return array;
-}
-
-ArrayList_s *array_list_new_s(){
-    ArrayList_s *array = malloc(sizeof(*array));
-    array->length = 0;
-    array->capacity = 16;
-    array->data = malloc(array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = 0;i < array->capacity;i++){
-        array->data[i] = 0;
-    }
-    return array;
-}
-
-ArrayList_m4 *array_list_new_m4(){
-    ArrayList_m4 *array = malloc(sizeof(*array));
-    array->length = 0;
-    array->capacity = 16;
-    array->data = malloc(array->capacity * sizeof(*(array->data)));
-    int i;
-    for(i = 0;i < array->capacity;i++){
-        array->data[i] = MAT4_IDENT;
-    }
-    return array;
-}
-
 void array_list_free(void *data){
-	if (data == NULL) return;
+    if (data == NULL) return;
 
     ArrayList *array = (ArrayList *)data;
     int i;
     for(i = 0;i < array->length;i++){
         array->free_element(array->data[i]);
     }
-    free(array->data);
-    free(array);
-}
-
-void array_list_free_f(void *data){
-    if (data == NULL) return;
-
-    ArrayList_f *array = (ArrayList_f *)data;
-    free(array->data);
-    free(array);
-}
-
-void array_list_free_i(void *data){
-    if (data == NULL) return;
-
-    ArrayList_i *array = (ArrayList_i *)data;
-    free(array->data);
-    free(array);
-}
-
-void array_list_free_s(void *data){
-    if (data == NULL) return;
-
-    ArrayList_s *array = (ArrayList_s *)data;
-    free(array->data);
-    free(array);
-}
-
-void array_list_free_m4(void *data){
-    if (data == NULL) return;
-
-    ArrayList_m4 *array = (ArrayList_m4 *)data;
     free(array->data);
     free(array);
 }
@@ -115,58 +35,6 @@ void array_list_push(ArrayList *array, void *data){
         array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
         for(;i < array->capacity;i++){
             array->data[i] = NULL;
-        }
-    }
-    array->data[array->length] = data;
-    array->length += 1;
-}
-
-void array_list_push_f(ArrayList_f *array, float data){
-    if(array->length == array->capacity){
-        int i = array->capacity;
-        array->capacity = 2 * array->capacity;
-        array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-        for(;i < array->capacity;i++){
-            array->data[i] = 0;
-        }
-    }
-    array->data[array->length] = data;
-    array->length += 1;
-}
-
-void array_list_push_i(ArrayList_i *array, int data){
-    if(array->length == array->capacity){
-        int i = array->capacity;
-        array->capacity = 2 * array->capacity;
-        array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-        for(;i < array->capacity;i++){
-            array->data[i] = 0;
-        }
-    }
-    array->data[array->length] = data;
-    array->length += 1;
-}
-
-void array_list_push_s(ArrayList_s *array, short data){
-    if(array->length == array->capacity){
-        int i = array->capacity;
-        array->capacity = 2 * array->capacity;
-        array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-        for(;i < array->capacity;i++){
-            array->data[i] = 0;
-        }
-    }
-    array->data[array->length] = data;
-    array->length += 1;
-}
-
-void array_list_push_m4(ArrayList_m4 *array, Mat4 data){
-    if(array->length == array->capacity){
-        int i = array->capacity;
-        array->capacity = 2 * array->capacity;
-        array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
-        for(;i < array->capacity;i++){
-            array->data[i] = MAT4_IDENT;
         }
     }
     array->data[array->length] = data;
@@ -185,47 +53,52 @@ void array_list_remove_at(ArrayList *array, int index){
     array->length = array->length - 1;
 }
 
-void array_list_remove_at_f(ArrayList_f *array, int index){
-    if(index >= array->length) return;
-
-    int i;
-    for(i = index + 1;i < array->length;i++){
-        array->data[i - 1] = array->data[i];
-    }
-    array->data[array->length - 1] = 0;
-    array->length = array->length - 1;
+#define IMPL_ARRAY_LIST(T, name, default_value) \
+ArrayList_##name *array_list_new_##name##(){ \
+    ArrayList_##name *array = malloc(sizeof(*array)); \
+    array->length = 0; \
+    array->capacity = 16; \
+    array->data = malloc(array->capacity * sizeof(*(array->data))); \
+    int i; \
+    for(i = 0; i < array->capacity;i++){ \
+        array->data[i] = default_value; \
+    } \
+    return array; \
+} \
+\
+void array_list_free_##name##(void *data){ \
+    if(data == NULL) return; \
+\
+    ArrayList_##name *array = (ArrayList_##name *)data; \
+    free(array->data); \
+    free(array); \
+} \
+\
+void array_list_push_##name##(ArrayList_##name *array, T data){ \
+    if(array->length == array->capacity){ \
+        int i = array->capacity; \
+        array->capacity = 2 * array->capacity; \
+        array->data = realloc(array->data, array->capacity * sizeof(*(array->data))); \
+        for(;i < array->capacity;i++){ \
+            array->data[i] = default_value; \
+        } \
+    } \
+    array->data[array->length] = data; \
+    array->length += 1; \
+} \
+\
+void array_list_remove_at_##name##(ArrayList_##name *array, int index){ \
+    if(index >= array->length) return; \
+\
+    int i; \
+    for(i = index + 1;i < array->length;i++){ \
+        array->data[i - 1] = array->data[i]; \
+    } \
+    array->data[array->length - 1] = default_value; \
+    array->length = array->length - 1; \
 }
 
-void array_list_remove_at_i(ArrayList_i *array, int index){
-    if(index >= array->length) return;
-
-    int i;
-    for(i = index + 1;i < array->length;i++){
-        array->data[i - 1] = array->data[i];
-    }
-    array->data[array->length - 1] = 0;
-    array->length = array->length - 1;
-}
-
-void array_list_remove_at_s(ArrayList_s *array, int index){
-    if(index >= array->length) return;
-
-    int i;
-    for(i = index + 1;i < array->length;i++){
-        array->data[i - 1] = array->data[i];
-    }
-    array->data[array->length - 1] = 0;
-    array->length = array->length - 1;
-}
-
-void array_list_remove_at_m4(ArrayList_m4 *array, int index){
-    if(index >= array->length) return;
-
-    int i;
-    for(i = index + 1;i < array->length;i++){
-        array->data[i - 1] = array->data[i];
-    }
-    array->data[array->length - 1] = MAT4_IDENT;
-    array->length = array->length - 1;
-}
-
+IMPL_ARRAY_LIST(float, f, 0.0)
+IMPL_ARRAY_LIST(int, i, 0)
+IMPL_ARRAY_LIST(short, s, 0)
+IMPL_ARRAY_LIST(Mat4, m4, MAT4_IDENT)

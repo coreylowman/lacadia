@@ -27,7 +27,7 @@ Player *mage_new(GameWorld *world){
     self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
     self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
 
-    self->renderable.asset_id = game_world_get_asset_id(world, "assets/lacadia_mage");
+    self->renderable.asset_id = game_world_get_asset_id(world, "assets/mage");
     renderable_object_update(&self->renderable, self->moveable);
 
     self->collidable.container = self->base_object;

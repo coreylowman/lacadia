@@ -6,7 +6,7 @@
 #include "array_list.h"
 #include "mat4.h"
 
-#define OBJECT_MODEL_SCALE 0.05
+#define OBJECT_MODEL_SCALE 0.25
 
 extern Vec3 VEC3_UNIT_X;
 extern Vec3 VEC3_UNIT_Y;

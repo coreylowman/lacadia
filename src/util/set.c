@@ -41,9 +41,15 @@ Set *set_new(void (*elem_free)(void *p)){
 
 void set_free(Set *self){
     int i;
-    for(i = 0;i < self->length;i++){
-        if(self->data[i] == NULL) continue;
-        self->elem_free(self->data[i]);
+    if(self->elem_free != NULL){
+        for(i = 0;i < self->length;i++){
+            if(self->data[i] == NULL) continue;
+            self->elem_free(self->data[i]);
+        }
+    }else{
+        for(i = 0;i < self->length;i++){
+            self->data[i] = NULL;
+        }
     }
     free(self->data);
     set_stack_free(self->available_indices);
@@ -69,7 +75,8 @@ int set_add(Set *self, void *elem){
 void set_remove_at(Set *self, int i){
     if(self->data[i] == NULL) return;
     self->num_elements--;
-    self->elem_free(self->data[i]);
+	if (self->elem_free != NULL)
+		self->elem_free(self->data[i]);
     self->data[i] = NULL;
     set_stack_push(self->available_indices, i);
 }

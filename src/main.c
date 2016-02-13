@@ -182,9 +182,9 @@ int main(int argc, char *argv[]){
 
     init_glfw();
     init_glew();
-    init_shaders(&shader, "vertex_shader.glsl", "fragment_shader.glsl");
-    init_shaders(&line_shader, "line_vertex_shader.glsl", "line_fragment_shader.glsl");
-    init_shaders(&ui_shader, "ui_vertex_shader.glsl", "ui_fragment_shader.glsl");
+    init_shaders(&shader, "shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+    init_shaders(&line_shader, "shaders/line_vertex_shader.glsl", "shaders/line_fragment_shader.glsl");
+    init_shaders(&ui_shader, "shaders/ui_vertex_shader.glsl", "shaders/ui_fragment_shader.glsl");
     camera_init(&camera, width, height);
     axis_init(&axis);
 

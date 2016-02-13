@@ -32,7 +32,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
         Player *player = user->container;
 		self->moveable = player->moveable;
         self->moveable.position = vec3_add(player->moveable.position, player->moveable.direction);
-		self->moveable.position.y += player->collidable.bounding_box.radius.y;
+		self->moveable.position.y += 0.5 * player->collidable.bounding_box.radius.y;
     }
 
     self->renderable.asset_id = game_world_get_asset_id(world, "assets/fireball");

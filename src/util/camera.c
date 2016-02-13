@@ -5,8 +5,8 @@
 
 void camera_init(Camera *camera, int width, int height){
 	camera->location.x = 0;
-    camera->location.y = 10;
-    camera->location.z = -10;
+    camera->location.y = 20;
+    camera->location.z = -20;
 
     camera->look_at.x = 0;
     camera->look_at.y = 0;

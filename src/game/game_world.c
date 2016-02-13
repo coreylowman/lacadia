@@ -16,29 +16,27 @@
 extern Mat4 MAT4_IDENT;
 extern Vec3 VEC3_UNIT_Y;
 
-static void null_free(void *data){
-
-}
-
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
     self->spells = set_new(spell_free);
     self->enemies = set_new(enemy_free);
-    self->collidables = set_new(null_free); //these collidables are pointers to other objects collidables... this set doesn't have ownership
+    self->collidables = set_new(NULL); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
 
-	self->num_assets = 6;
-	self->asset_names[0] = "assets/box";
-	self->asset_names[1] = "assets/lacadia_mage";
-	self->asset_names[2] = "assets/bug";
-    self->asset_names[3] = "assets/fireball";
-    self->asset_names[4] = "assets/icicle";
-    self->asset_names[5] = "assets/burn_particle";
+	self->num_assets = 8;
+	self->asset_names[0] = "assets/default_box";
+    self->asset_names[1] = "assets/mage";
+	self->asset_names[2] = "assets/hunter";
+	self->asset_names[3] = "assets/bug";
+    self->asset_names[4] = "assets/fireball";
+    self->asset_names[5] = "assets/icicle";
+    self->asset_names[6] = "assets/burn_particle";
+    self->asset_names[7] = "assets/wall";
     
     int i;
     for(i = 0;i < self->num_assets;i++){
         self->asset_models[i] = obj_model_from_file(self->asset_names[i]);        
-        self->asset_model_matrices[i] = array_list_new_m4();
+		self->asset_model_matrices[i] = array_list_new_m4();
     }
 
     glGenVertexArrays(1, &self->asset_vao);
