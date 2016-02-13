@@ -111,8 +111,7 @@ static void wildfire_on_collide(GameObject *self, GameObject *other){
 		//was fired at enemies who are already affected by burn
 		//TODO what if the burn is already faded by the time it gets to the enemy?
 		e = enemy->affectable.effects->data[i];
-		data = e->data;
-		data->degree = min(3, data->degree);
+		burn_increase_degree(e);
 		e->duration = e->max_duration;
 
 		//search for enemies with 5 radius of this enemy

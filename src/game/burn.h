@@ -13,5 +13,7 @@ typedef struct {
 } BurnData;
 
 Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float duration);
+void burn_increase_degree(Effect *self);
+
 
 #endif

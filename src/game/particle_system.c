@@ -37,6 +37,14 @@ void particle_system_free(ParticleSystem *self){
     free(self);
 }
 
+void particle_system_double_particles(ParticleSystem *self){
+    int i = self->num_particles;
+    self->num_particles *= 2;
+    for(;i < self->num_particles;i++){
+        self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
+    }
+}
+
 void particle_system_set_particle_init(ParticleSystem *self, void (*particle_init_arg)(Particle *p, Vec3 position, float duration)){
     self->particle_init = particle_init_arg;
     int i;

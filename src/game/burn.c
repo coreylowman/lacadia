@@ -13,7 +13,7 @@ static int burn_is_over(Effect *self);
 
 
 static void burn_particle_init(Particle *p, Vec3 position, float duration){
-    p->position = vec3_add(position, random_length_vec3(2.0));
+    p->position = vec3_add(position, random_length_vec3(1.0));
     p->velocity = (Vec3) { .data = { 0, 1, 0 } };
     p->duration = random_in_range(0, duration);
 }
@@ -25,7 +25,7 @@ Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float dura
     BurnData *data = self->data;
     data->degree = 1;
     data->dps = dmg;
-    data->particle_system = particle_system_new(world, target, "assets/burn_particle", 32, duration, duration * 0.2);
+    data->particle_system = particle_system_new(world, target, "assets/burn_particle", 16, duration, duration * 0.4);
     particle_system_set_particle_init(data->particle_system, burn_particle_init);
 
     self->on_apply = burn_on_apply;
@@ -36,6 +36,15 @@ Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float dura
     self->is_over = burn_is_over;
 
     return self;
+}
+
+void burn_increase_degree(Effect *self){
+    BurnData *data;
+    data = self->data;
+    if(data->degree < 3){
+        particle_system_double_particles(data->particle_system);
+        data->degree = data->degree + 1;        
+    }
 }
 
 static void burn_on_apply(Effect *self, AffectableObject *affectable){
