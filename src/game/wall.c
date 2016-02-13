@@ -40,6 +40,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
 
     self->collidable.on_collide = wall_on_collide;
     self->collidable.is_colliding = collidable_object_is_colliding;
+    
     return self;
 }
 

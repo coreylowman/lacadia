@@ -136,6 +136,7 @@ void game_world_update(GameWorld *self, double dt){
 
     player_update(self->player, dt);
 
+
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
@@ -194,6 +195,15 @@ void game_world_update(GameWorld *self, double dt){
             set_remove_at(self->particle_systems, i);
         }
     }
+}
+
+void game_world_set_player(GameWorld *self, Player *p){
+    self->player = p;
+    int *index = malloc(sizeof(*index));
+    //bogus value...deestroy collidable will never be called for player
+    *index = 0;
+    set_add(self->collidables, &p->collidable);
+    set_add(self->indices, index);
 }
 
 void game_world_add_spell(GameWorld *self, void *s){

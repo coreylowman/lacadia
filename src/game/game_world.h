@@ -54,6 +54,8 @@ typedef struct GameWorld {
 GameWorld *game_world_new();
 void game_world_free(GameWorld *self);
 
+void game_world_set_player(GameWorld *self, Player *p);
+
 void game_world_add_spell(GameWorld *self, void *s);
 void game_world_add_enemy(GameWorld *self, void *e);
 void game_world_add_wall(GameWorld *self, Wall *w, int index);

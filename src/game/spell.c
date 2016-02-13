@@ -23,6 +23,14 @@ void spell_update(Spell *self, double dt){
     collidable_object_update(&self->collidable, self->moveable);
 }
 
+int spell_is_colliding(CollidableObject self, CollidableObject other){
+    Spell *spell = self.container->container;
+    if(spell->caster_type != other.container->type){
+        return obb_intersects(self.bounding_box, other.bounding_box);
+    }
+    return 0;
+}
+
 int spell_is_colliding_with_target(CollidableObject self, CollidableObject other){
     Spell *spell = self.container->container;
     if(spell->target == other.container){

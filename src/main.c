@@ -190,8 +190,8 @@ int main(int argc, char *argv[]){
     axis_init(&axis);
 
 	world = game_world_new();
-    player = mage_new(world);    
-    world->player = player;
+    player = mage_new(world);
+    game_world_set_player(world, player);
     world->level = level_new(world);
 
 	follow();

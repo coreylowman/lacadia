@@ -13,15 +13,15 @@
 - [ ] Optimized structure for collision instead of doing O(n^2)
 - [ ] Lights
 - [ ] Deferred Rendering
-- [ ] Level structure
+- [x] Level structure
 - [ ] Level generation
-- [ ] Level rendering
+- [x] Level rendering
 - [ ] Skeletal Animation
 - [ ] Main Screen UI
 - [ ] Character Selection Screen UI
 - [ ] Game UI
 - [ ] Floating Text
-- [ ] Floating Healthbar
+- [x] Floating Healthbar
 
 #### Characters
 - [x] Movement
@@ -35,7 +35,7 @@
 ###### Ranger
 - [x] Spell Design
 - [ ] Spell Implementation
-- [ ] Model
+- [x] Model
 - [ ] Model Animations
 
 ###### Warrior

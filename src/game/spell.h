@@ -14,6 +14,7 @@ typedef struct Spell {
     MoveableObject moveable;
     RenderableObject renderable;
 
+    GameObjectType caster_type;
     GameObject *target;
 
     void (*on_update)(struct Spell *self, double dt);
@@ -24,6 +25,7 @@ void spell_free(Spell *self);
 
 void spell_update(Spell *self, double dt);
 
+int spell_is_colliding(CollidableObject self, CollidableObject other);
 int spell_is_colliding_with_target(CollidableObject self, CollidableObject other);
 
 #endif
