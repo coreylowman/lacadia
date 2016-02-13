@@ -7,6 +7,7 @@
 #include "particle_system.h"
 #include "burn.h"
 #include "spell.h"
+#include "util/random.h"
 
 Ability fireball_ability = {
     .cooldown = 0,
@@ -34,6 +35,9 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
         self->moveable.speed = 10.0;
         self->moveable.position = vec3_add(player->moveable.position, player->moveable.direction);
 		self->moveable.position.y += 0.5 * player->collidable.bounding_box.radius.y;
+        self->caster_type = GAME_OBJECT_TYPE_PLAYER;
+    }else{
+        self->caster_type = GAME_OBJECT_TYPE_ENEMY;
     }
 
     self->renderable.asset_id = game_world_get_asset_id(world, "assets/fireball");
@@ -41,7 +45,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
 
     self->collidable.container = self->base_object;
     self->collidable.on_collide = fireball_on_collide;
-    self->collidable.is_colliding = collidable_object_is_colliding;
+    self->collidable.is_colliding = spell_is_colliding;
     self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
     collidable_object_update(&self->collidable, self->moveable);
 
@@ -56,13 +60,26 @@ static void fireball_update(Spell *self, double dt){
     //just have to move
 }
 
+static void fizzle_particle_init(Particle *p, Vec3 position, float duration){
+	p->position = position;
+	p->velocity = random_length_vec3(3.0);
+	p->duration = random_in_rangef(0, duration);
+}
+
 static void fireball_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other->container;
         affectable_object_damage(&enemy->affectable, 1);
 	    affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+        self->destroy = 1;
+    }else if(other->type == GAME_OBJECT_TYPE_WALL){
+        Spell *fireball = self->container;
+        ParticleSystem *ps = particle_system_new(self->world, fireball->collidable.bounding_box.center, "assets/burn_particle", 32, 0.0, 0.75);
+		particle_system_set_particle_init(ps, fizzle_particle_init);
+        //this gives ownership to game_world... we don't have to worry about freeing
+        game_world_add_particle_system(self->world, ps);
+        self->destroy = 1;
     }
-    self->destroy = 1;
 }
 
 

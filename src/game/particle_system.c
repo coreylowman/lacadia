@@ -13,11 +13,12 @@ static void particle_init(Particle *p, Vec3 position, float duration){
     p->duration = random_in_rangef(0, duration);
 }
 
-ParticleSystem *particle_system_new(GameWorld *world, MoveableObject *follow_target,const char *asset_name, int num_particles, float duration, float particle_duration){
+ParticleSystem *particle_system_new(GameWorld *world, Vec3 position,const char *asset_name, int num_particles, float duration, float particle_duration){
     ParticleSystem *self = malloc(sizeof(*self));
     self->world = world;
 
-    self->follow_target = follow_target;
+    self->follow_target = NULL;
+    self->position = position;
 
     self->duration = duration;
     self->particle_duration = particle_duration;
@@ -26,7 +27,7 @@ ParticleSystem *particle_system_new(GameWorld *world, MoveableObject *follow_tar
 
     self->particle_init = particle_init;
     int i;
-    for(i = 0;i < num_particles;i++) self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
+    for(i = 0;i < num_particles;i++) self->particle_init(&self->particles[i], position, self->particle_duration);
 
     self->renderable.asset_id = game_world_get_asset_id(world, asset_name);
 
@@ -41,14 +42,21 @@ void particle_system_double_particles(ParticleSystem *self){
     int i = self->num_particles;
     self->num_particles *= 2;
     for(;i < self->num_particles;i++){
-        self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
+        self->particle_init(
+            &self->particles[i], 
+            self->follow_target ? self->follow_target->position : self->position,
+            self->particle_duration);
     }
 }
 
 void particle_system_set_particle_init(ParticleSystem *self, void (*particle_init_arg)(Particle *p, Vec3 position, float duration)){
     self->particle_init = particle_init_arg;
     int i;
-    for(i = 0;i < self->num_particles;i++) self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
+    for(i = 0;i < self->num_particles;i++)
+        self->particle_init(
+            &self->particles[i],
+            self->follow_target ? self->follow_target->position : self->position,
+            self->particle_duration);
 }
 
 void particle_system_update(ParticleSystem *self, double dt){
@@ -60,7 +68,10 @@ void particle_system_update(ParticleSystem *self, double dt){
         self->particles[i].position = vec3_add(self->particles[i].position, vel);
         self->particles[i].duration -= dt;
         if(self->duration > 0.0 && self->particles[i].duration <= 0.0)
-            self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
+            self->particle_init(
+                &self->particles[i],
+                self->follow_target ? self->follow_target->position : self->position,
+                self->particle_duration);
     }
 }
 
@@ -76,6 +87,10 @@ void particle_system_render(ParticleSystem *self){
         self->renderable.model_matrix = model_matrix;
         renderable_object_render(self->renderable, self->world);
     }
+}
+
+void particle_system_set_follow_target(ParticleSystem *self, MoveableObject *follow_target){
+    self->follow_target = follow_target;
 }
 
 int particle_system_is_over(ParticleSystem *self){

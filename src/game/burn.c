@@ -25,8 +25,9 @@ Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float dura
     BurnData *data = self->data;
     data->degree = 1;
     data->dps = dmg;
-    data->particle_system = particle_system_new(world, target, "assets/burn_particle", 16, duration, duration * 0.4);
+    data->particle_system = particle_system_new(world, target->position, "assets/burn_particle", 16, duration, duration * 0.4);
     particle_system_set_particle_init(data->particle_system, burn_particle_init);
+    particle_system_set_follow_target(data->particle_system, target);
     //this gives ownership to game_world... we don't have to worry about freeing
     game_world_add_particle_system(world, data->particle_system);
 
