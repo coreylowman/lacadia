@@ -136,17 +136,18 @@ void game_world_update(GameWorld *self, double dt){
 
     player_update(self->player, dt);
 
+    //note: put enemy_update before spell update,
+    //so targetted spells capture when their targets are about to be destroyed
+    for(i = 0;i < self->enemies->length;i++){
+        if(self->enemies->data[i] == NULL) continue;
+        e = self->enemies->data[i];
+        enemy_update(e, dt);
+    }
 
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
         spell_update(s, dt);
-    }
-
-    for(i = 0;i < self->enemies->length;i++){
-        if(self->enemies->data[i] == NULL) continue;
-        e = self->enemies->data[i];
-        enemy_update(e, dt);
     }
 
     for(i = 0;i < self->collidables->length - 1;i++){

@@ -31,7 +31,7 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *targe
 		Player *player = user->container;
 		self->moveable = player->moveable;
 		//start from center of player
-		self->moveable.speed = 5.0;
+		self->moveable.speed = 50.0;
 		self->moveable.position.y += player->collidable.bounding_box.radius.y;
 	}
 
@@ -59,13 +59,13 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject
 	if (user->type == GAME_OBJECT_TYPE_PLAYER) {
 		Player *player = user->container;
 		self->moveable = player->moveable;
-		self->moveable.speed = 5.0;
+		self->moveable.speed = 50.0;
 		//start from center of player
 		self->moveable.position.y += player->collidable.bounding_box.radius.y;
 	}else if(user->type == GAME_OBJECT_TYPE_ENEMY) {
 		Enemy *enemy = user->container;
 		self->moveable = enemy->moveable;
-		self->moveable.speed = 5.0;
+		self->moveable.speed = 50.0;
 		//start from center of enemy
 		self->moveable.position.y += enemy->collidable.bounding_box.radius.y;
 	}
