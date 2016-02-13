@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include "random.h"
 
-float random_in_range(float min, float max) {
+int random_in_rangei(int min, int max){
+    return (rand() % (max - min)) + min;
+}
+
+float random_in_rangef(float min, float max) {
     float val = ((float)rand()) / (float)RAND_MAX;
     return val * (max - min) + min;
 }

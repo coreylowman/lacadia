@@ -23,7 +23,7 @@ void camera_init(Camera *camera, int width, int height){
 
     camera->speed = 25.0;
 
-    camera->follow_dist = sqrt(vec3_dot(camera->location, camera->location));
+    camera->follow_dist = 30.0;
 	camera->follow_target = NULL;
 
     camera_update_view_matrix(camera);

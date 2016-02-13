@@ -17,6 +17,6 @@ void moveable_object_reverse(MoveableObject *self){
 float moveable_object_get_y_rotation(MoveableObject self){
     float rotation = atan(self.direction.x / self.direction.z);
     if (self.direction.z <= 0.0)
-        rotation += 3.14159265359;
+        rotation += 3.14159265358979323846;
     return rotation;
 }

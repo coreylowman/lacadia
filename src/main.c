@@ -70,7 +70,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
     if(inputs.tab_pressed){
         if(camera.follow_dist == 1.0){
-			camera.follow_dist = 10.0;
+			camera.follow_dist = 30.0;
         }else{
             camera.follow_dist = 1.0;
         }

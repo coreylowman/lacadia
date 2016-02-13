@@ -10,7 +10,7 @@ static Vec3 rand_scale_vec3(float scale){
 static void particle_init(Particle *p, Vec3 position, float duration){
     p->position = vec3_add(position, random_unit_vec3());
     p->velocity = random_unit_vec3();
-    p->duration = random_in_range(0, duration);
+    p->duration = random_in_rangef(0, duration);
 }
 
 ParticleSystem *particle_system_new(GameWorld *world, MoveableObject *follow_target,const char *asset_name, int num_particles, float duration, float particle_duration){
