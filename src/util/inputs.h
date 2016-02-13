@@ -12,6 +12,7 @@ typedef struct {
 
     int e_pressed, p_pressed, r_pressed, l_pressed;
     int tab_pressed;
+    int esc_pressed;
 	int numbers_pressed[10];
 
     double mouse_pos[2];

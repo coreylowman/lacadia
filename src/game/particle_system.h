@@ -6,7 +6,7 @@
 #include "moveable_object.h"
 #include "game_world.h"
 
-#define MAX_PARTICLES 64
+#define MAX_PARTICLES 256
 
 typedef struct {
     Vec3 position;
@@ -39,5 +39,7 @@ void particle_system_set_particle_init(ParticleSystem *self, void (*particle_ini
 
 void particle_system_update(ParticleSystem *self, double dt);
 void particle_system_render(ParticleSystem *self);
+
+int particle_system_is_over(ParticleSystem *self);
 
 #endif

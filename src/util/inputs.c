@@ -34,6 +34,7 @@ void inputs_update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, in
     if(key == GLFW_KEY_L && action == GLFW_PRESS) i->l_pressed = 1;
     if(key == GLFW_KEY_E && action == GLFW_PRESS) i->e_pressed = 1;
     if(key == GLFW_KEY_TAB && action == GLFW_PRESS) i->tab_pressed = 1;
+    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) i->esc_pressed = 1;
 
     if (key == GLFW_KEY_A && action == GLFW_PRESS) i->a_down = 1;
     else if (key == GLFW_KEY_A && action == GLFW_RELEASE) i->a_down = 0;

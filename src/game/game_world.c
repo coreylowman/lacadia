@@ -12,6 +12,7 @@
 #include "spell.h"
 #include "game_world.h"
 #include "collidable_object.h"
+#include "game/particle_system.h"
 
 extern Mat4 MAT4_IDENT;
 extern Vec3 VEC3_UNIT_Y;
@@ -22,7 +23,9 @@ GameWorld *game_world_new(){
     self->enemies = set_new(enemy_free);
     self->collidables = set_new(NULL); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
+    self->particle_systems = set_new(particle_system_free);
 
+    printf("Loading assets... ");
 	self->num_assets = 8;
 	self->asset_names[0] = "assets/default_box";
     self->asset_names[1] = "assets/mage";
@@ -38,6 +41,7 @@ GameWorld *game_world_new(){
         self->asset_models[i] = obj_model_from_file(self->asset_names[i]);        
 		self->asset_model_matrices[i] = array_list_new_m4();
     }
+    printf("done.\n");
 
     glGenVertexArrays(1, &self->asset_vao);
     glBindVertexArray(self->asset_vao);
@@ -94,6 +98,7 @@ void game_world_free(GameWorld *self){
     set_free(self->enemies);
     set_free(self->collidables);
     set_free(self->indices);
+    set_free(self->particle_systems);
 
 	int i;
 	for (i = 0; i < self->num_assets; i++){
@@ -175,6 +180,18 @@ void game_world_update(GameWorld *self, double dt){
 
         }
     }
+
+    ParticleSystem *p;
+    for(i = 0;i < self->particle_systems->length;i++){
+        if(self->particle_systems->data[i] == NULL) continue;
+        p = self->particle_systems->data[i];
+
+        particle_system_update(p, dt);
+
+        if(particle_system_is_over(p)){
+            set_remove_at(self->particle_systems, i);
+        }
+    }
 }
 
 void game_world_add_spell(GameWorld *self, void *s){
@@ -193,10 +210,15 @@ void game_world_add_enemy(GameWorld *self, void *e){
     set_add(self->indices, index);
 }
 
+void game_world_add_particle_system(GameWorld *self, void *ps){
+    set_add(self->particle_systems, ps);
+}
+
 void game_world_render(GameWorld *self, Shader shader){
     int i;
     Spell *s;
 	Enemy *e;
+    ParticleSystem *ps;
 
     //gather updates to the vertices
 	Player *p = self->player;
@@ -208,9 +230,14 @@ void game_world_render(GameWorld *self, Shader shader){
     }
 	for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
-		e = self->enemies->data[i];
-		renderable_object_render(e->renderable, self);
+        e = self->enemies->data[i];
+        renderable_object_render(e->renderable, self);
         affectable_object_render(e->affectable, self);
+    }
+    for (i = 0; i < self->particle_systems->length; i++){
+        if(self->particle_systems->data[i] == NULL) continue;
+		ps = self->particle_systems->data[i];
+		particle_system_render(ps);
 	}
 	
     for(i = 0;i < self->num_assets;i++){

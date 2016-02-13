@@ -211,6 +211,8 @@ int main(int argc, char *argv[]){
         glfwPollEvents();
         temp_time = glfwGetTime() - temp_time;
         last_update_seconds += temp_time;
+
+		if (inputs.esc_pressed) break;
     }
 
     glfwDestroyWindow(window);

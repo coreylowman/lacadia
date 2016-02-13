@@ -27,6 +27,8 @@ Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float dura
     data->dps = dmg;
     data->particle_system = particle_system_new(world, target, "assets/burn_particle", 16, duration, duration * 0.4);
     particle_system_set_particle_init(data->particle_system, burn_particle_init);
+    //this gives ownership to game_world... we don't have to worry about freeing
+    game_world_add_particle_system(world, data->particle_system);
 
     self->on_apply = burn_on_apply;
     self->on_update = burn_on_update;
@@ -39,12 +41,15 @@ Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float dura
 }
 
 void burn_increase_degree(Effect *self){
+    self->duration = self->max_duration;
+
     BurnData *data;
     data = self->data;
     if(data->degree < 3){
         particle_system_double_particles(data->particle_system);
-        data->degree = data->degree + 1;        
+        data->degree = data->degree + 1;
     }
+    data->particle_system->duration = self->duration;
 }
 
 static void burn_on_apply(Effect *self, AffectableObject *affectable){
@@ -68,12 +73,14 @@ static void burn_on_update(Effect *self, AffectableObject *affectable, double dt
     BurnData *data = self->data;
     affectable_object_damage(affectable, dt * data->degree * data->dps);
     self->duration -= dt;
-    particle_system_update(data->particle_system, dt);
+    //game world will update particle_system
+    //particle_system_update(data->particle_system, dt);
 }
 
 static void burn_on_render(Effect *self, GameWorld *world){
     BurnData *data = self->data;
-    particle_system_render(data->particle_system);
+    //game_world will render particle_system
+    //particle_system_render(data->particle_system);
 }
 
 static void burn_on_end(Effect *self, AffectableObject *affectable){
@@ -89,7 +96,10 @@ static void burn_on_end(Effect *self, AffectableObject *affectable){
 
 static void burn_on_free(Effect *self){
     BurnData *data = self->data;
-    particle_system_free(data->particle_system);
+    //game world will free particle system when it actually ends
+	data->particle_system->duration = 0.0;
+    data->particle_system = NULL;
+    //particle_system_free(data->particle_system);
     free(self->data);
     free(self);
 }

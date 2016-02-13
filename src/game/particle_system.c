@@ -54,11 +54,13 @@ void particle_system_set_particle_init(ParticleSystem *self, void (*particle_ini
 void particle_system_update(ParticleSystem *self, double dt){
     int i;
     Vec3 vel;
+    self->duration -= dt;
     for(i = 0;i < self->num_particles;i++){
         vel = vec3_scale(self->particles[i].velocity, dt);
         self->particles[i].position = vec3_add(self->particles[i].position, vel);
         self->particles[i].duration -= dt;
-        if(self->particles[i].duration <= 0.0) self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
+        if(self->duration > 0.0 && self->particles[i].duration <= 0.0)
+            self->particle_init(&self->particles[i], self->follow_target->position, self->particle_duration);
     }
 }
 
@@ -66,6 +68,7 @@ void particle_system_render(ParticleSystem *self){
     Mat4 model_matrix;
     int i;
     for(i = 0;i < self->num_particles;i++){
+        if(self->particles[i].duration <= 0.0) continue;
         mat4_ident(&model_matrix);
         mat4_translate(&model_matrix, self->particles[i].position);
         mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
@@ -73,4 +76,15 @@ void particle_system_render(ParticleSystem *self){
         self->renderable.model_matrix = model_matrix;
         renderable_object_render(self->renderable, self->world);
     }
+}
+
+int particle_system_is_over(ParticleSystem *self){
+    int i, particles_over = 0;
+    if(self->duration > 0.0) return 0;
+
+    for(i = 0;i < self->num_particles;i++){
+        if(self->particles[i].duration > 0)
+            return 0;
+    }
+    return 1;
 }
