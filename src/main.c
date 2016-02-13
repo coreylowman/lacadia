@@ -16,6 +16,7 @@
 #include "players/mage.h"
 #include "enemies/enemy.h"
 #include "enemies/bug.h"
+#include "game/level.h"
 
 static GLFWwindow *window;
 static int width = 1280,height = 960;
@@ -189,9 +190,9 @@ int main(int argc, char *argv[]){
     axis_init(&axis);
 
 	world = game_world_new();
-    player = mage_new(world);
-    
+    player = mage_new(world);    
     world->player = player;
+    world->level = level_new(world);
 
 	follow();
 
@@ -218,9 +219,11 @@ int main(int argc, char *argv[]){
     glfwDestroyWindow(window);
     glfwTerminate();
 
-	world->player = NULL;
-	game_world_free(world);
+    level_free(world->level);
+    world->level = NULL;
 	player_free(player);
+    world->player = NULL;
+    game_world_free(world);
 
     // for debugging only
     _CrtDumpMemoryLeaks();

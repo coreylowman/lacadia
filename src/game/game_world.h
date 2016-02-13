@@ -14,9 +14,13 @@
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;
+typedef struct Level Level;
+typedef struct Wall Wall;
 
 typedef struct GameWorld {
     Player *player;
+    Level *level;
+
     Set *spells; //Set<Spell *>
     Set *enemies; //Set<Enemy *>
     
@@ -52,6 +56,7 @@ void game_world_free(GameWorld *self);
 
 void game_world_add_spell(GameWorld *self, void *s);
 void game_world_add_enemy(GameWorld *self, void *e);
+void game_world_add_wall(GameWorld *self, Wall *w, int index);
 void game_world_add_particle_system(GameWorld *self, void *ps);
 
 void game_world_update(GameWorld *self, double dt);

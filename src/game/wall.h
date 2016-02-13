@@ -7,14 +7,23 @@
 #include "collidable_object.h"
 #include "util/vec3.h"
 
-typedef struct {
+#define MAX_WALL_LENGTH 32
+
+typedef struct Wall {
     GameObject *base_object;
+
     CollidableObject collidable;
-    RenderableObject renderable;
+
+    int num_renderables;
+    RenderableObject renderables[MAX_WALL_LENGTH];
 } Wall;
 
-Wall *wall_new(GameWorld *world, Vec3 position, Vec3 scale);
+Vec3 wall_dimensions(GameWorld *world);
+
+Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length);
 void wall_free(Wall *self);
+
+void wall_render(Wall *self);
 
 void wall_on_collide(GameObject *self, GameObject *other);
 

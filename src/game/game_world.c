@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <GL/glew.h>
 
+#include "level.h"
 #include "players/player.h"
 #include "enemies/enemy.h"
 #include "util/array_list.h"
@@ -13,6 +14,7 @@
 #include "game_world.h"
 #include "collidable_object.h"
 #include "game/particle_system.h"
+#include "wall.h"
 
 extern Mat4 MAT4_IDENT;
 extern Vec3 VEC3_UNIT_Y;
@@ -210,9 +212,17 @@ void game_world_add_enemy(GameWorld *self, void *e){
     set_add(self->indices, index);
 }
 
+void game_world_add_wall(GameWorld *self, Wall *w, int i){
+    int *index = malloc(sizeof(*index));
+    *index = i;
+    set_add(self->collidables, &w->collidable);
+    set_add(self->indices, index);
+}
+
 void game_world_add_particle_system(GameWorld *self, void *ps){
     set_add(self->particle_systems, ps);
 }
+
 
 void game_world_render(GameWorld *self, Shader shader){
     int i;
@@ -239,6 +249,8 @@ void game_world_render(GameWorld *self, Shader shader){
 		ps = self->particle_systems->data[i];
 		particle_system_render(ps);
 	}
+
+    level_render(self->level);
 	
     for(i = 0;i < self->num_assets;i++){
         ObjectModel *model = self->asset_models[i];
@@ -311,6 +323,9 @@ void game_world_debug_render(GameWorld *self, Shader shader){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
         collidable_object_render(e->collidable);
+    }
+    for(i = 0;i < self->level->num_walls;i++){
+        collidable_object_render(self->level->walls[i]->collidable);
     }
 }
 

@@ -31,6 +31,8 @@ list(APPEND GAME_SOURCES
     wall.h
     wildfire.c
     wildfire.h
+    level.h
+    level.c
 )
 
 add_library(game OBJECT ${GAME_SOURCES})
