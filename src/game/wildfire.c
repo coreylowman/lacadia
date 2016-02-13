@@ -87,14 +87,14 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject
 }
 
 static void wildfire_update(Spell *self, double dt){
-	//TODO what happens if you fire a targetted spell at an enemy and it dies before the spell gets to it?
-	//always move towards target
+	if (self->target->destroy){
+		self->base_object->destroy = 1;
+		return;
+	}
 	Vec3 pos = self->moveable.position;
 	Vec3 target_pos = ((Enemy *)(self->target->container))->moveable.position;
 	self->moveable.direction = vec3_sub(target_pos, pos);
 	vec3_normalize(&self->moveable.direction);
-
-	//just have to adjust direction... movement is done in spell_update
 }
 
 static void wildfire_on_collide(GameObject *self, GameObject *other){
@@ -109,9 +109,12 @@ static void wildfire_on_collide(GameObject *self, GameObject *other){
 
 		i = affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN);
 		//was fired at enemies who are already affected by burn
-		//TODO what if the burn is already faded by the time it gets to the enemy?
-		e = enemy->affectable.effects->data[i];
-		burn_increase_degree(e);
+		if (i != -1){
+			e = enemy->affectable.effects->data[i];
+			burn_increase_degree(e);
+		}else{
+			affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+		}
 
 		//search for enemies with 5 radius of this enemy
 	    for(j = 0;j < world->collidables->length;j++){

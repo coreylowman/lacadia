@@ -15,7 +15,7 @@ static int burn_is_over(Effect *self);
 static void burn_particle_init(Particle *p, Vec3 position, float duration){
     p->position = vec3_add(position, random_length_vec3(1.0));
     p->velocity = (Vec3) { .data = { 0, 1, 0 } };
-    p->duration = random_in_range(0, duration);
+    p->duration = random_in_rangef(0, duration);
 }
 
 Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float duration){
@@ -53,19 +53,17 @@ void burn_increase_degree(Effect *self){
 }
 
 static void burn_on_apply(Effect *self, AffectableObject *affectable){
-    int i;
-    Effect *e;
-    for (i = 0; i < affectable->effects->length; i++) {
-        if (affectable->effects->data[i] == NULL) continue;
-        e = affectable->effects->data[i];
-        if (e->type == EFFECT_TYPE_BURN) {
-            e->duration = e->max_duration;
-            BurnData *data = e->data;
-            // data->degree = min(data->degree + 1, 3);
-            effect_free(self);
-            return;
-        }
-    }
+	int i = affectable_object_index_of_effect(affectable, EFFECT_TYPE_BURN);;
+    
+	if (i != -1){
+		Effect *e = affectable->effects->data[i];
+		BurnData *data = e->data;
+		data->particle_system->duration = e->max_duration;
+		e->duration = e->max_duration;
+		effect_free(self);
+		return;
+	}
+
     set_add(affectable->effects, self);
 }
 
@@ -73,14 +71,10 @@ static void burn_on_update(Effect *self, AffectableObject *affectable, double dt
     BurnData *data = self->data;
     affectable_object_damage(affectable, dt * data->degree * data->dps);
     self->duration -= dt;
-    //game world will update particle_system
-    //particle_system_update(data->particle_system, dt);
 }
 
 static void burn_on_render(Effect *self, GameWorld *world){
-    BurnData *data = self->data;
-    //game_world will render particle_system
-    //particle_system_render(data->particle_system);
+
 }
 
 static void burn_on_end(Effect *self, AffectableObject *affectable){

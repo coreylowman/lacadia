@@ -31,6 +31,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
     if(user->type == GAME_OBJECT_TYPE_PLAYER){
         Player *player = user->container;
 		self->moveable = player->moveable;
+        self->moveable.speed = 10.0;
         self->moveable.position = vec3_add(player->moveable.position, player->moveable.direction);
 		self->moveable.position.y += 0.5 * player->collidable.bounding_box.radius.y;
     }
@@ -59,13 +60,7 @@ static void fireball_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other->container;
         affectable_object_damage(&enemy->affectable, 1);
-        int i = affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN);
-        if(i == -1){
-		    affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
-        }else{
-            Effect *e = enemy->affectable.effects->data[i];
-            e->duration = e->max_duration;
-        }
+	    affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
     }
     self->destroy = 1;
 }
