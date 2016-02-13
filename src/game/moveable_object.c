@@ -20,3 +20,9 @@ float moveable_object_get_y_rotation(MoveableObject self){
         rotation += 3.14159265358979323846;
     return rotation;
 }
+
+void moveable_object_move_by(MoveableObject *self, Vec3 dp){
+    int i;
+    self->last_move = dp;
+    self->position = vec3_add(self->position, self->last_move);
+}

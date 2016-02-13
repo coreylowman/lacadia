@@ -48,8 +48,7 @@ void player_affect(Player *self, Effect *e, double dt){
 void player_move_forwards(Player *self, double dt, float direction){
     int i;
     float speed = self->moveable.speed;
-    for(i = 0;i < 3;i++)
-        self->moveable.position.data[i] += dt * direction * speed * self->moveable.direction.data[i];
+	moveable_object_move_by(&self->moveable, vec3_scale(self->moveable.direction, dt * speed * direction));
 }
 
 void player_turn(Player *self, double side_amt){
@@ -73,8 +72,7 @@ void player_strafe(Player *self, double dt, float direction){
     sideways = vec3_cross(self->moveable.direction, VEC3_UNIT_Y);
     vec3_normalize(&sideways);
 
-	for (i = 0; i < 3; i++)
-		self->moveable.position.data[i] += dt * speed * direction * sideways.data[i];
+	moveable_object_move_by(&self->moveable, vec3_scale(sideways, dt * speed * direction));
 }
 
 void player_handle_inputs(Player *self, double dt, Inputs inputs){
@@ -99,7 +97,7 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
 }
 
 void player_on_collide(GameObject *self, GameObject *other){
-	Player *player = (Player *)self;
+	Player *player = self->container;
     if(other->type == GAME_OBJECT_TYPE_WALL){
         moveable_object_reverse(&player->moveable);
     }
