@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "player.h"
+#include "game/wall.h"
 
 extern Vec3 VEC3_UNIT_Y;
 
@@ -90,16 +91,35 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
         player_turn(self, dx);
     }
 
-    if (inputs.w_down) player_move_forwards(self, dt, 1.0);
-    if (inputs.s_down) player_move_forwards(self, dt, -1.0);
-    if (inputs.a_down) player_strafe(self, dt, -1.0);
-    if (inputs.d_down) player_strafe(self, dt, 1.0);
+    int num_moves = 0;
+    //need to capture num of directions of movement, so we don't move faster
+    //than the current speed
+    if (inputs.w_down) num_moves++;
+    if (inputs.s_down)
+        if(inputs.w_down) num_moves--;
+        else num_moves++;
+    if (inputs.a_down) num_moves++;
+    if (inputs.d_down)
+        if(inputs.a_down) num_moves--;
+        else num_moves++;
+
+    float t_dt = dt / (float)num_moves;
+    if (inputs.w_down) player_move_forwards(self, t_dt, 1.0);
+    if (inputs.s_down) player_move_forwards(self, t_dt, -1.0);
+    if (inputs.a_down) player_strafe(self, t_dt, -1.0);
+    if (inputs.d_down) player_strafe(self, t_dt, 1.0);
 }
 
 void player_on_collide(GameObject *self, GameObject *other){
 	Player *player = self->container;
     if(other->type == GAME_OBJECT_TYPE_WALL){
-        moveable_object_reverse(&player->moveable);
+        Wall *wall = other->container;
+
+        Vec3 wall_normal = wall_get_normal(wall, player->collidable.bounding_box.center);
+        int i;
+        for(i = 0;i < 3;i++){
+            player->moveable.position.data[i] += self->world->dt * player->moveable.speed * wall_normal.data[i];
+        }
     }
 }
 

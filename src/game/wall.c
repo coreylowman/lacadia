@@ -3,6 +3,9 @@
 #include "util/mat4.h"
 #include "util/random.h"
 
+extern Vec3 VEC3_UNIT_X;
+extern Vec3 VEC3_UNIT_Z;
+
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length){
     Wall *self = malloc(sizeof(*self));
     self->base_object = game_object_new(world, GAME_OBJECT_TYPE_WALL);
@@ -28,19 +31,19 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
         self->renderables[i].model_matrix = model_matrix;
     }
 
-    
-    
     self->collidable.bounding_box = game_world_get_asset_obb(world, asset_id);
     self->collidable.bounding_box.center = position;
     self->collidable.bounding_box.center.y += dims.y * 0.5;
-	self->collidable.bounding_box.radius.data[which] *= length;
-	self->collidable.bounding_box.center.data[which] += width * (length - 1)* 0.5;
+    self->collidable.bounding_box.radius.data[which] *= length;
+    self->collidable.bounding_box.center.data[which] += width * (length - 1)* 0.5;
     
     self->collidable.container = self->base_object;
 
     self->collidable.on_collide = wall_on_collide;
     self->collidable.is_colliding = collidable_object_is_colliding;
-    
+
+    self->normal = which == 0 ? VEC3_UNIT_Z : VEC3_UNIT_X;
+
     return self;
 }
 
@@ -64,4 +67,17 @@ Vec3 wall_dimensions(GameWorld *world){
     int asset_id = game_world_get_asset_id(world, "assets/wall");
     Obb obb = game_world_get_asset_obb(world, asset_id);
     return vec3_scale(obb.radius, 2.0);
+}
+
+Vec3 wall_get_normal(Wall *self, Vec3 position){
+    int i;
+    for(i = 0;i < 3;i++){
+        if(self->normal.data[i] == 1.0){
+            if(position.data[i] < self->collidable.bounding_box.center.data[i]){
+                return vec3_scale(self->normal, -1.0);
+            }else{
+                return self->normal;
+            }
+        }
+    }
 }

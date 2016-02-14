@@ -134,6 +134,8 @@ void game_world_update(GameWorld *self, double dt){
     Enemy *e;
     CollidableObject *c1, *c2;
 
+    self->dt = dt;
+
     player_update(self->player, dt);
 
     //note: put enemy_update before spell update,
@@ -394,4 +396,18 @@ Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords
 	output.y /= w;
 	output.z /= w;
     return output;
+}
+
+int game_world_is_colliding_with_wall(GameWorld *self, CollidableObject collidable){
+    int i;
+    CollidableObject *other;
+    for(i = 0;i < self->collidables->length;i++){
+        if(self->collidables->data[i] == NULL) continue;
+        other = self->collidables->data[i];
+        if(other->container->type != GAME_OBJECT_TYPE_WALL) continue;
+        if(collidable.is_colliding(collidable, *other)
+            && other->is_colliding(*other, collidable))
+            return 1;
+    }
+    return 0;
 }

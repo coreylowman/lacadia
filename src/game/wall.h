@@ -16,6 +16,8 @@ typedef struct Wall {
 
     int num_renderables;
     RenderableObject renderables[MAX_WALL_LENGTH];
+
+    Vec3 normal;
 } Wall;
 
 Vec3 wall_dimensions(GameWorld *world);
@@ -26,5 +28,7 @@ void wall_free(Wall *self);
 void wall_render(Wall *self);
 
 void wall_on_collide(GameObject *self, GameObject *other);
+
+Vec3 wall_get_normal(Wall *self, Vec3 position);
 
 #endif

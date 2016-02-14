@@ -16,10 +16,13 @@ typedef struct Player Player;
 typedef struct Enemy Enemy;
 typedef struct Level Level;
 typedef struct Wall Wall;
+typedef struct CollidableObject CollidableObject;
 
 typedef struct GameWorld {
     Player *player;
     Level *level;
+
+    double dt;
 
     Set *spells; //Set<Spell *>
     Set *enemies; //Set<Enemy *>
@@ -78,5 +81,6 @@ void game_world_draw_rect(GameWorld *self, Rect2 rect, Vec3 color);
 Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords);
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy));
+int game_world_is_colliding_with_wall(GameWorld *self, CollidableObject collidable);
 
 #endif
