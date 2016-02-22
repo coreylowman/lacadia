@@ -15,7 +15,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
 	int which = grow_direction.x ? 0 : (grow_direction.y ? 1 : 2);
 	float width = grow_direction.x ? dims.x : (grow_direction.y ? dims.y : dims.z);
 
-    int asset_id = game_world_get_asset_id(world, "assets/wall");
+    int model_id = game_world_get_model_id(world, "assets/wall");
     int i;
     Vec3 pos;
     Mat4 model_matrix;
@@ -26,11 +26,21 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
 		mat4_rotate_y(&model_matrix, 3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
         mat4_translate(&model_matrix, pos);
 
+<<<<<<< HEAD
         self->renderables[i].asset_id = asset_id;
         renderable_object_set_model_matrix(&self->renderables[i], model_matrix);
     }
 
     self->collidable.bounding_box = game_world_get_asset_obb(world, asset_id);
+=======
+		self->renderables[i].model_id = model_id;
+        self->renderables[i].model_matrix = model_matrix;
+    }
+
+    
+    
+	self->collidable.bounding_box = game_world_get_model_obb(world, model_id);
+>>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
     self->collidable.bounding_box.center = position;
     self->collidable.bounding_box.center.y += dims.y * 0.5;
     self->collidable.bounding_box.radius.data[which] *= length;
@@ -54,8 +64,9 @@ void wall_free(Wall *self){
 void wall_render(Wall *self){
     int i;
     for(i = 0;i < self->num_renderables;i++){
-        renderable_object_render(self->renderables[i], self->base_object->world);        
+        renderable_object_render(self->renderables[i], self->base_object->world);
     }
+    collidable_object_render(self->collidable, self->base_object->world);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other){
@@ -63,8 +74,8 @@ void wall_on_collide(GameObject *self, GameObject *other){
 }
 
 Vec3 wall_dimensions(GameWorld *world){
-    int asset_id = game_world_get_asset_id(world, "assets/wall");
-    Obb obb = game_world_get_asset_obb(world, asset_id);
+    int model_id = game_world_get_model_id(world, "assets/wall");
+    Obb obb = game_world_get_model_obb(world, model_id);
     return vec3_scale(obb.radius, 2.0);
 }
 

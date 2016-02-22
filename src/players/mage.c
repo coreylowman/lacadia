@@ -28,13 +28,13 @@ Player *mage_new(GameWorld *world){
     self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
     self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
 
-    self->renderable.asset_id = game_world_get_asset_id(world, "assets/mage");
+    self->renderable.model_id = game_world_get_model_id(world, "assets/mage");
     renderable_object_update(&self->renderable, self->moveable);
 
     self->collidable.is_colliding = collidable_object_is_colliding;
     self->collidable.on_collide = player_on_collide;
     self->collidable.container = self->base_object;
-    self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
+    self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
     collidable_object_update(&self->collidable, self->moveable);
     
     self->stance = 0;

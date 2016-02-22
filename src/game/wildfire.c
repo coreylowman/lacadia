@@ -35,13 +35,13 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *targe
 		self->moveable.position.y += player->collidable.bounding_box.radius.y;
 	}
 
-	self->renderable.asset_id = game_world_get_asset_id(world, "assets/burn_particle");
+	self->renderable.model_id = game_world_get_model_id(world, "assets/burn_particle");
 	renderable_object_update(&self->renderable, self->moveable);
 
 	self->collidable.container = self->base_object;
 	self->collidable.on_collide = wildfire_on_collide;
 	self->collidable.is_colliding = spell_is_colliding_with_target;
-	self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
+	self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
 	collidable_object_update(&self->collidable, self->moveable);
 
 	self->target = target;
@@ -70,13 +70,13 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject
 		self->moveable.position.y += enemy->collidable.bounding_box.radius.y;
 	}
 
-	self->renderable.asset_id = game_world_get_asset_id(world, "assets/burn_particle");
+	self->renderable.model_id = game_world_get_model_id(world, "assets/burn_particle");
 	renderable_object_update(&self->renderable, self->moveable);
 
 	self->collidable.container = self->base_object;
 	self->collidable.on_collide = wildfire_spread_on_collide;
 	self->collidable.is_colliding = spell_is_colliding_with_target;
-	self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
+	self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
 	collidable_object_update(&self->collidable, self->moveable);
 
 	self->target = target;

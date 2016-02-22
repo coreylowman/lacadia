@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <stdio.h>
-#include "shaders.h"
+#include "shader.h"
 
 static void print_shader_info_log(GLuint shader) {
     int max_length = 2048;
@@ -40,7 +40,7 @@ static int parse_file_into_str (const char* file_name, char* shader_str, size_t 
     return 1;
 }
 
-int init_shaders(Shader *shader,
+int shader_init(Shader *shader,
 	const char *vertex_shader_loc,
 	const char *fragment_shader_loc)
 {

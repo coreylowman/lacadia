@@ -29,7 +29,7 @@ void affectable_object_update(AffectableObject *self, double dt){
     }
 }
 
-void affectable_object_render(AffectableObject self, GameWorld *world){
+void affectable_object_render(AffectableObject self, Vec3 world_pos, GameWorld *world){
     int i;
     Effect *e;
     for(i = 0;i < self.effects->length;i++){
@@ -38,9 +38,7 @@ void affectable_object_render(AffectableObject self, GameWorld *world){
 
         e->on_render(e, world);
     }
-}
 
-void affectable_object_render_ui(AffectableObject self, Vec3 world_pos, GameWorld *world){
     Vec3 screen_pos = game_world_world_coords_to_screen_coords(world, world_pos);
     
     Rect2 healthbar;
@@ -48,14 +46,14 @@ void affectable_object_render_ui(AffectableObject self, Vec3 world_pos, GameWorl
     healthbar.y = screen_pos.y;
     healthbar.width = .1 * self.stats.health / self.stats.max_health;
     healthbar.height = 0.01;
-    game_world_draw_rect(world, healthbar, COLOR_RED);
+    renderer_render_rect(world->renderer, healthbar, COLOR_RED);
 
     Rect2 background;
     background.x = screen_pos.x - 0.05;
     background.y = screen_pos.y;
     background.width = .1;
     background.height = 0.01;
-    game_world_draw_rect(world, background, COLOR_WHITE);
+    renderer_render_rect(world->renderer, background, COLOR_WHITE);
 }
 
 void affectable_object_print(AffectableObject self){

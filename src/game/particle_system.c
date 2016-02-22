@@ -29,7 +29,7 @@ ParticleSystem *particle_system_new(GameWorld *world, Vec3 position,const char *
     int i;
     for(i = 0;i < num_particles;i++) self->particle_init(&self->particles[i], position, self->particle_duration);
 
-    self->renderable.asset_id = game_world_get_asset_id(world, asset_name);
+    self->renderable.model_id = game_world_get_model_id(world, asset_name);
 
     return self;
 }

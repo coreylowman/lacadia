@@ -15,12 +15,13 @@ list(APPEND UTIL_SOURCES
     rect.h
     set.c
     set.h
-    shaders.c
-    shaders.h
+    shader.c
+    shader.h
     string_helpers.c
     string_helpers.h
     vec3.c
     vec3.h
+    line.h
     obb.c
     obb.h
     random.c

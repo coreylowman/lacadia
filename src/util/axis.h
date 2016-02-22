@@ -1,7 +1,7 @@
 #ifndef AXIS_H
 #define AXIS_H
 
-#include "shaders.h"
+#include "shader.h"
 
 typedef struct {
     unsigned int vbo[3], vao;

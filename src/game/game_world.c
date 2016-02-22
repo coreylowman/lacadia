@@ -27,70 +27,7 @@ GameWorld *game_world_new(){
     self->indices = set_new(free);
     self->particle_systems = set_new(particle_system_free);
 
-    printf("Loading assets... ");
-	self->num_assets = 8;
-	self->asset_names[0] = "assets/default_box";
-    self->asset_names[1] = "assets/mage";
-	self->asset_names[2] = "assets/hunter";
-	self->asset_names[3] = "assets/bug";
-    self->asset_names[4] = "assets/fireball";
-    self->asset_names[5] = "assets/icicle";
-    self->asset_names[6] = "assets/burn_particle";
-    self->asset_names[7] = "assets/wall";
-    
-    int i;
-    for(i = 0;i < self->num_assets;i++){
-        self->asset_models[i] = obj_model_from_file(self->asset_names[i]);        
-		self->asset_model_matrices[i] = array_list_new_m4();
-    }
-    printf("done.\n");
-
-    glGenVertexArrays(1, &self->asset_vao);
-    glBindVertexArray(self->asset_vao);
-	
-    glGenBuffers(3, &self->asset_vbo[0]);
-    
-    //vertex data buffer object
-	glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    //color data buffer object
-	glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[2]);
-    //instance model matrix buffer object
-    for(i = 0;i < 4;i++){
-        glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, 16 * sizeof(float), (void *)(4 * i * sizeof(float)));
-        glEnableVertexAttribArray(2 + i);
-        glVertexAttribDivisor(2 + i, 1);
-    }
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-
-    //ui vbo/vao
-    glGenVertexArrays(1, &self->ui_vao);
-    glBindVertexArray(self->ui_vao);
-    
-    glGenBuffers(2, &self->ui_vbo[0]);
-    
-    //vertex data buffer object
-    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[0]);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    //color data buffer object
-    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-	self->num_ui_rects = 0;
+    self->renderer = renderer_new();
 
     return self;
 }
@@ -102,11 +39,7 @@ void game_world_free(GameWorld *self){
     set_free(self->indices);
     set_free(self->particle_systems);
 
-	int i;
-	for (i = 0; i < self->num_assets; i++){
-		obj_model_free(self->asset_models[i]);
-		array_list_free_m4(self->asset_model_matrices[i]);
-	}
+	renderer_free(self->renderer);
 
     free(self);
 }
@@ -237,34 +170,42 @@ void game_world_add_particle_system(GameWorld *self, void *ps){
 }
 
 
-void game_world_render(GameWorld *self, Shader shader){
+void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix){
     int i;
     Spell *s;
 	Enemy *e;
     ParticleSystem *ps;
+    Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
+    Vec3 healthbar_loc;
 
-    //gather updates to the vertices
+    //gather updates to the various things
 	Player *p = self->player;
     renderable_object_render(p->renderable, self);
+<<<<<<< HEAD
     
+=======
+    collidable_object_render(p->collidable, self);
+>>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
         renderable_object_render(s->renderable, self);
+        collidable_object_render(s->collidable, self);
     }
 	for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
         renderable_object_render(e->renderable, self);
-        affectable_object_render(e->affectable, self);
+        collidable_object_render(e->collidable, self);
+        affectable_object_render(e->affectable, healthbar_loc, self);
     }
     for (i = 0; i < self->particle_systems->length; i++){
         if(self->particle_systems->data[i] == NULL) continue;
 		ps = self->particle_systems->data[i];
 		particle_system_render(ps);
 	}
-
     level_render(self->level);
+<<<<<<< HEAD
 	
     for(i = 0;i < self->num_assets;i++){
         ObjectModel *model = self->asset_models[i];
@@ -351,37 +292,19 @@ void game_world_debug_render(GameWorld *self, Shader shader){
         collidable_object_render(self->level->walls[i]->collidable);
     }
 }
+=======
+>>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
 
-int game_world_get_asset_id(GameWorld *self, const char *name){
-    int i;
-    for(i = 0;i < self->num_assets;i++){
-        if(string_equals(self->asset_names[i], name))
-            return i;
-    }
-	//default to default box
-    return 0;
+    //actually draw stuff
+    renderer_render(self->renderer, projection_matrix, view_matrix);
 }
 
-Obb game_world_get_asset_obb(GameWorld *self, int asset_id){
-    return self->asset_models[asset_id]->bounding_box;
+int game_world_get_model_id(GameWorld *self, const char *name){
+    return renderer_get_model_id(self->renderer, name);
 }
 
-void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix){
-    array_list_push_m4(self->asset_model_matrices[asset_id], model_matrix);
-}
-
-void game_world_draw_rect(GameWorld *self, Rect2 rect, Vec3 color){
-    int i = self->num_ui_rects;
-    if(i < MAX_UI_RECTS){
-        self->rects[i] = ui_rect_from_rect2(rect);
-        self->rect_colors[4*i] = color;
-        self->rect_colors[4*i+1] = color;
-        self->rect_colors[4*i+2] = color;
-        self->rect_colors[4*i+3] = color;
-        self->num_ui_rects++;
-    }else{
-        printf("error! too many rects\n");
-    }
+Obb game_world_get_model_obb(GameWorld *self, int model_id){
+    return renderer_get_model_obb(self->renderer, model_id);
 }
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy)){

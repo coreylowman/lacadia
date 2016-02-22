@@ -6,11 +6,11 @@
 #include "moveable_object.h"
 
 typedef struct {
-    int asset_id;
+    int model_id;
     Mat4 model_matrix;
 } RenderableObject;
 
-RenderableObject renderable_object_init(const char *asset_name);
+RenderableObject renderable_object_init(const char *model_name, Renderer *renderer);
 void renderable_object_set_model_matrix(RenderableObject *self, Mat4 model_matrix);
 void renderable_object_update(RenderableObject *self, MoveableObject moveable);
 void renderable_object_render(RenderableObject self, GameWorld *world);

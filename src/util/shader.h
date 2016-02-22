@@ -10,7 +10,7 @@ typedef struct Shader {
 	int view_matrix_location;
 } Shader;
 
-int init_shaders(Shader *shader, 
+int shader_init(Shader *shader, 
     const char *vertex_shader_loc,
     const char *fragment_shader_loc);
 

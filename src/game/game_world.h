@@ -4,13 +4,12 @@
 #include "util/array_list.h"
 #include "util/set.h"
 #include "util/object_model.h"
-#include "util/shaders.h"
+#include "util/shader.h"
 #include "util/obb.h"
 #include "util/rect.h"
 #include "util/mat4.h"
 
-#define MAX_ASSETS 32
-#define MAX_UI_RECTS 128
+#include "renderer.h"
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;
@@ -35,19 +34,7 @@ typedef struct GameWorld {
     Set *particle_systems; //Set<ParticleSystem *>
 
 
-    //models and stuff aka assets
-    int num_assets;
-    char *asset_names[MAX_ASSETS];
-    ObjectModel *asset_models[MAX_ASSETS];
-	ArrayList_m4 *asset_model_matrices[MAX_ASSETS]; //ArrayList<Mat4>[MAX_ASSETS]
-    unsigned int asset_vbo[3], asset_vao;
-
-    //ui rects and stuff
-    int num_ui_rects;
-    UIRect rects[MAX_UI_RECTS];
-    Vec3 rect_colors[4 * MAX_UI_RECTS];
-    unsigned int ui_vbo[2], ui_vao;
-
+    Renderer *renderer;
 
     //matrix for converting world to screen
     //this is just projection * view
@@ -76,8 +63,12 @@ Obb game_world_get_asset_obb(GameWorld *self, int asset_id);
 //use to copy verts & colors into vertices/colors array list
 //will then draw the whole thing in render
 void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix);
+=======
+void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix);
+>>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
 
-void game_world_draw_rect(GameWorld *self, Rect2 rect, Vec3 color);
+int game_world_get_model_id(GameWorld *self, const char *name);
+Obb game_world_get_model_obb(GameWorld *self, int asset_id);
 
 Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords);
 

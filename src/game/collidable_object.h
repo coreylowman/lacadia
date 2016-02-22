@@ -4,6 +4,7 @@
 #include "util/obb.h"
 #include "util/vec3.h"
 #include "game_object.h"
+#include "game_world.h"
 #include "moveable_object.h"
 
 typedef struct CollidableObject {
@@ -17,6 +18,6 @@ typedef struct CollidableObject {
 
 int collidable_object_is_colliding(CollidableObject self, CollidableObject other);
 void collidable_object_update(CollidableObject *self, MoveableObject moveable);
-void collidable_object_render(CollidableObject self);
+void collidable_object_render(CollidableObject self, GameWorld *world);
 
 #endif

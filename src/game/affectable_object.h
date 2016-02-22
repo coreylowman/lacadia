@@ -22,8 +22,7 @@ void affectable_object_affect(struct AffectableObject *self, struct Effect *effe
 void affectable_object_update(struct AffectableObject *self, double dt);
 
 //renders each of the effects using effects->on_render
-void affectable_object_render(struct AffectableObject self, GameWorld *world);
-void affectable_object_render_ui(struct AffectableObject self, Vec3 pos, GameWorld *world);
+void affectable_object_render(struct AffectableObject self, Vec3 world_pos, GameWorld *world);
 
 void affectable_object_print(struct AffectableObject self);
 

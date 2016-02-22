@@ -1,7 +1,5 @@
 #include <math.h>
 #include "obb.h"
-#include <GL/glew.h>
-#include <GL/glfw3.h>
 
 extern Vec3 VEC3_ZERO;
 
@@ -129,37 +127,6 @@ void obb_rotate_y(Obb *self, float rads){
 	self->axis[2].data[0] = s;
 	self->axis[2].data[1] = 0;
 	self->axis[2].data[2] = c;
-}
-
-void obb_render(Obb a){
-    int i, ti;
-    Vec3 r = VEC3_ZERO;
-    Vec3 rs[3];
-    for(i = 0;i < 3;i++) rs[i] = vec3_scale(a.axis[i], 2 * a.radius.data[i]);
-    for(i = 0;i < 3;i++) r = vec3_add(r, rs[i]);
-	r = vec3_scale(r, 0.5);
-	Vec3 max = vec3_add(a.center, r);
-	Vec3 min = vec3_sub(a.center, r);
-
-    glBegin(GL_LINES);
-
-	for (i = 0; i < 3; i++){
-		ti = (i + 1) % 3;
-
-		glVertex3f(min.x, min.y, min.z);
-		glVertex3f(min.x + rs[i].x, min.y + rs[i].y, min.z + rs[i].z);
-
-		glVertex3f(max.x, max.y, max.z);
-		glVertex3f(max.x - rs[i].x, max.y - rs[i].y, max.z - rs[i].z);
-
-		glVertex3f(min.x + rs[i].x, min.y + rs[i].y, min.z + rs[i].z);
-		glVertex3f(max.x - rs[ti].x, max.y - rs[ti].y, max.z - rs[ti].z);
-
-		glVertex3f(min.x + rs[ti].x, min.y + rs[ti].y, min.z + rs[ti].z);
-		glVertex3f(max.x - rs[i].x, max.y - rs[i].y, max.z - rs[i].z);
-	}
-
-    glEnd();
 }
 
 

@@ -40,13 +40,13 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
         self->caster_type = GAME_OBJECT_TYPE_ENEMY;
     }
 
-    self->renderable.asset_id = game_world_get_asset_id(world, "assets/fireball");
+    self->renderable.model_id = game_world_get_model_id(world, "assets/fireball");
     renderable_object_update(&self->renderable, self->moveable);
 
     self->collidable.container = self->base_object;
     self->collidable.on_collide = fireball_on_collide;
     self->collidable.is_colliding = spell_is_colliding;
-    self->collidable.bounding_box = game_world_get_asset_obb(world, self->renderable.asset_id);
+    self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
     collidable_object_update(&self->collidable, self->moveable);
 
     self->target = NULL;
