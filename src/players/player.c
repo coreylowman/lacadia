@@ -31,14 +31,13 @@ void player_update(Player *self, double dt){
     
     int i;
     for(i = 0;i < 4;i++){
-        self->abilities[i].cooldown = max(self->abilities[i].cooldown - dt, 0);
+        ability_update(&self->abilities[i], dt);
     }
 }
 
 void player_use_ability(Player *self, int i){
-    if(self->abilities[i].cooldown <= 0.0){
-        self->abilities[i].on_use(self->base_object->world, self->base_object);
-        self->abilities[i].cooldown = self->abilities[i].max_cooldown;
+    if(ability_is_ready(self->abilities[i])){
+        ability_use(&self->abilities[i], self->base_object->world, self->base_object);
     }
 }
 
@@ -47,7 +46,6 @@ void player_affect(Player *self, Effect *e, double dt){
 }
 
 void player_move_forwards(Player *self, double dt, float direction){
-    int i;
     float speed = self->moveable.speed;
 	moveable_object_move_by(&self->moveable, vec3_scale(self->moveable.direction, dt * speed * direction));
 }
@@ -66,7 +64,6 @@ void player_turn(Player *self, double side_amt){
 }
 
 void player_strafe(Player *self, double dt, float direction){
-    int i;
     float speed = self->moveable.speed;
     Vec3 sideways;
 

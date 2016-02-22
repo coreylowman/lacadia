@@ -8,6 +8,13 @@ typedef union {
     };
 } Vec3;
 
+typedef union {
+    int data[3];
+    struct {
+        int x, y, z;
+    };
+} Vec3_i;
+
 Vec3 vec3_from_3f(float x, float y, float z);
 Vec3 vec3_add(Vec3 v1, Vec3 v2);
 Vec3 vec3_sub(Vec3 v1, Vec3 v2);

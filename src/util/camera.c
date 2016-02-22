@@ -19,7 +19,7 @@ void camera_init(Camera *camera, int width, int height){
     camera->fov = 45.0;
     camera->aspect_ratio = (float) width / height;
     camera->z_near = 0.1;
-    camera->z_far = 100.0;
+    camera->z_far = 1000.0;
 
     camera->speed = 25.0;
 

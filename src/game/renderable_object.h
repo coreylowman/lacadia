@@ -11,9 +11,8 @@ typedef struct {
 } RenderableObject;
 
 RenderableObject renderable_object_init(const char *asset_name);
-
+void renderable_object_set_model_matrix(RenderableObject *self, Mat4 model_matrix);
 void renderable_object_update(RenderableObject *self, MoveableObject moveable);
-
 void renderable_object_render(RenderableObject self, GameWorld *world);
 
 #endif

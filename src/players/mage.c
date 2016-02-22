@@ -21,7 +21,8 @@ Player *mage_new(GameWorld *world){
 
     self->passive = mage_passive;
 
-    //todo set up stats in affectable
+    self->affectable.stats.max_health = 100;
+    affectable_object_init(&self->affectable);
 
     self->moveable.speed = 5.0;
     self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };

@@ -9,7 +9,6 @@ void affectable_object_init(AffectableObject *self){
     self->stats.regen = self->stats.max_regen;
     self->stats.power = self->stats.max_power;
     self->stats.lifesteal = self->stats.max_lifesteal;
-    self->effects = set_new(effect_free);
 }
 
 void affectable_object_affect(AffectableObject *self, Effect *effect){

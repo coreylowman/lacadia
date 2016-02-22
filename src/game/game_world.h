@@ -9,8 +9,8 @@
 #include "util/rect.h"
 #include "util/mat4.h"
 
-#define MAX_ASSETS 20
-#define MAX_UI_RECTS 20
+#define MAX_ASSETS 32
+#define MAX_UI_RECTS 128
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;
@@ -67,6 +67,7 @@ void game_world_add_particle_system(GameWorld *self, void *ps);
 void game_world_update(GameWorld *self, double dt);
 void game_world_render(GameWorld *self, Shader shader);
 void game_world_render_ui(GameWorld *self, Shader shader);
+void game_world_render_terrain(GameWorld *self, Shader shader);
 void game_world_debug_render(GameWorld *self, Shader shader);
 
 int game_world_get_asset_id(GameWorld *self, const char *name);

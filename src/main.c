@@ -26,9 +26,10 @@ static double last_fps_seconds;
 static int draw_count;
 
 static Inputs inputs;
-static Shader shader;
+static Shader model_shader;
 static Shader line_shader;
 static Shader ui_shader;
+static Shader terrain_shader;
 static Camera camera;
 static Axis axis;
 
@@ -74,6 +75,14 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
         }else{
             camera.follow_dist = 1.0;
         }
+    }
+
+    //reload shaders
+    if(inputs.r_pressed){
+        init_shaders(&model_shader, "../../shaders/model_vert.glsl", "../../shaders/model_frag.glsl");
+        init_shaders(&line_shader, "../../shaders/line_vert.glsl", "../../shaders/line_frag.glsl");
+        init_shaders(&ui_shader, "../../shaders/ui_vert.glsl", "../../shaders/ui_frag.glsl");
+        init_shaders(&terrain_shader, "../../shaders/terrain_vert.glsl", "../../shaders/terrain_frag.glsl");
     }
 }
 
@@ -158,21 +167,26 @@ static void render(){
     
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(shader.program);
+    glUseProgram(model_shader.program);
 
-    glUniformMatrix4fv(shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
-    glUniformMatrix4fv(shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
+    glUniformMatrix4fv(model_shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
+    glUniformMatrix4fv(model_shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
 
-    axis_render(axis, shader);
-    game_world_render(world, shader);
+    axis_render(axis, model_shader);
+    game_world_render(world, model_shader);
 
     glUseProgram(ui_shader.program);
     game_world_render_ui(world, ui_shader);
 
     glUseProgram(line_shader.program);
-	glUniformMatrix4fv(shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
-	glUniformMatrix4fv(shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
+	glUniformMatrix4fv(model_shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
+	glUniformMatrix4fv(model_shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
 	game_world_debug_render(world, line_shader);
+
+    glUseProgram(terrain_shader.program);
+    glUniformMatrix4fv(terrain_shader.projection_matrix_location, 1, GL_TRUE, &camera.projection_matrix.data[0]);
+    glUniformMatrix4fv(terrain_shader.view_matrix_location, 1, GL_TRUE, &camera.view_matrix.data[0]);
+    game_world_render_terrain(world, terrain_shader);
 }
 
 int main(int argc, char *argv[]){
@@ -183,9 +197,10 @@ int main(int argc, char *argv[]){
 
     init_glfw();
     init_glew();
-    init_shaders(&shader, "shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
-    init_shaders(&line_shader, "shaders/line_vertex_shader.glsl", "shaders/line_fragment_shader.glsl");
-    init_shaders(&ui_shader, "shaders/ui_vertex_shader.glsl", "shaders/ui_fragment_shader.glsl");
+    init_shaders(&model_shader, "shaders/model_vert.glsl", "shaders/model_frag.glsl");
+    init_shaders(&line_shader, "shaders/line_vert.glsl", "shaders/line_frag.glsl");
+    init_shaders(&ui_shader, "shaders/ui_vert.glsl", "shaders/ui_frag.glsl");
+    init_shaders(&terrain_shader, "shaders/terrain_vert.glsl", "shaders/terrain_frag.glsl");
     camera_init(&camera, width, height);
     axis_init(&axis);
 

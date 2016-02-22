@@ -18,6 +18,10 @@ list(APPEND GAME_SOURCES
     game_object.h
     game_world.c
     game_world.h
+    level.c
+    level.h
+    melee_hit.c
+    melee_hit.h
     moveable_object.c
     moveable_object.h
     particle_system.c
@@ -31,8 +35,6 @@ list(APPEND GAME_SOURCES
     wall.h
     wildfire.c
     wildfire.h
-    level.h
-    level.c
 )
 
 add_library(game OBJECT ${GAME_SOURCES})

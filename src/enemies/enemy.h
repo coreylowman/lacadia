@@ -7,6 +7,7 @@
 #include "game/collidable_object.h"
 #include "game/affectable_object.h"
 #include "game/moveable_object.h"
+#include "game/ability.h"
 
 typedef struct Enemy {
     GameObject *base_object;
@@ -18,6 +19,8 @@ typedef struct Enemy {
     CollidableObject collidable;
     MoveableObject moveable;
     RenderableObject renderable;
+
+    Ability attack;
 
     void (*on_update)(struct Enemy *self, double dt);
 } Enemy;

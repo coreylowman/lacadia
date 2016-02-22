@@ -1,5 +1,10 @@
 #include "renderable_object.h"
 
+void renderable_object_set_model_matrix(RenderableObject *self, Mat4 model_matrix){
+    self->model_matrix = model_matrix;
+    mat4_transpose(&self->model_matrix);
+}
+
 void renderable_object_render(RenderableObject self, GameWorld *world){
     game_world_draw_asset(world, self.asset_id, self.model_matrix);
 }

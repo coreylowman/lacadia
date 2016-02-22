@@ -51,22 +51,14 @@ target_link_libraries(lacadia
 endif()
 
 add_custom_command(TARGET lacadia
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${VERTEX_SHADER} $<TARGET_FILE_DIR:lacadia>
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:lacadia>/shaders
 )
 add_custom_command(TARGET lacadia
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FRAGMENT_SHADER} $<TARGET_FILE_DIR:lacadia>
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/assets $<TARGET_FILE_DIR:lacadia>/assets
 )
 add_custom_command(TARGET lacadia
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LINE_VERTEX_SHADER} $<TARGET_FILE_DIR:lacadia>
-)
-add_custom_command(TARGET lacadia
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LINE_FRAGMENT_SHADER} $<TARGET_FILE_DIR:lacadia>
-)
-add_custom_command(TARGET lacadia
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_RUNTIME} $<TARGET_FILE_DIR:lacadia>
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${GLEW_RUNTIME} $<TARGET_FILE_DIR:lacadia>
 )

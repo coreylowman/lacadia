@@ -246,6 +246,7 @@ void game_world_render(GameWorld *self, Shader shader){
     //gather updates to the vertices
 	Player *p = self->player;
     renderable_object_render(p->renderable, self);
+    
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
@@ -293,11 +294,20 @@ void game_world_render(GameWorld *self, Shader shader){
     }
 }
 
+void game_world_render_terrain(GameWorld *self, Shader shader){
+    level_render_terrain(self->level);
+}
+
 void game_world_render_ui(GameWorld *self, Shader shader){
     int i;
     Enemy *e;
+
     Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
     Vec3 healthbar_loc;
+
+    healthbar_loc = vec3_add(obb_top(self->player->collidable.bounding_box), above);
+    affectable_object_render_ui(self->player->affectable, healthbar_loc, self);
+
     for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];

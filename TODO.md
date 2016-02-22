@@ -25,6 +25,7 @@
 
 #### Characters
 - [x] Movement
+- [x] Collision with walls
 
 ###### Mage
 - [x] Spell Design

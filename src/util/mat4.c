@@ -363,7 +363,6 @@ int mat4_inverse(Mat4 *out_mat, Mat4 self){
 
 //returns the w component
 float mat4_mul_vec3(Vec3 *out_vec, Mat4 mat, Vec3 vec){
-    int i;
 	float x = vec.x, y = vec.y, z = vec.z;
 	out_vec->x = mat.data[0] * x + mat.data[1] * y + mat.data[2] * z + mat.data[3];
 	out_vec->y = mat.data[4] * x + mat.data[5] * y + mat.data[6] * z + mat.data[7];

@@ -25,6 +25,10 @@ list(APPEND UTIL_SOURCES
     obb.h
     random.c
     random.h
+    simplex_noise.h
+    simplex_noise.c
+    terrain.h
+    terrain.c
 )
 
 add_library(util OBJECT ${UTIL_SOURCES})
