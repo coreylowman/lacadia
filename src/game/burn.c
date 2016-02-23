@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include "burn.h"
 #include "util/random.h"
+#include "util/renderer.h"
 
 //forward declarations
 static void burn_on_apply(Effect *self, AffectableObject *affectable);
 static void burn_on_update(Effect *self, AffectableObject *affectable, double dt);
-static void burn_on_render(Effect *self, GameWorld *world);
+static void burn_on_render(Effect *self, Renderer *renderer);
 static void burn_on_end(Effect *self, AffectableObject *affectable);
 static void burn_on_free(Effect *self);
 static int burn_is_over(Effect *self);
@@ -74,7 +75,7 @@ static void burn_on_update(Effect *self, AffectableObject *affectable, double dt
     self->duration -= dt;
 }
 
-static void burn_on_render(Effect *self, GameWorld *world){
+static void burn_on_render(Effect *self, Renderer *renderer){
 
 }
 

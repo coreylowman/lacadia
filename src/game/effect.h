@@ -2,7 +2,7 @@
 #define EFFECT_H
 
 #include "game/affectable_object.h"
-#include "game/game_world.h"
+#include "util/renderer.h"
 
 typedef enum EffectType {
     EFFECT_TYPE_SHIELD,
@@ -51,7 +51,7 @@ typedef struct Effect{
     void (*on_free)(struct Effect *self);
 
     //renders the effect
-    void (*on_render)(struct Effect *self, GameWorld *world);
+    void (*on_render)(struct Effect *self, Renderer *renderer);
 } Effect;
 
 Effect *effect_new(EffectType type, float duration);

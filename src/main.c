@@ -9,7 +9,6 @@
 #include "util/inputs.h"
 #include "util/camera.h"
 #include "util/shader.h"
-#include "util/axis.h"
 #include "util/random.h"
 #include "game/game_world.h"
 #include "players/player.h"
@@ -27,12 +26,9 @@ static int draw_count;
 
 static Inputs inputs;
 static Camera camera;
-static Axis axis;
 
 GameWorld *world;
 Player *player;
-
-extern Mat4 MAT4_IDENT;
 
 static void mouse_callback(GLFWwindow *w,int button, int action, int mods)
 {
@@ -71,14 +67,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
         }else{
             camera.follow_dist = 1.0;
         }
-    }
-
-    //reload shaders
-    if(inputs.r_pressed){
-        init_shaders(&model_shader, "../../shaders/model_vert.glsl", "../../shaders/model_frag.glsl");
-        init_shaders(&line_shader, "../../shaders/line_vert.glsl", "../../shaders/line_frag.glsl");
-        init_shaders(&ui_shader, "../../shaders/ui_vert.glsl", "../../shaders/ui_frag.glsl");
-        init_shaders(&terrain_shader, "../../shaders/terrain_vert.glsl", "../../shaders/terrain_frag.glsl");
     }
 }
 
@@ -163,7 +151,6 @@ static void render(){
     
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //axis_render(axis, shader);
     game_world_render(world, camera.projection_matrix, camera.view_matrix);
 }
 
@@ -176,7 +163,6 @@ int main(int argc, char *argv[]){
     init_glfw();
     init_glew();
     camera_init(&camera, width, height);
-    axis_init(&axis);
 
 	world = game_world_new();
     player = mage_new(world);

@@ -8,8 +8,7 @@
 #include "util/obb.h"
 #include "util/rect.h"
 #include "util/mat4.h"
-
-#include "renderer.h"
+#include "util/renderer.h"
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;
@@ -52,20 +51,11 @@ void game_world_add_wall(GameWorld *self, Wall *w, int index);
 void game_world_add_particle_system(GameWorld *self, void *ps);
 
 void game_world_update(GameWorld *self, double dt);
-void game_world_render(GameWorld *self, Shader shader);
-void game_world_render_ui(GameWorld *self, Shader shader);
-void game_world_render_terrain(GameWorld *self, Shader shader);
-void game_world_debug_render(GameWorld *self, Shader shader);
 
 int game_world_get_asset_id(GameWorld *self, const char *name);
 Obb game_world_get_asset_obb(GameWorld *self, int asset_id);
 
-//use to copy verts & colors into vertices/colors array list
-//will then draw the whole thing in render
-void game_world_draw_asset(GameWorld *self, int asset_id, Mat4 model_matrix);
-=======
 void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix);
->>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
 
 int game_world_get_model_id(GameWorld *self, const char *name);
 Obb game_world_get_model_obb(GameWorld *self, int asset_id);

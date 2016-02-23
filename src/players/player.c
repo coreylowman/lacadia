@@ -42,7 +42,7 @@ void player_use_ability(Player *self, int i){
 }
 
 void player_affect(Player *self, Effect *e, double dt){
-    affectable_object_affect(&self->affectable, e, dt);
+    affectable_object_affect(&self->affectable, e);
 }
 
 void player_move_forwards(Player *self, double dt, float direction){

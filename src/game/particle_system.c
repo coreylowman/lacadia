@@ -75,7 +75,7 @@ void particle_system_update(ParticleSystem *self, double dt){
     }
 }
 
-void particle_system_render(ParticleSystem *self){
+void particle_system_render(ParticleSystem *self, Renderer *renderer){
     Mat4 model_matrix;
     int i;
     for(i = 0;i < self->num_particles;i++){
@@ -84,7 +84,7 @@ void particle_system_render(ParticleSystem *self){
         mat4_translate(&model_matrix, self->particles[i].position);
         mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
         renderable_object_set_model_matrix(&self->renderable, model_matrix);
-        renderable_object_render(self->renderable, self->world);
+        renderable_object_render(self->renderable, renderer);
     }
 }
 

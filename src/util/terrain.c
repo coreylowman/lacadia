@@ -14,23 +14,6 @@ static float height_map[TERRAIN_SIZE][TERRAIN_SIZE];
 Terrain terrain_new(Vec3 start, Vec3 dimensions){
     Terrain self;
 
-    glGenVertexArrays(1, &self.asset_vao);
-    glBindVertexArray(self.asset_vao);
-    
-    glGenBuffers(2, &self.asset_vbo[0]);
-    
-    //vertex data buffer object
-    glBindBuffer(GL_ARRAY_BUFFER, self.asset_vbo[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, self.asset_vbo[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     int i, j, k;
     float tx, tz;
     float octave_vals[OCTAVES];
@@ -135,16 +118,4 @@ Terrain terrain_new(Vec3 start, Vec3 dimensions){
 void terrain_free(Terrain self){
     free(self.vertices);
 	free(self.normals);
-}
-
-void terrain_render(Terrain self){
-    glBindBuffer(GL_ARRAY_BUFFER, self.asset_vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, self.num_vertices * sizeof(float), &self.vertices[0], GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, self.asset_vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, self.num_vertices * sizeof(float), &self.normals[0], GL_STATIC_DRAW);
-
-    glBindVertexArray(self.asset_vao);
-    glDrawArrays(GL_TRIANGLES, 0, self.num_vertices / 3);
-    glBindVertexArray(0);
 }

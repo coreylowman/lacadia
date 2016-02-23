@@ -2,9 +2,11 @@
 #include "wall.h"
 #include "util/mat4.h"
 #include "util/random.h"
+#include "util/renderer.h"
 
 extern Vec3 VEC3_UNIT_X;
 extern Vec3 VEC3_UNIT_Z;
+extern Vec3 VEC3_ZERO;
 
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length){
     Wall *self = malloc(sizeof(*self));
@@ -61,12 +63,12 @@ void wall_free(Wall *self){
     free(self);
 }
 
-void wall_render(Wall *self){
+void wall_render(Wall *self, Renderer *renderer){
     int i;
     for(i = 0;i < self->num_renderables;i++){
-        renderable_object_render(self->renderables[i], self->base_object->world);
+        renderable_object_render(self->renderables[i], renderer);
     }
-    collidable_object_render(self->collidable, self->base_object->world);
+    collidable_object_render(self->collidable, renderer);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other){
@@ -90,4 +92,5 @@ Vec3 wall_get_normal(Wall *self, Vec3 position){
             }
         }
     }
+	return VEC3_ZERO;
 }

@@ -103,7 +103,6 @@ static void wildfire_on_collide(GameObject *self, GameObject *other){
 		Enemy *enemy = other->container;
 		int i, j;
 		Effect *e;
-		BurnData *data;
 		CollidableObject *collidable;
 		GameObject *object;
 

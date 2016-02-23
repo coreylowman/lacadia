@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 #include "bug.h"
 #include "players/player.h"
 #include "game/collidable_object.h"

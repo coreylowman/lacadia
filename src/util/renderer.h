@@ -8,10 +8,11 @@
 #include "util/mat4.h"
 #include "util/line.h"
 #include "util/obb.h"
+#include "util/terrain.h"
 
 #define MAX_ASSETS 32
 #define MAX_UI_RECTS 128
-#define MAX_LINES 128
+#define MAX_LINES 1024
 #define MAX_TERRAINS 4
 
 typedef struct Renderer {
@@ -40,8 +41,8 @@ typedef struct Renderer {
     //terrains and stuff
     Shader terrain_shader;
     int num_terrains;
-    //TODO
-
+    Terrain terrains[MAX_TERRAINS];
+    unsigned int terrain_vbo[2], terrain_vao;
 } Renderer;
 
 Renderer *renderer_new();
@@ -55,7 +56,6 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix);
 void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix);
 void renderer_render_rect(Renderer *self, Rect2 rect, Vec3 color);
 void renderer_render_line(Renderer *self, Line line);
-//TODO
-//void renderer_render_terrain(Renderer *self, Terrain terrain);
+void renderer_render_terrain(Renderer *self, Terrain terrain);
 
 #endif

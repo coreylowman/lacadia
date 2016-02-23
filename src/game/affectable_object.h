@@ -4,7 +4,7 @@
 #include "stats.h"
 #include "util/set.h"
 #include "game/effect.h"
-#include "game/game_world.h"
+#include "util/renderer.h"
 #include "util/mat4.h"
 
 typedef struct AffectableObject {
@@ -22,7 +22,7 @@ void affectable_object_affect(struct AffectableObject *self, struct Effect *effe
 void affectable_object_update(struct AffectableObject *self, double dt);
 
 //renders each of the effects using effects->on_render
-void affectable_object_render(struct AffectableObject self, Vec3 world_pos, GameWorld *world);
+void affectable_object_render(struct AffectableObject self, Vec3 screen_pos, Renderer *renderer);
 
 void affectable_object_print(struct AffectableObject self);
 

@@ -15,7 +15,7 @@ void collidable_object_update(CollidableObject *self, MoveableObject moveable){
     obb_rotate_y(&self->bounding_box, rotation);
 }
 
-void collidable_object_render(CollidableObject self, GameWorld *world){
+void collidable_object_render(CollidableObject self, Renderer *renderer){
     int i, ti;
     Vec3 r = VEC3_ZERO;
     Vec3 rs[3];
@@ -32,18 +32,18 @@ void collidable_object_render(CollidableObject self, GameWorld *world){
 
         l.start = min;
         l.end = vec3_add(min, rs[i]);
-        renderer_render_line(world->renderer, l);
+        renderer_render_line(renderer, l);
 
         l.start = max;
         l.end = vec3_sub(max, rs[i]);
-        renderer_render_line(world->renderer, l);
+        renderer_render_line(renderer, l);
 
         l.start = vec3_add(min, rs[i]);
         l.end = vec3_sub(max, rs[ti]);
-        renderer_render_line(world->renderer, l);
+        renderer_render_line(renderer, l);
 
         l.start = vec3_add(min, rs[ti]);
         l.end = vec3_sub(max, rs[i]);
-        renderer_render_line(world->renderer, l);
+        renderer_render_line(renderer, l);
     }
 }

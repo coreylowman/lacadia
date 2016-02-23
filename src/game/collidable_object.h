@@ -18,6 +18,6 @@ typedef struct CollidableObject {
 
 int collidable_object_is_colliding(CollidableObject self, CollidableObject other);
 void collidable_object_update(CollidableObject *self, MoveableObject moveable);
-void collidable_object_render(CollidableObject self, GameWorld *world);
+void collidable_object_render(CollidableObject self, Renderer *renderer);
 
 #endif

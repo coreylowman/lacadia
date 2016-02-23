@@ -42,13 +42,10 @@ void level_free(Level *self){
     free(self);
 }
 
-void level_render(Level *self){
+void level_render(Level *self, Renderer *renderer){
     int i;
     for(i = 0;i < self->num_walls;i++){
-        wall_render(self->walls[i]);
+        wall_render(self->walls[i], renderer);
     }
-}
-
-void level_render_terrain(Level *self){
-    terrain_render(self->terrain);
+    // renderer_render_terrain(renderer, self->terrain);
 }

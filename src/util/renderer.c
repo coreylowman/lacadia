@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <GL/glew.h>
 #include "renderer.h"
 
@@ -98,7 +99,23 @@ Renderer *renderer_new() {
     // TERRAINS
     //
     shader_init(&self->terrain_shader, "shaders/terrain_vert.glsl", "shaders/terrain_frag.glsl");
-    //TODO
+	self->num_terrains = 0;
+    glGenVertexArrays(1, &self->terrain_vao);
+    glBindVertexArray(self->terrain_vao);
+    
+    glGenBuffers(2, &self->terrain_vbo[0]);
+    
+    //vertex data buffer object
+    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[1]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     return self;
 }
@@ -109,8 +126,7 @@ void renderer_free(Renderer *self){
         obj_model_free(self->models[i]);
         array_list_free_m4(self->model_model_matrices[i]);
     }
-
-    //TODO free terrains
+	free(self);
 }
 
 int renderer_get_model_id(Renderer *self, const char *name){
@@ -132,6 +148,7 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
     glUseProgram(self->model_shader.program);
     glUniformMatrix4fv(self->model_shader.projection_matrix_location, 1, GL_TRUE, &projection_matrix.data[0]);
     glUniformMatrix4fv(self->model_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
+    
     int i;
     for(i = 0;i < self->num_models;i++){
         ObjectModel *model = self->models[i];
@@ -181,11 +198,34 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
     glUseProgram(self->line_shader.program);
     glUniformMatrix4fv(self->line_shader.projection_matrix_location, 1, GL_TRUE, &projection_matrix.data[0]);
     glUniformMatrix4fv(self->line_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
-    //TODO
+    
+    glBindBuffer(GL_ARRAY_BUFFER, self->line_vbo);
+    glBufferData(GL_ARRAY_BUFFER, 2 * 3 * self->num_lines * sizeof(float), &self->lines[0], GL_STATIC_DRAW);
+
+    glBindVertexArray(self->line_vao);
+    glDrawArrays(GL_LINES, 0, 2 * self->num_lines);
+    glBindVertexArray(0);
+    
+	self->num_lines = 0;
 
     //render terrain
     glUseProgram(self->terrain_shader.program);
-    //TODO
+    glUniformMatrix4fv(self->terrain_shader.projection_matrix_location, 1, GL_TRUE, &projection_matrix.data[0]);
+    glUniformMatrix4fv(self->terrain_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
+    Terrain t;
+    for(i = 0;i < self->num_terrains;i++){
+        t = self->terrains[i];
+        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, t.num_vertices * sizeof(float), &t.vertices[0], GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[1]);
+        glBufferData(GL_ARRAY_BUFFER, t.num_vertices * sizeof(float), &t.normals[0], GL_STATIC_DRAW);
+
+        glBindVertexArray(self->terrain_vao);
+        glDrawArrays(GL_TRIANGLES, 0, t.num_vertices / 3);
+        glBindVertexArray(0);
+    }
+	self->num_terrains = 0;
 }
 
 void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix){
@@ -210,11 +250,19 @@ void renderer_render_line(Renderer *self, Line line){
     int i = self->num_lines;
     if(i < MAX_LINES){
         self->lines[i] = line;
+        self->num_lines++;
     }else {
         printf("error! too many lines\n");
     }
 }
 
-//TODO
-//void renderer_render_terrain(Renderer *self, Terrain terrain){}
+void renderer_render_terrain(Renderer *self, Terrain terrain){
+    int i = self->num_terrains;
+    if(i < MAX_TERRAINS){
+        self->terrains[i] = terrain;
+        self->num_terrains++;
+    }else {
+        printf("error! too many lines\n");
+    }
+}
 

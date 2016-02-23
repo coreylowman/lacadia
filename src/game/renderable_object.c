@@ -14,8 +14,8 @@ void renderable_object_set_model_matrix(RenderableObject *self, Mat4 model_matri
     mat4_transpose(&self->model_matrix);
 }
 
-void renderable_object_render(RenderableObject self, GameWorld *world){
-    renderer_render_model(world->renderer, self.model_id, self.model_matrix);
+void renderable_object_render(RenderableObject self, Renderer *renderer){
+    renderer_render_model(renderer, self.model_id, self.model_matrix);
 }
 
 void renderable_object_update(RenderableObject *self, MoveableObject moveable){

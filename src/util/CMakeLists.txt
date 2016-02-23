@@ -1,8 +1,6 @@
 list(APPEND UTIL_SOURCES
     array_list.c
     array_list.h
-    axis.c
-    axis.h
     camera.c
     camera.h
     inputs.c
@@ -30,6 +28,8 @@ list(APPEND UTIL_SOURCES
     simplex_noise.c
     terrain.h
     terrain.c
+    renderer.h
+    renderer.c
 )
 
 add_library(util OBJECT ${UTIL_SOURCES})

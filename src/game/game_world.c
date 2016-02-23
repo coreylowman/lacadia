@@ -180,120 +180,29 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
 
     //gather updates to the various things
 	Player *p = self->player;
-    renderable_object_render(p->renderable, self);
-<<<<<<< HEAD
-    
-=======
-    collidable_object_render(p->collidable, self);
->>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
+    renderable_object_render(p->renderable, self->renderer);
+    collidable_object_render(p->collidable, self->renderer);
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
-        renderable_object_render(s->renderable, self);
-        collidable_object_render(s->collidable, self);
+        renderable_object_render(s->renderable, self->renderer);
+        collidable_object_render(s->collidable, self->renderer);
     }
 	for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
-        renderable_object_render(e->renderable, self);
-        collidable_object_render(e->collidable, self);
-        affectable_object_render(e->affectable, healthbar_loc, self);
+        healthbar_loc = vec3_add(obb_top(e->collidable.bounding_box), above);
+        healthbar_loc = game_world_world_coords_to_screen_coords(self, healthbar_loc);
+        renderable_object_render(e->renderable, self->renderer);
+        collidable_object_render(e->collidable, self->renderer);
+        affectable_object_render(e->affectable, healthbar_loc, self->renderer);
     }
     for (i = 0; i < self->particle_systems->length; i++){
         if(self->particle_systems->data[i] == NULL) continue;
 		ps = self->particle_systems->data[i];
-		particle_system_render(ps);
+		particle_system_render(ps, self->renderer);
 	}
-    level_render(self->level);
-<<<<<<< HEAD
-	
-    for(i = 0;i < self->num_assets;i++){
-        ObjectModel *model = self->asset_models[i];
-        ArrayList_m4 *model_matrices = self->asset_model_matrices[i];
-		
-		if (model_matrices->length == 0) continue;
-
-        //upload vertices of model
-        glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, model->num_floats * sizeof(float), &model->vertices[0], GL_STATIC_DRAW);
-
-        //upload colors of model
-        glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[1]);
-        glBufferData(GL_ARRAY_BUFFER, model->num_floats * sizeof(float), &model->colors[0], GL_STATIC_DRAW);
-
-        //upload instace model matrices
-        glBindBuffer(GL_ARRAY_BUFFER, self->asset_vbo[2]);
-        glBufferData(GL_ARRAY_BUFFER, model_matrices->length * sizeof(Mat4), &model_matrices->data[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        
-        //draw stuff
-        glBindVertexArray(self->asset_vao);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, model->num_floats / 3, model_matrices->length);
-        glBindVertexArray(0);
-
-		self->asset_model_matrices[i]->length = 0;
-    }
-}
-
-void game_world_render_terrain(GameWorld *self, Shader shader){
-    level_render_terrain(self->level);
-}
-
-void game_world_render_ui(GameWorld *self, Shader shader){
-    int i;
-    Enemy *e;
-
-    Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
-    Vec3 healthbar_loc;
-
-    healthbar_loc = vec3_add(obb_top(self->player->collidable.bounding_box), above);
-    affectable_object_render_ui(self->player->affectable, healthbar_loc, self);
-
-    for (i = 0; i < self->enemies->length; i++){
-        if(self->enemies->data[i] == NULL) continue;
-        e = self->enemies->data[i];
-        healthbar_loc = vec3_add(obb_top(e->collidable.bounding_box), above);
-        affectable_object_render_ui(e->affectable, healthbar_loc, self);
-    }    
-
-    //upload vertices of model
-    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, 8 * self->num_ui_rects * sizeof(float), &self->rects[0], GL_STATIC_DRAW);
-
-    //upload colors of model
-    glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, 12 * self->num_ui_rects * sizeof(float), &self->rect_colors[0], GL_STATIC_DRAW);
-
-    glBindVertexArray(self->ui_vao);
-    glDrawArrays(GL_QUADS, 0, 4 * self->num_ui_rects);
-    glBindVertexArray(0);
-
-    self->num_ui_rects = 0;
-}
-
-void game_world_debug_render(GameWorld *self, Shader shader){
-    int i;
-    Spell *s;
-    Enemy *e;
-
-    Player *p = self->player;
-    collidable_object_render(p->collidable);
-    for(i = 0;i < self->spells->length;i++){
-        if(self->spells->data[i] == NULL) continue;
-        s = self->spells->data[i];
-        collidable_object_render(s->collidable);
-    }
-    for (i = 0; i < self->enemies->length; i++){
-        if(self->enemies->data[i] == NULL) continue;
-        e = self->enemies->data[i];
-        collidable_object_render(e->collidable);
-    }
-    for(i = 0;i < self->level->num_walls;i++){
-        collidable_object_render(self->level->walls[i]->collidable);
-    }
-}
-=======
->>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
+    level_render(self->level, self->renderer);
 
     //actually draw stuff
     renderer_render(self->renderer, projection_matrix, view_matrix);

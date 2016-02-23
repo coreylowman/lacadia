@@ -5,6 +5,7 @@
 #include "renderable_object.h"
 #include "moveable_object.h"
 #include "game_world.h"
+#include "util/renderer.h"
 
 #define MAX_PARTICLES 256
 
@@ -40,7 +41,7 @@ void particle_system_double_particles(ParticleSystem *self);
 void particle_system_set_particle_init(ParticleSystem *self, void (*particle_init)(Particle *p, Vec3 position, float duration));
 
 void particle_system_update(ParticleSystem *self, double dt);
-void particle_system_render(ParticleSystem *self);
+void particle_system_render(ParticleSystem *self, Renderer *renderer);
 
 int particle_system_is_over(ParticleSystem *self);
 
