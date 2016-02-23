@@ -79,13 +79,14 @@ int shader_init(Shader *shader,
     glLinkProgram(shader->program);
     glGetProgramiv(shader->program, GL_LINK_STATUS, &params);
     if (GL_TRUE != params) {
-        fprintf(stderr, "ERROR: could not link shader programme GL index %i\n",shader->program);
+        fprintf(stderr, "ERROR: could not link shader program GL index %i\n",shader->program);
         print_program_info_log(shader->program);
         return 1;
     }
 
 	shader->projection_matrix_location = glGetUniformLocation(shader->program, "projection_matrix");
 	shader->view_matrix_location = glGetUniformLocation(shader->program, "view_matrix");
-	
+    shader->light_position_location = glGetUniformLocation(shader->program, "light_position");
+
     return 0;
 }

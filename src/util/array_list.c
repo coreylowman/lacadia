@@ -53,6 +53,15 @@ void array_list_remove_at(ArrayList *array, int index){
     array->length = array->length - 1;
 }
 
+void array_list_grow(ArrayList *array){
+    int i = array->capacity;
+    array->capacity = 2 * array->capacity;
+    array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
+    for(;i < array->capacity;i++){
+        array->data[i] = NULL;
+    }
+}
+
 #define IMPL_ARRAY_LIST(T, name, default_value) \
 ArrayList_##name *array_list_new_##name##(){ \
     ArrayList_##name *array = malloc(sizeof(*array)); \
@@ -96,6 +105,15 @@ void array_list_remove_at_##name##(ArrayList_##name *array, int index){ \
     } \
     array->data[array->length - 1] = default_value; \
     array->length = array->length - 1; \
+} \
+\
+void array_list_grow_##name##(ArrayList_##name *array){ \
+    int i = array->capacity; \
+    array->capacity = 2 * array->capacity; \
+    array->data = realloc(array->data,array->capacity * sizeof(*(array->data))); \
+    for(;i < array->capacity;i++){ \
+        array->data[i] = default_value; \
+    } \
 }
 
 IMPL_ARRAY_LIST(float, f, 0.0)

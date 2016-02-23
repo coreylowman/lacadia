@@ -68,6 +68,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
             camera.follow_dist = 1.0;
         }
     }
+
+	if (inputs.r_pressed){
+		terrain_regen(&world->level->terrain);
+	}
 }
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){

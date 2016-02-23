@@ -68,7 +68,7 @@ void wall_render(Wall *self, Renderer *renderer){
     for(i = 0;i < self->num_renderables;i++){
         renderable_object_render(self->renderables[i], renderer);
     }
-    collidable_object_render(self->collidable, renderer);
+    //collidable_object_render(self->collidable, renderer);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other){

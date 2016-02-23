@@ -5,11 +5,12 @@ layout(location = 1) in vec3 vertex_normal;
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
+uniform vec3 light_position;
 
 out vec3 fragment_color;
 out vec3 fragment_position;
 out vec3 fragment_normal;
-out vec3 light_position;
+out vec3 light_position_camera;
 
 void main() {
     mat4 VP = projection_matrix * view_matrix;
@@ -17,6 +18,6 @@ void main() {
 
     fragment_color = vec3(1.0, 1.0, 1.0);
     fragment_position = (view_matrix * vec4(vertex_position, 1.0)).xyz;
-    light_position = (view_matrix * vec4(0.0, 10.0, 0.0, 1.0)).xyz;
+    light_position_camera = (view_matrix * vec4(light_position, 1.0)).xyz;
     fragment_normal = normalize((view_matrix * vec4(vertex_normal, 0.0)).xyz);
 }

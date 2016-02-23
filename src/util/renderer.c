@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include "renderer.h"
+#include "util/string_helpers.h"
+
+static Vec3 light_position = { .data = { 0, 100, 0 } };
 
 Renderer *renderer_new() {
     Renderer *self = malloc(sizeof(*self));
@@ -212,17 +215,20 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
     glUseProgram(self->terrain_shader.program);
     glUniformMatrix4fv(self->terrain_shader.projection_matrix_location, 1, GL_TRUE, &projection_matrix.data[0]);
     glUniformMatrix4fv(self->terrain_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
+	glUniform3f(self->terrain_shader.light_position_location, light_position.x, light_position.y, light_position.z);
+
+
     Terrain t;
     for(i = 0;i < self->num_terrains;i++){
         t = self->terrains[i];
         glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, t.num_vertices * sizeof(float), &t.vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, t.num_floats * sizeof(float), &t.vertices[0], GL_STATIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[1]);
-        glBufferData(GL_ARRAY_BUFFER, t.num_vertices * sizeof(float), &t.normals[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, t.num_floats * sizeof(float), &t.normals[0], GL_STATIC_DRAW);
 
         glBindVertexArray(self->terrain_vao);
-        glDrawArrays(GL_TRIANGLES, 0, t.num_vertices / 3);
+        glDrawArrays(GL_TRIANGLES, 0, t.num_floats / 3);
         glBindVertexArray(0);
     }
 	self->num_terrains = 0;

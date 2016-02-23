@@ -13,7 +13,8 @@ typedef struct { \
 ArrayList_##name *array_list_new_##name##(); \
 void array_list_free_##name##(void *data); \
 void array_list_push_##name##(ArrayList_##name *array, T data); \
-void array_list_remove_at_##name##(ArrayList_##name *array, int index);
+void array_list_remove_at_##name##(ArrayList_##name *array, int index); \
+void array_list_grow_##name##(ArrayList_##name *array);
 
 // array list of void pointers... needs a free element function pointer
 typedef struct {
@@ -27,6 +28,7 @@ ArrayList *array_list_new(void (*free_element)(void *element));
 void array_list_free(void *data);
 void array_list_push(ArrayList *array, void *data);
 void array_list_remove_at(ArrayList *array, int index);
+void array_list_grow(ArrayList *array);
 
 DEFINE_ARRAY_LIST(float, f)
 DEFINE_ARRAY_LIST(int, i)

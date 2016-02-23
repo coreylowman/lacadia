@@ -8,6 +8,7 @@ typedef struct Shader {
 
 	int projection_matrix_location;
 	int view_matrix_location;
+    int light_position_location;
 } Shader;
 
 int shader_init(Shader *shader, 

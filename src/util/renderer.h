@@ -12,7 +12,7 @@
 
 #define MAX_ASSETS 32
 #define MAX_UI_RECTS 128
-#define MAX_LINES 1024
+#define MAX_LINES 2048
 #define MAX_TERRAINS 4
 
 typedef struct Renderer {
