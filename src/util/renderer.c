@@ -4,7 +4,7 @@
 #include "renderer.h"
 #include "util/string_helpers.h"
 
-static Vec3 light_position = { .data = { 0, 100, 0 } };
+Vec3 light_position = { .data = { 0, 100, 0 } };
 
 Renderer *renderer_new() {
     Renderer *self = malloc(sizeof(*self));
@@ -13,7 +13,7 @@ Renderer *renderer_new() {
     //MODELS
     //
     shader_init(&self->model_shader, "shaders/model_vert.glsl", "shaders/model_frag.glsl");
-    self->num_models = 8;
+    self->num_models = 9;
     self->model_names[0] = "assets/default_box";
     self->model_names[1] = "assets/mage";
     self->model_names[2] = "assets/hunter";
@@ -22,7 +22,8 @@ Renderer *renderer_new() {
     self->model_names[5] = "assets/icicle";
     self->model_names[6] = "assets/burn_particle";
     self->model_names[7] = "assets/wall";
-    
+    self->model_names[8] = "assets/sphere";
+
     printf("Loading assets... ");
     int i;
     for(i = 0;i < self->num_models;i++){
@@ -228,7 +229,7 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
         glBufferData(GL_ARRAY_BUFFER, t.num_floats * sizeof(float), &t.normals[0], GL_STATIC_DRAW);
 
         glBindVertexArray(self->terrain_vao);
-        glDrawArrays(GL_TRIANGLES, 0, t.num_floats / 3);
+        glDrawArrays(GL_QUADS, 0, t.num_floats / 3);
         glBindVertexArray(0);
     }
 	self->num_terrains = 0;
@@ -270,5 +271,14 @@ void renderer_render_terrain(Renderer *self, Terrain terrain){
     }else {
         printf("error! too many lines\n");
     }
+}
+
+void renderer_render_sphere(Renderer *self, Vec3 position){
+    int model_id = renderer_get_model_id(self, "assets/sphere");
+    Mat4 model_matrix;
+    mat4_ident(&model_matrix);
+    mat4_translate(&model_matrix, position);
+    mat4_transpose(&model_matrix);
+    renderer_render_model(self, model_id, model_matrix);
 }
 

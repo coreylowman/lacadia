@@ -57,5 +57,6 @@ void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix);
 void renderer_render_rect(Renderer *self, Rect2 rect, Vec3 color);
 void renderer_render_line(Renderer *self, Line line);
 void renderer_render_terrain(Renderer *self, Terrain terrain);
+void renderer_render_sphere(Renderer *self, Vec3 position);
 
 #endif

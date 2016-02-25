@@ -9,39 +9,52 @@
 
 #define TERRAIN_SIZE 64
 #define OCTAVES 5
-#define JAGGEDNESS 1.0
-#define DAMPENING 0.2
+#define JAGGEDNESS 0.5
+#define DAMPENING 0.5
+
+
+/*
+oct: 5
+jagg: 1.0
+damp: 0.2
+91.235085 97.946098
+5.478073 9.646901
+*/
+
+/*
+oct: 5
+jagg: 0.5
+damp: 0.2
+25.345623 65.031891
+88.967560 49.69634
+*/
 
 static float height_map[TERRAIN_SIZE][TERRAIN_SIZE];
 
-static Vec3 start = { .data = { -32, 0, -32 } };
-static Vec3 dimensions = { .data = { 32, 8, 32 } };
-static Vec3 block_dimensions = { .data = { 20, 20, 20 } };
+static float height = TERRAIN_SIZE * 0.25;
+static Vec3 start = { .data = { -TERRAIN_SIZE * 0.5, -TERRAIN_SIZE * 0.125, -TERRAIN_SIZE * 0.5 } };
+static Vec3 block_dimensions = { .data = { 10, 10, 10 } };
 
 typedef struct {
-    Vec3 a, b, c;
-} Triangle;
+    Vec3 p[4];
+} Quad;
 
-static Vec3 triangle_normal(Triangle t){
-    Vec3 e1 = vec3_sub(t.b, t.a);
-    Vec3 e2 = vec3_sub(t.c, t.a);
+static Vec3 quad_normal(Quad q){
+    Vec3 e1 = vec3_sub(q.p[1], q.p[0]);
+    Vec3 e2 = vec3_sub(q.p[3], q.p[0]);
     Vec3 n = vec3_cross(e2, e1);
     vec3_normalize(&n);
-    return n; 
+    return n;
 }
 
-static void triangle_unload(Triangle t, float *arr){
-    arr[0] = t.a.x;
-    arr[1] = t.a.y;
-    arr[2] = t.a.z;
-    
-    arr[3] = t.b.x;
-    arr[4] = t.b.y;
-    arr[5] = t.b.z;
-
-    arr[6] = t.c.x;
-    arr[7] = t.c.y;
-    arr[8] = t.c.z;
+static void quad_unload(Quad t, float *arr){
+    int i, ind;
+    for(i = 0;i < 4;i++){
+        ind = 3 * i;
+        arr[ind + 0] = t.p[i].x;
+        arr[ind + 1] = t.p[i].y;
+        arr[ind + 2] = t.p[i].z;
+    }
 }
 
 static void normal_unload(Vec3 n, float *arr){
@@ -56,6 +69,10 @@ static void normal_unload(Vec3 n, float *arr){
     arr[6] = n.x;
     arr[7] = n.y;
     arr[8] = n.z;
+
+    arr[9] = n.x;
+    arr[10] = n.y;
+    arr[11] = n.z;
 }
 
 //todo:
@@ -83,7 +100,8 @@ void terrain_regen(Terrain *self){
 	free(self->vertices);
 	free(self->normals);
 
-	self->num_floats = 2 * 3 * 3 * (TERRAIN_SIZE - 1) * (TERRAIN_SIZE - 1);
+    //for each point in the terrain, there are 4 vertices, each with 3 floats
+	self->num_floats = 4 * 3 * TERRAIN_SIZE * TERRAIN_SIZE;
 	self->vertices = malloc(self->num_floats * sizeof(float));
 	self->normals = malloc(self->num_floats * sizeof(float));
 
@@ -98,9 +116,12 @@ void terrain_regen(Terrain *self){
 		octave_ivals[i] = 1.0 / octave_vals[i];
 	}
 
+    //pick random start position
 	float sx = random_in_rangef(0.0f, 100.0f);
 	float sy = random_in_rangef(0.0f, 100.0f);
+    printf("%f %f\n", sx, sy);
 
+    //compute the height for the terrain
 	for (i = 0; i < TERRAIN_SIZE; i++){
 		for (j = 0; j < TERRAIN_SIZE; j++){
 			tx = JAGGEDNESS * i / TERRAIN_SIZE;
@@ -112,162 +133,128 @@ void terrain_regen(Terrain *self){
 				height_map[i][j] += octave_ivals[k] * simplex_noise(sx + octave_vals[k] * tx, sy + octave_vals[k] * tz);
 			}
 
-			height_map[i][j] *= dimensions.y;
+			height_map[i][j] *= height;
 			height_map[i][j] = block_dimensions.y * ((int)(height_map[i][j]) + start.y);
 		}
 	}
 
+    //build the mesh for the terrain
     ArrayList_f *extra_vertices = array_list_new_f();
     ArrayList_f *extra_normals = array_list_new_f();
 
 	int ind;
 	Vec3 a, b, e1, e2, normal;
-	Triangle t;
-	float ti[3], tj[3];
-	for (i = 0; i < TERRAIN_SIZE - 1; i++){
-		for (j = 0; j < TERRAIN_SIZE - 1; j++){
-			ind = 18 * (i + j * (TERRAIN_SIZE - 1));
-			ti[1] = (start.x + i) * block_dimensions.x;
-			ti[0] = ti[1] - block_dimensions.x;
-			ti[2] = ti[1] + block_dimensions.x;
-			tj[1] = (start.z + j) * block_dimensions.z;
-			tj[2] = tj[1] - block_dimensions.z;
-			tj[2] = tj[1] + block_dimensions.z;
+    Quad q;
+	float ti[2], tj[2];
+	for (i = 0; i < TERRAIN_SIZE; i++){
+		for (j = 0; j < TERRAIN_SIZE; j++){
+			ind = 12 * (i + j * TERRAIN_SIZE);
+            //x positions
+            ti[0] = (start.x + i) * block_dimensions.x;
+            ti[1] = ti[0] + block_dimensions.x;
 
-			//triangle 1
-            t.a = vec3_from_3f(ti[1], height_map[i][j], tj[1]);
-			t.b = vec3_from_3f(ti[2], height_map[i][j], tj[1]);
-			t.c = vec3_from_3f(ti[1], height_map[i][j], tj[2]);
-			normal = triangle_normal(t);
-            normal_unload(normal, self->normals + ind);			
-			triangle_unload(t, self->vertices + ind);
+            //z positions
+			tj[0] = (start.z + j) * block_dimensions.z;
+			tj[1] = tj[0] + block_dimensions.z;
 
-			//triangle 2
-            t.a = vec3_from_3f(ti[1], height_map[i][j], tj[2]);
-			t.b = vec3_from_3f(ti[2], height_map[i][j], tj[1]);
-			t.c = vec3_from_3f(ti[2], height_map[i][j], tj[2]);
-			normal = triangle_normal(t);
-			normal_unload(normal, self->normals + ind + 9);
-			triangle_unload(t, self->vertices + ind + 9);
+            q.p[0] = vec3_from_3f(ti[0], height_map[i][j], tj[0]);
+            q.p[1] = vec3_from_3f(ti[1], height_map[i][j], tj[0]);
+            q.p[2] = vec3_from_3f(ti[1], height_map[i][j], tj[1]);
+            q.p[3] = vec3_from_3f(ti[0], height_map[i][j], tj[1]);
+            normal = quad_normal(q);
+            normal_unload(normal, self->normals + ind);
+            quad_unload(q, self->vertices + ind);
 
-            if(i > 0){
+            if(i < TERRAIN_SIZE - 1){
                 float h[2];
-                if(height_map[i-1][j] < height_map[i][j]){
-                    //current place is higher than place to the left
-                    //triangle 1
-                    h[0] = height_map[i-1][j];
+                if(height_map[i][j] < height_map[i+1][j]){
+                    //at start you are facing -z
+                    //with +x to the right
+
+                    //current spot is lower than place to the right
+                    h[0] = height_map[i][j];
+                    h[1] = height_map[i+1][j];
+
+                    q.p[0] = vec3_from_3f(ti[1], h[0], tj[0]);
+                    q.p[1] = vec3_from_3f(ti[1], h[1], tj[0]);
+                    q.p[2] = vec3_from_3f(ti[1], h[1], tj[1]);
+                    q.p[3] = vec3_from_3f(ti[1], h[0], tj[1]);
+                    normal = quad_normal(q);
+
+                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
+                    normal_unload(normal, extra_normals->data + extra_normals->length);
+                    extra_normals->length += 12;
+
+                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
+                    quad_unload(q, extra_vertices->data + extra_vertices->length);
+                    extra_vertices->length += 12;                    
+                }else if(height_map[i][j] > height_map[i+1][j]){
+                    //current spot is higher than place to the right
+                    h[0] = height_map[i+1][j];
                     h[1] = height_map[i][j];
-                    t.a = vec3_from_3f(ti[1], h[0], tj[1]);
-                    t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-                    t.c = vec3_from_3f(ti[1], h[0], tj[2]);
-                    normal = triangle_normal(t);
-                    if(extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-                    normal_unload(normal, extra_normals->data + extra_normals->length);
-                    extra_normals->length += 9;
-                    if(extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-                    triangle_unload(t, extra_vertices->data + extra_vertices->length);
-                    extra_vertices->length += 9;
 
-                    //triangle 2
-                    t.a = vec3_from_3f(ti[1], h[0], tj[2]);
-                    t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-                    t.c = vec3_from_3f(ti[1], h[1], tj[2]);
-                    normal = triangle_normal(t);
-                    if(extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-                    normal_unload(normal, extra_normals->data + extra_normals->length);
-                    extra_normals->length += 9;
-                    if(extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-                    triangle_unload(t, extra_vertices->data + extra_vertices->length);
-                    extra_vertices->length += 9;
-                }else if(height_map[i-1][j] > height_map[i][j]){
-                    //current place is lower than the place to the left
-					//triangle 1
-					h[0] = height_map[i][j];
-					h[1] = height_map[i-1][j];
-					t.a = vec3_from_3f(ti[1], h[0], tj[1]);
-					t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-					t.c = vec3_from_3f(ti[1], h[0], tj[2]);
-					normal = triangle_normal(t);
-					if(extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-					normal_unload(normal, extra_normals->data + extra_normals->length);
-					extra_normals->length += 9;
-					if(extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-					triangle_unload(t, extra_vertices->data + extra_vertices->length);
-					extra_vertices->length += 9;
+                    q.p[0] = vec3_from_3f(ti[1], h[0], tj[1]);
+                    q.p[1] = vec3_from_3f(ti[1], h[1], tj[1]);
+                    q.p[2] = vec3_from_3f(ti[1], h[1], tj[0]);
+                    q.p[3] = vec3_from_3f(ti[1], h[0], tj[0]);
+                    normal = quad_normal(q);
 
-					//triangle 2
-					t.a = vec3_from_3f(ti[1], h[0], tj[2]);
-					t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-					t.c = vec3_from_3f(ti[1], h[1], tj[2]);
-					normal = triangle_normal(t);
-					if(extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-					normal_unload(normal, extra_normals->data + extra_normals->length);
-					extra_normals->length += 9;
-					if(extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-					triangle_unload(t, extra_vertices->data + extra_vertices->length);
-					extra_vertices->length += 9;
+                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
+                    normal_unload(normal, extra_normals->data + extra_normals->length);
+                    extra_normals->length += 12;
+
+                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
+                    quad_unload(q, extra_vertices->data + extra_vertices->length);
+                    extra_vertices->length += 12;                    
                 }
             }
 
-            if(j > 0){
-				float h[2];
-                if(height_map[i][j-1] < height_map[i][j]){
-                    //current place is higher than the place to the bottom
-					//triangle 1
-					h[0] = height_map[i][j-1];
-					h[1] = height_map[i][j];
-					t.a = vec3_from_3f(ti[1], h[0], tj[1]);
-					t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-					t.c = vec3_from_3f(ti[2], h[0], tj[1]);
-					normal = triangle_normal(t);
-					if (extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-					normal_unload(normal, extra_normals->data + extra_normals->length);
-					extra_normals->length += 9;
-					if (extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-					triangle_unload(t, extra_vertices->data + extra_vertices->length);
-					extra_vertices->length += 9;
+            if(j < TERRAIN_SIZE - 1){
+                float h[2];
+                if(height_map[i][j] < height_map[i][j+1]){
+                    //at start you are facing -z
+                    //with +x to the right
 
-					//triangle 2
-					t.a = vec3_from_3f(ti[2], h[0], tj[1]);
-					t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-					t.c = vec3_from_3f(ti[2], h[1], tj[1]);
-					normal = triangle_normal(t);
-					if (extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-					normal_unload(normal, extra_normals->data + extra_normals->length);
-					extra_normals->length += 9;
-					if (extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-					triangle_unload(t, extra_vertices->data + extra_vertices->length);
-					extra_vertices->length += 9;
-                }else if(height_map[i][j-1] > height_map[i][j]){
-                    //current place is lower than the place to the bottom
-					h[0] = height_map[i][j];
-					h[1] = height_map[i][j-1];
-					t.a = vec3_from_3f(ti[1], h[0], tj[1]);
-					t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-					t.c = vec3_from_3f(ti[2], h[0], tj[1]);
-					normal = triangle_normal(t);
-					if(extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-					normal_unload(normal, extra_normals->data + extra_normals->length);
-					extra_normals->length += 9;
-					if(extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-					triangle_unload(t, extra_vertices->data + extra_vertices->length);
-					extra_vertices->length += 9;
+                    //current spot is lower than place behind
+                    h[0] = height_map[i][j];
+                    h[1] = height_map[i][j+1];
 
-					//triangle 2
-					t.a = vec3_from_3f(ti[2], h[0], tj[1]);
-					t.b = vec3_from_3f(ti[1], h[1], tj[1]);
-					t.c = vec3_from_3f(ti[2], h[1], tj[1]);
-					normal = triangle_normal(t);
-					if(extra_normals->capacity - extra_normals->length <= 9) array_list_grow_f(extra_normals);
-					normal_unload(normal, extra_normals->data + extra_normals->length);
-					extra_normals->length += 9;
-					if(extra_vertices->capacity - extra_vertices->length <= 9) array_list_grow_f(extra_vertices);
-					triangle_unload(t, extra_vertices->data + extra_vertices->length);
-					extra_vertices->length += 9;
+                    q.p[0] = vec3_from_3f(ti[1], h[0], tj[1]);
+                    q.p[1] = vec3_from_3f(ti[1], h[1], tj[1]);
+                    q.p[2] = vec3_from_3f(ti[0], h[1], tj[1]);
+                    q.p[3] = vec3_from_3f(ti[0], h[0], tj[1]);
+                    normal = quad_normal(q);
+
+                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
+                    normal_unload(normal, extra_normals->data + extra_normals->length);
+                    extra_normals->length += 12;
+
+                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
+                    quad_unload(q, extra_vertices->data + extra_vertices->length);
+                    extra_vertices->length += 12;                    
+                }else if(height_map[i][j] > height_map[i][j+1]){
+                    //current spot is higher than place behind
+                    h[0] = height_map[i][j+1];
+                    h[1] = height_map[i][j];
+
+                    q.p[0] = vec3_from_3f(ti[0], h[0], tj[1]);
+                    q.p[1] = vec3_from_3f(ti[0], h[1], tj[1]);
+                    q.p[2] = vec3_from_3f(ti[1], h[1], tj[1]);
+                    q.p[3] = vec3_from_3f(ti[1], h[0], tj[1]);
+                    normal = quad_normal(q);
+
+                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
+                    normal_unload(normal, extra_normals->data + extra_normals->length);
+                    extra_normals->length += 12;
+
+                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
+                    quad_unload(q, extra_vertices->data + extra_vertices->length);
+                    extra_vertices->length += 12;                                      
                 }
             }
 		}
 	}
+    
     int new_length = self->num_floats + extra_vertices->length;
     self->vertices = realloc(self->vertices, new_length * sizeof(float));
     self->normals = realloc(self->normals, new_length * sizeof(float));
