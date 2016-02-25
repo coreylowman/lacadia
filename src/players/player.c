@@ -103,8 +103,8 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
     float t_dt = dt / (float)num_moves;
     if (inputs.w_down) player_move_forwards(self, t_dt, 1.0);
     if (inputs.s_down) player_move_forwards(self, t_dt, -1.0);
-    if (inputs.a_down) player_strafe(self, t_dt, -1.0);
-    if (inputs.d_down) player_strafe(self, t_dt, 1.0);
+	if (inputs.d_down) player_strafe(self, t_dt, 1.0);
+	if (inputs.a_down) player_strafe(self, t_dt, -1.0);    
 }
 
 void player_on_collide(GameObject *self, GameObject *other){

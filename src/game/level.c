@@ -48,18 +48,17 @@ void level_render(Level *self, Renderer *renderer){
         wall_render(self->walls[i], renderer);
     }
     renderer_render_terrain(renderer, self->terrain);
-	// int num_triangles = self->terrain.num_floats / 3;
+	// int num_quads = self->terrain.num_floats / 12;
 	// int ind;
 	// Vec3 a, b, n;
-	// Line l; 
-	// int start = 30000;
-	// int end = start + 1024;
-	// for (i = start; i < end; i+=3){
-	// 	ind = 3 * i;
+	// Line l;
+	// for (i = 0; i < num_quads; i++){
+	// 	ind = 12 * i;
 	// 	a = vec3_from_3f(self->terrain.vertices[ind], self->terrain.vertices[ind + 1], self->terrain.vertices[ind + 2]);
 	// 	a = vec3_add(a, vec3_from_3f(self->terrain.vertices[ind + 3], self->terrain.vertices[ind + 4], self->terrain.vertices[ind + 5]));
-	// 	a = vec3_add(a, vec3_from_3f(self->terrain.vertices[ind + 6], self->terrain.vertices[ind + 7], self->terrain.vertices[ind + 8]));
-	// 	a = vec3_scale(a, 0.333333333333f);
+ //        a = vec3_add(a, vec3_from_3f(self->terrain.vertices[ind + 6], self->terrain.vertices[ind + 7], self->terrain.vertices[ind + 8]));
+	// 	a = vec3_add(a, vec3_from_3f(self->terrain.vertices[ind + 9], self->terrain.vertices[ind + 10], self->terrain.vertices[ind + 11]));
+	// 	a = vec3_scale(a, 0.25);
 	// 	n = vec3_from_3f(self->terrain.normals[ind], self->terrain.normals[ind + 1], self->terrain.normals[ind + 2]);
 	// 	b = vec3_add(a, n);
 	// 	l.start = a;

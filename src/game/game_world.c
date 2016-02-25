@@ -18,6 +18,7 @@
 
 extern Mat4 MAT4_IDENT;
 extern Vec3 VEC3_UNIT_Y;
+extern Vec3 light_position;
 
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
@@ -177,6 +178,8 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
     ParticleSystem *ps;
     Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
     Vec3 healthbar_loc;
+
+    renderer_render_sphere(self->renderer, light_position);
 
     //gather updates to the various things
 	Player *p = self->player;

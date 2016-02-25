@@ -25,7 +25,7 @@ Player *mage_new(GameWorld *world){
     affectable_object_init(&self->affectable);
 
     self->moveable.speed = 5.0;
-    self->moveable.direction = (Vec3) { .data = { 0, 0, 1 } };
+    self->moveable.direction = (Vec3) { .data = { 0, 0, -1 } };
     self->moveable.position = (Vec3) { .data = { 0, 0, 0 } };
 
     self->renderable.model_id = game_world_get_model_id(world, "assets/mage");
