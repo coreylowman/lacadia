@@ -16,7 +16,7 @@ void main() {
     mat4 VP = projection_matrix * view_matrix;
     gl_Position = VP * vec4(vertex_position, 1.0);
 
-    fragment_color = vec3(1.0, 1.0, 1.0);
+    fragment_color = vec3(0.0, 0.80859375, 0.203125);
     fragment_position = (view_matrix * vec4(vertex_position, 1.0)).xyz;
     light_position_camera = (view_matrix * vec4(light_position, 1.0)).xyz;
     fragment_normal = normalize((view_matrix * vec4(vertex_normal, 0.0)).xyz);

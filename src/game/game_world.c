@@ -184,12 +184,12 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
     //gather updates to the various things
 	Player *p = self->player;
     renderable_object_render(p->renderable, self->renderer);
-    //collidable_object_render(p->collidable, self->renderer);
+    // collidable_object_render(p->collidable, self->renderer);
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
         renderable_object_render(s->renderable, self->renderer);
-        //collidable_object_render(s->collidable, self->renderer);
+        // collidable_object_render(s->collidable, self->renderer);
     }
 	for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
@@ -197,7 +197,7 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
         healthbar_loc = vec3_add(obb_top(e->collidable.bounding_box), above);
         healthbar_loc = game_world_world_coords_to_screen_coords(self, healthbar_loc);
         renderable_object_render(e->renderable, self->renderer);
-        //collidable_object_render(e->collidable, self->renderer);
+        // collidable_object_render(e->collidable, self->renderer);
         affectable_object_render(e->affectable, healthbar_loc, self->renderer);
     }
     for (i = 0; i < self->particle_systems->length; i++){

@@ -168,6 +168,9 @@ int main(int argc, char *argv[]){
     init_glew();
     camera_init(&camera, width, height);
 
+	//sky blue
+	glClearColor(0.52734375, 0.8046875, 0.91796875, 1.0);
+
 	world = game_world_new();
     player = mage_new(world);
     game_world_set_player(world, player);

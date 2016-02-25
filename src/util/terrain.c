@@ -10,7 +10,7 @@
 #define TERRAIN_SIZE 64
 #define OCTAVES 5
 #define JAGGEDNESS 0.5
-#define DAMPENING 0.5
+#define DAMPENING 0.2
 
 
 /*
@@ -33,7 +33,7 @@ static float height_map[TERRAIN_SIZE][TERRAIN_SIZE];
 
 static float height = TERRAIN_SIZE * 0.25;
 static Vec3 start = { .data = { -TERRAIN_SIZE * 0.5, -TERRAIN_SIZE * 0.125, -TERRAIN_SIZE * 0.5 } };
-static Vec3 block_dimensions = { .data = { 10, 10, 10 } };
+static Vec3 block_dimensions = { .data = { 5, 5, 5 } };
 
 typedef struct {
     Vec3 p[4];
@@ -117,9 +117,10 @@ void terrain_regen(Terrain *self){
 	}
 
     //pick random start position
-	float sx = random_in_rangef(0.0f, 100.0f);
-	float sy = random_in_rangef(0.0f, 100.0f);
-    printf("%f %f\n", sx, sy);
+	// float sx = random_in_rangef(0.0f, 100.0f);
+	// float sy = random_in_rangef(0.0f, 100.0f);
+    // printf("%f %f\n", sx, sy);
+    float sx = 25.345623, sy = 65.031891;
 
     //compute the height for the terrain
 	for (i = 0; i < TERRAIN_SIZE; i++){
