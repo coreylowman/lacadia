@@ -1,6 +1,9 @@
 #version 400
 
-in vec3 fragment_color;
+uniform sampler2D tex[3];
+
+flat in int texture_index;
+in vec2 texture_coords;
 in vec3 fragment_position;
 in vec3 fragment_normal;
 in vec3 light_position_camera;
@@ -9,8 +12,14 @@ in vec3 light_position_camera;
 out vec4 color;
 
 void main() {
-    vec3 light_color = vec3(1.0, 1.0, 1.0);
+    vec4 light_color = vec4(1.0, 1.0, 1.0, 1.0);
     float light_power = 0.75;
+
+    vec4 fragment_color;
+    if(texture_index == 0)
+        fragment_color = texture(tex[0], texture_coords);
+    else
+        fragment_color = texture(tex[1], texture_coords);
 
     vec3 n = normalize(fragment_normal);
     vec3 l = normalize(light_position_camera - fragment_position);
@@ -22,13 +31,13 @@ void main() {
     float cosAlpha = clamp(dot(e, r), 0.0, 1.0);
 
     //ambient color
-    vec3 fcolor = vec3(0.1, 0.1, 0.1) * fragment_color;
+    color = vec4(0.5, 0.5, 0.5, 1.0) * fragment_color;
 
     //diffuse color
-    fcolor += fragment_color * light_color * light_power * cosTheta / dist;
+    color += fragment_color * light_color * light_power * cosTheta / dist;
 
     //specular color
-    fcolor += 0.25 * light_color * light_power * pow(cosAlpha, 5) / dist;
+    // color += 0.25 * light_color * light_power * pow(cosAlpha, 5) / dist;
 
-    color = vec4(fcolor, 1.0);
+    color.a = 1.0;
 }

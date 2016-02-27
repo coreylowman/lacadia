@@ -87,6 +87,7 @@ int shader_init(Shader *shader,
 	shader->projection_matrix_location = glGetUniformLocation(shader->program, "projection_matrix");
 	shader->view_matrix_location = glGetUniformLocation(shader->program, "view_matrix");
     shader->light_position_location = glGetUniformLocation(shader->program, "light_position");
+    shader->texture_location = glGetUniformLocation(shader->program, "tex");
 
     return 0;
 }

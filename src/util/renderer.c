@@ -1,10 +1,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glew.h>
+#include "lodepng.h"
 #include "renderer.h"
 #include "util/string_helpers.h"
 
 Vec3 light_position = { .data = { 0, 100, 0 } };
+
+static int load_png_data(const char *filename, unsigned char **image, unsigned *width, unsigned * height){
+    unsigned error;
+    unsigned char* png = 0;
+    size_t pngsize;
+
+    error = lodepng_load_file(&png, &pngsize, filename);
+    if(!error) error = lodepng_decode32(image, width, height, png, pngsize);
+    if(error){
+        printf("error %u: %s\n", error, lodepng_error_text(error));  
+        free(png);
+        return 0;
+    }
+
+    free(png);
+    return 1;
+}
 
 Renderer *renderer_new() {
     Renderer *self = malloc(sizeof(*self));
@@ -107,7 +125,7 @@ Renderer *renderer_new() {
     glGenVertexArrays(1, &self->terrain_vao);
     glBindVertexArray(self->terrain_vao);
     
-    glGenBuffers(2, &self->terrain_vbo[0]);
+    glGenBuffers(4, &self->terrain_vbo[0]);
     
     //vertex data buffer object
     glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[0]);
@@ -118,8 +136,56 @@ Renderer *renderer_new() {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
+    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[2]);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[3]);
+    glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(3);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    unsigned png_width, png_height;
+
+    //size should be 256x256
+    if(!load_png_data("assets/grass.2d.png", &self->textures[0], &png_width, &png_height)){
+        printf("error: cannot load \"assets/grass.2d.png\"\n");
+    }
+
+    if(!load_png_data("assets/grass_dirt.2d.png", &self->textures[1], &png_width, &png_height)){
+        printf("error: cannot load \"assets/grass_dirt.2d.png\"\n");
+    }
+
+    if(!load_png_data("assets/dirt.2d.png", &self->textures[2], &png_width, &png_height)){
+        printf("error: cannot load \"assets/dirt.2d.png\"\n");
+    }
+
+	glGenTextures(3, &self->texture_ids[0]);
+
+	glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, self->textures[0]);
+
+    glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, self->textures[1]);
+
+    glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, self->textures[2]);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
     return self;
 }
@@ -130,6 +196,9 @@ void renderer_free(Renderer *self){
         obj_model_free(self->models[i]);
         array_list_free_m4(self->model_model_matrices[i]);
     }
+    free(self->textures[0]);
+    free(self->textures[1]);
+    free(self->textures[2]);
 	free(self);
 }
 
@@ -217,7 +286,18 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
     glUniformMatrix4fv(self->terrain_shader.projection_matrix_location, 1, GL_TRUE, &projection_matrix.data[0]);
     glUniformMatrix4fv(self->terrain_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
 	glUniform3f(self->terrain_shader.light_position_location, light_position.x, light_position.y, light_position.z);
+    
+    glUniform1i(self->terrain_shader.texture_location + 0, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);
 
+    glUniform1i(self->terrain_shader.texture_location + 1, 1);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]);
+    
+    glUniform1i(self->terrain_shader.texture_location + 2, 2);
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]);
 
     Terrain t;
     for(i = 0;i < self->num_terrains;i++){
@@ -228,10 +308,17 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
         glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[1]);
         glBufferData(GL_ARRAY_BUFFER, t.num_floats * sizeof(float), &t.normals[0], GL_STATIC_DRAW);
 
+		glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[2]);
+		glBufferData(GL_ARRAY_BUFFER, t.num_texture_floats * sizeof(float), &t.texture_coords[0], GL_STATIC_DRAW);
+		
+        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[3]);
+        glBufferData(GL_ARRAY_BUFFER, t.num_texture_inds * sizeof(int), &t.texture_inds[0], GL_STATIC_DRAW);
+
         glBindVertexArray(self->terrain_vao);
         glDrawArrays(GL_QUADS, 0, t.num_floats / 3);
         glBindVertexArray(0);
     }
+
 	self->num_terrains = 0;
 }
 

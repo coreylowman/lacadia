@@ -43,10 +43,10 @@ void level_free(Level *self){
 }
 
 void level_render(Level *self, Renderer *renderer){
-    int i;
-    for(i = 0;i < self->num_walls;i++){
-        wall_render(self->walls[i], renderer);
-    }
+    // int i;
+    // for(i = 0;i < self->num_walls;i++){
+    //     wall_render(self->walls[i], renderer);
+    // }
     renderer_render_terrain(renderer, self->terrain);
 	// int num_quads = self->terrain.num_floats / 12;
 	// int ind;
