@@ -48,6 +48,18 @@ void inputs_update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, in
     if (key == GLFW_KEY_S && action == GLFW_PRESS) i->s_down = 1;
     else if (key == GLFW_KEY_S && action == GLFW_RELEASE) i->s_down = 0;
 
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS) i->up_down = 1;
+    else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) i->up_down = 0;
+
+    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) i->down_down = 1;
+    else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) i->down_down = 0;
+    
+    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) i->left_down = 1;
+    else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) i->left_down = 0;
+
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) i->right_down = 1;
+    else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) i->right_down = 0;
+
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         if(mod == GLFW_MOD_SHIFT) i->space_shift_down = 1;
         i->space_down = 1;

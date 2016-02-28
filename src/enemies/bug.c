@@ -14,7 +14,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
     self->affectable.stats.max_health = 25;
     affectable_object_init(&self->affectable);
 
-    self->moveable.speed = 3.0;
+    self->moveable.speed = 7.5;
     self->moveable.position = position;
     self->moveable.direction = (Vec3) { .data = { 0, 0, -1 } };
 
@@ -29,6 +29,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 
     self->on_update = bug_on_update;
     self->attack = melee_hit_ability;
+    self->attack.max_cooldown = 1.0;
 
 	return self;
 }
@@ -40,13 +41,15 @@ void bug_on_update(Enemy *self, double dt){
     Player *player = self->target->container;
     Vec3 pos = self->moveable.position;
     Vec3 target_pos = player->moveable.position;
-    self->moveable.direction = vec3_sub(target_pos, pos);
+    self->moveable.direction = vec3_sub(target_pos, pos);    
     float dist = sqrt(vec3_dot(self->moveable.direction, self->moveable.direction));
-    if(dist < 10){
-        if(ability_is_ready(self->attack))
+    vec3_normalize(&self->moveable.direction);
+    if(ability_is_ready(self->attack)){
+        if(dist < 3){
             ability_use(&self->attack, self->base_object->world, self->base_object);
-    }else{
-        moveable_object_update(&self->moveable, dt);        
+        }else{
+            moveable_object_update(&self->moveable, dt);        
+        }
     }
     vec3_normalize(&self->moveable.direction);
 }

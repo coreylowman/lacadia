@@ -7,12 +7,23 @@
 #include "random.h"
 #include "util/array_list.h"
 
-#define TERRAIN_SIZE 64
-#define OCTAVES 5
+#define TERRAIN_SIZE 128
+#define OCTAVES 3
 #define JAGGEDNESS 0.5
-#define DAMPENING 0.2
+#define DAMPENING 0.5
+//#define RANDOM_TERRAIN
 
 TerrainVertex TERRAIN_VERTEX_DEFAULT = { .position = { 0, 0, 0 }, .normal = { 0, 0, 0 }, .texture = { 0, 0 } };
+/*
+#define TERRAIN_SIZE 64
+#define OCTAVES 3
+#define JAGGEDNESS 0.5
+#define DAMPENING 0.5
+
+29.88 85.65
+15.729239 98.638878
+
+*/
 
 /*
 oct: 5
@@ -35,6 +46,9 @@ static float height_map[TERRAIN_SIZE][TERRAIN_SIZE];
 static float height = TERRAIN_SIZE * 0.25;
 static Vec3 start = { .data = { -TERRAIN_SIZE * 0.5, -TERRAIN_SIZE * 0.125, -TERRAIN_SIZE * 0.5 } };
 static Vec3 block_dimensions = { .data = { 5, 5, 5 } };
+static Vec3 terrain_offset = { .data = { -2.5, -30, -17.5 } };
+
+static float sx = 15.729239, sy = 98.638878;
 
 typedef struct {
     Vec3 p[4];
@@ -147,10 +161,12 @@ void terrain_regen(Terrain *self){
 	}
 
     //pick random start position
-	// float sx = random_in_rangef(0.0f, 100.0f);
-	// float sy = random_in_rangef(0.0f, 100.0f);
-    // printf("%f %f\n", sx, sy);
-    float sx = 25.345623, sy = 65.031891;
+#ifdef RANDOM_TERRAIN
+	sx = random_in_rangef(0.0f, 100.0f);
+	sy = random_in_rangef(0.0f, 100.0f);
+    printf("%f %f\n", sx, sy);
+#endif
+	
 
     //compute the height for the terrain
 	for (i = 0; i < TERRAIN_SIZE; i++){
@@ -166,6 +182,7 @@ void terrain_regen(Terrain *self){
 
 			height_map[i][j] *= height;
 			height_map[i][j] = block_dimensions.y * ((int)(height_map[i][j]) + start.y);
+            height_map[i][j] += terrain_offset.y;
 		}
 	}
 
@@ -177,27 +194,29 @@ void terrain_regen(Terrain *self){
     Quad q;
     TerrainVertex v;
 	float ti[2], tj[2];
+    float h[2];
 	for (i = 0; i < TERRAIN_SIZE; i++){
 		for (j = 0; j < TERRAIN_SIZE; j++){
 			ind = 4 * (i + j * TERRAIN_SIZE);
 
+            h[0] = height_map[i][j];
+
             //x positions
-            ti[0] = (start.x + i) * block_dimensions.x;
+            ti[0] = (start.x + i) * block_dimensions.x + terrain_offset.x;
             ti[1] = ti[0] + block_dimensions.x;
 
             //z positions
-			tj[0] = (start.z + j) * block_dimensions.z;
+			tj[0] = (start.z + j) * block_dimensions.z + terrain_offset.z;
 			tj[1] = tj[0] + block_dimensions.z;
 
-            q.p[0] = vec3_from_3f(ti[0], height_map[i][j], tj[0]);
-            q.p[1] = vec3_from_3f(ti[1], height_map[i][j], tj[0]);
-            q.p[2] = vec3_from_3f(ti[1], height_map[i][j], tj[1]);
-            q.p[3] = vec3_from_3f(ti[0], height_map[i][j], tj[1]);
+            q.p[0] = vec3_from_3f(ti[0], h[0], tj[0]);
+            q.p[1] = vec3_from_3f(ti[1], h[0], tj[0]);
+            q.p[2] = vec3_from_3f(ti[1], h[0], tj[1]);
+            q.p[3] = vec3_from_3f(ti[0], h[0], tj[1]);
             normal = quad_normal(q);
             terrain_vertex_unload(self->grass_vertices + ind, q, normal);
             
             if(i < TERRAIN_SIZE - 1){
-                float h[2];
                 if(height_map[i][j] < height_map[i+1][j]){
                     //at start you are facing -z
                     //with +x to the right
@@ -227,7 +246,6 @@ void terrain_regen(Terrain *self){
             }
 
             if(j < TERRAIN_SIZE - 1){
-                float h[2];
                 if(height_map[i][j] < height_map[i][j+1]){
                     //at start you are facing -z
                     //with +x to the right

@@ -32,7 +32,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
     if(user->type == GAME_OBJECT_TYPE_PLAYER){
         Player *player = user->container;
 		self->moveable = player->moveable;
-        self->moveable.speed = 10.0;
+        self->moveable.speed = 30.0;
         self->moveable.position = vec3_add(player->moveable.position, player->moveable.direction);
 		self->moveable.position.y += 0.5 * player->collidable.bounding_box.radius.y;
         self->caster_type = GAME_OBJECT_TYPE_PLAYER;

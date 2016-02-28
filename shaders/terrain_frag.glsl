@@ -26,7 +26,7 @@ void main() {
     float cosAlpha = clamp(dot(e, r), 0.0, 1.0);
 
     //ambient color
-    color = vec4(0.5, 0.5, 0.5, 1.0) * fragment_color;
+    color = vec4(0.4, 0.4, 0.4, 1.0) * fragment_color;
 
     //diffuse color
     color += fragment_color * light_color * light_power * cosTheta / dist;
