@@ -42,7 +42,7 @@ typedef struct Renderer {
     Shader terrain_shader;
     int num_terrains;
     Terrain terrains[MAX_TERRAINS];
-    unsigned int terrain_vbo[4], terrain_vao;
+    unsigned int terrain_vbo, terrain_vao;
     unsigned char *textures[3];
     unsigned int texture_ids[3];
 } Renderer;

@@ -2,6 +2,7 @@
 #include "array_list.h"
 
 extern Mat4 MAT4_IDENT;
+extern TerrainVertex TERRAIN_VERTEX_DEFAULT;
 
 ArrayList *array_list_new(void (*free_element)(void *element)){
     ArrayList *array = malloc(sizeof(*array));
@@ -62,6 +63,21 @@ void array_list_grow(ArrayList *array){
     }
 }
 
+void array_list_grow_to_capactiy(ArrayList *array, size_t size){
+    int i = array->capacity;
+    array->capacity = size;
+    array->data = realloc(array->data, array->capacity * sizeof(*(array->data)));
+    for(;i < array->capacity;i++){
+        array->data[i] = NULL;
+    }
+}
+
+void array_list_shrink_to_fit(ArrayList *array){
+    int i = array->capacity;
+    array->capacity = array->length;
+    array->data = realloc(array->data,array->capacity * sizeof(*(array->data)));
+}
+
 #define IMPL_ARRAY_LIST(T, name, default_value) \
 ArrayList_##name *array_list_new_##name##(){ \
     ArrayList_##name *array = malloc(sizeof(*array)); \
@@ -114,9 +130,25 @@ void array_list_grow_##name##(ArrayList_##name *array){ \
     for(;i < array->capacity;i++){ \
         array->data[i] = default_value; \
     } \
+} \
+\
+void array_list_grow_to_capactiy_##name##(ArrayList_##name *array, size_t size) { \
+    int i = array->capacity; \
+    array->capacity = size; \
+    array->data = realloc(array->data, array->capacity * sizeof(*(array->data))); \
+    for(;i < array->capacity;i++){ \
+        array->data[i] = default_value; \
+    } \
+} \
+\
+void array_list_shrink_to_fit_##name##(ArrayList_##name *array) { \
+    int i = array->capacity; \
+    array->capacity = array->length; \
+    array->data = realloc(array->data,array->capacity * sizeof(*(array->data))); \
 }
 
 IMPL_ARRAY_LIST(float, f, 0.0)
 IMPL_ARRAY_LIST(int, i, 0)
 IMPL_ARRAY_LIST(short, s, 0)
 IMPL_ARRAY_LIST(Mat4, m4, MAT4_IDENT)
+IMPL_ARRAY_LIST(TerrainVertex, tv, TERRAIN_VERTEX_DEFAULT)

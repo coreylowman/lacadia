@@ -12,6 +12,8 @@
 #define JAGGEDNESS 0.5
 #define DAMPENING 0.2
 
+TerrainVertex TERRAIN_VERTEX_DEFAULT = { .position = { 0, 0, 0 }, .normal = { 0, 0, 0 }, .texture = { 0, 0 } };
+
 /*
 oct: 5
 jagg: 1.0
@@ -46,76 +48,79 @@ static Vec3 quad_normal(Quad q){
     return n;
 }
 
-static void quad_unload(Quad t, float *arr){
-    int i, ind;
+static void terrain_vertex_unload(TerrainVertex *arr, Quad q, Vec3 n){
+    int i;
     for(i = 0;i < 4;i++){
-        ind = 3 * i;
-        arr[ind + 0] = t.p[i].x;
-        arr[ind + 1] = t.p[i].y;
-        arr[ind + 2] = t.p[i].z;
+        arr[i].position[0] = q.p[i].x;
+        arr[i].position[1] = q.p[i].y;
+        arr[i].position[2] = q.p[i].z;
+
+        arr[i].normal[0] = n.x;
+        arr[i].normal[1] = n.y;
+        arr[i].normal[2] = n.z;
     }
+
+    arr[0].texture[0] = 0;
+    arr[0].texture[1] = 1;
+
+    arr[1].texture[0] = 0;
+    arr[1].texture[1] = 0;
+
+    arr[2].texture[0] = 1;
+    arr[2].texture[1] = 0;
+
+    arr[3].texture[0] = 1;
+    arr[3].texture[1] = 1;
 }
 
-static void normal_unload(Vec3 n, float *arr){
-    arr[0] = n.x;
-    arr[1] = n.y;
-    arr[2] = n.z;
-    
-    arr[3] = n.x;
-    arr[4] = n.y;
-    arr[5] = n.z;
+static void terrain_vertex_push(ArrayList_tv *arr, Quad q, Vec3 n){
+    TerrainVertex vs[4];
+    int i;
+    for(i = 0;i < 4;i++){
+        vs[i].position[0] = q.p[i].x;
+        vs[i].position[1] = q.p[i].y;
+        vs[i].position[2] = q.p[i].z;
 
-    arr[6] = n.x;
-    arr[7] = n.y;
-    arr[8] = n.z;
+        vs[i].normal[0] = n.x;
+        vs[i].normal[1] = n.y;
+        vs[i].normal[2] = n.z;
+    }
 
-    arr[9] = n.x;
-    arr[10] = n.y;
-    arr[11] = n.z;
+    vs[0].texture[0] = 0;
+    vs[0].texture[1] = 1;
+
+    vs[1].texture[0] = 0;
+    vs[1].texture[1] = 0;
+
+    vs[2].texture[0] = 1;
+    vs[2].texture[1] = 0;
+
+    vs[3].texture[0] = 1;
+    vs[3].texture[1] = 1;
+
+    array_list_push_tv(arr, vs[0]);
+    array_list_push_tv(arr, vs[1]);
+    array_list_push_tv(arr, vs[2]);
+    array_list_push_tv(arr, vs[3]);
 }
 
-static void texture_coords_unload(float *arr){
-    arr[0] = 0;
-    arr[1] = 1;
-
-    arr[2] = 0;
-    arr[3] = 0;
-
-    arr[4] = 1;
-    arr[5] = 0;
-
-    arr[6] = 1;
-    arr[7] = 1;
-}
-
-static void texture_inds_unload(int ind, int *arr){
-    arr[0] = ind;
-    arr[1] = ind;
-    arr[2] = ind;
-    arr[3] = ind;
-}
 
 //todo:
 //to optimize:
-//-render quads instead of triangles
 //-since there are only 5 possible normals (since its a cube with no rotation),
 // instead of passing a normal, pass an index (0-4) into a normal array in the shader
 
 Terrain terrain_new(){
     Terrain self;
 
-    //2 triangles per point
-    //3 vertices per triangle
-    //3 floats per vertex
-	self.num_floats = 0;
-	self.vertices = NULL;
-	self.normals = NULL;
+    self.num_grass_vertices = 0;
+    self.grass_vertices = NULL;
 
-    self.num_texture_floats = 0;
-    self.texture_coords = NULL;
+    self.num_grass_dirt_vertices = 0;
+    self.grass_dirt_vertices = NULL;
 
-    self.num_texture_inds = 0;
-    self.texture_inds = NULL;
+    self.num_dirt_vertices = 0;
+    self.dirt_vertices = NULL;
 
 	terrain_regen(&self);
 
@@ -123,21 +128,12 @@ Terrain terrain_new(){
 }
 
 void terrain_regen(Terrain *self){
-	free(self->vertices);
-	free(self->normals);
-    free(self->texture_coords);
-    free(self->texture_inds);
+    free(self->grass_vertices);
+    free(self->grass_dirt_vertices);
+    free(self->dirt_vertices);
 
-    //for each point in the terrain, there are 4 vertices, each with 3 floats
-	self->num_floats = 4 * 3 * TERRAIN_SIZE * TERRAIN_SIZE;
-	self->vertices = malloc(self->num_floats * sizeof(float));
-	self->normals = malloc(self->num_floats * sizeof(float));
-
-    self->num_texture_floats = 4 * 2 * TERRAIN_SIZE * TERRAIN_SIZE;
-    self->texture_coords = malloc(self->num_texture_floats * sizeof(float));
-
-    self->num_texture_inds = 4 * 1 * TERRAIN_SIZE * TERRAIN_SIZE;
-    self->texture_inds = malloc(self->num_texture_inds * sizeof(int));
+    self->num_grass_vertices = 4 * TERRAIN_SIZE * TERRAIN_SIZE;
+    self->grass_vertices = malloc(self->num_grass_vertices * sizeof(*(self->grass_vertices)));
 
 	int i, j, k;
 	float tx, tz;
@@ -174,20 +170,16 @@ void terrain_regen(Terrain *self){
 	}
 
     //build the mesh for the terrain
-    ArrayList_f *extra_vertices = array_list_new_f();
-    ArrayList_f *extra_normals = array_list_new_f();
-    ArrayList_f *extra_textures = array_list_new_f();
-    ArrayList_f *extra_inds = array_list_new_f();
+    ArrayList_tv *extra_vertices = array_list_new_tv();
 
-	int ind, tc_ind, t_ind;
-	Vec3 a, b, e1, e2, normal;
+	int ind;
+	Vec3 normal;
     Quad q;
+    TerrainVertex v;
 	float ti[2], tj[2];
 	for (i = 0; i < TERRAIN_SIZE; i++){
 		for (j = 0; j < TERRAIN_SIZE; j++){
-			ind = 12 * (i + j * TERRAIN_SIZE);
-            tc_ind = 8 * (i + j * TERRAIN_SIZE);
-            t_ind = 4 * (i + j * TERRAIN_SIZE);
+			ind = 4 * (i + j * TERRAIN_SIZE);
 
             //x positions
             ti[0] = (start.x + i) * block_dimensions.x;
@@ -202,11 +194,8 @@ void terrain_regen(Terrain *self){
             q.p[2] = vec3_from_3f(ti[1], height_map[i][j], tj[1]);
             q.p[3] = vec3_from_3f(ti[0], height_map[i][j], tj[1]);
             normal = quad_normal(q);
-            normal_unload(normal, self->normals + ind);
-            quad_unload(q, self->vertices + ind);
-            texture_coords_unload(self->texture_coords + tc_ind);
-            texture_inds_unload(0, self->texture_inds + t_ind);
-
+            terrain_vertex_unload(self->grass_vertices + ind, q, normal);
+            
             if(i < TERRAIN_SIZE - 1){
                 float h[2];
                 if(height_map[i][j] < height_map[i+1][j]){
@@ -222,22 +211,7 @@ void terrain_regen(Terrain *self){
                     q.p[2] = vec3_from_3f(ti[1], h[1], tj[1]);
                     q.p[3] = vec3_from_3f(ti[1], h[0], tj[1]);
                     normal = quad_normal(q);
-
-                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
-                    normal_unload(normal, extra_normals->data + extra_normals->length);
-                    extra_normals->length += 12;
-
-                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
-                    quad_unload(q, extra_vertices->data + extra_vertices->length);
-                    extra_vertices->length += 12;
-
-                    if(extra_textures->capacity - extra_textures->length <= 8) array_list_grow_f(extra_textures);
-                    texture_coords_unload(extra_textures->data + extra_textures->length);
-                    extra_textures->length += 8;
-
-                    if(extra_inds->capacity - extra_inds->length <= 4) array_list_grow_f(extra_inds);
-                    texture_inds_unload(1, extra_inds->data + extra_inds->length);
-                    extra_inds->length += 4;
+                    terrain_vertex_push(extra_vertices, q, normal);
                 }else if(height_map[i][j] > height_map[i+1][j]){
                     //current spot is higher than place to the right
                     h[0] = height_map[i+1][j];
@@ -248,22 +222,7 @@ void terrain_regen(Terrain *self){
                     q.p[2] = vec3_from_3f(ti[1], h[1], tj[0]);
                     q.p[3] = vec3_from_3f(ti[1], h[0], tj[0]);
                     normal = quad_normal(q);
-
-                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
-                    normal_unload(normal, extra_normals->data + extra_normals->length);
-                    extra_normals->length += 12;
-
-                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
-                    quad_unload(q, extra_vertices->data + extra_vertices->length);
-                    extra_vertices->length += 12;
-
-                    if(extra_textures->capacity - extra_textures->length <= 8) array_list_grow_f(extra_textures);
-                    texture_coords_unload(extra_textures->data + extra_textures->length);
-                    extra_textures->length += 8;
-
-                    if(extra_inds->capacity - extra_inds->length <= 4) array_list_grow_f(extra_inds);
-                    texture_inds_unload(1, extra_inds->data + extra_inds->length);
-                    extra_inds->length += 4;
+                    terrain_vertex_push(extra_vertices, q, normal);
                 }
             }
 
@@ -282,22 +241,7 @@ void terrain_regen(Terrain *self){
                     q.p[2] = vec3_from_3f(ti[0], h[1], tj[1]);
                     q.p[3] = vec3_from_3f(ti[0], h[0], tj[1]);
                     normal = quad_normal(q);
-
-                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
-                    normal_unload(normal, extra_normals->data + extra_normals->length);
-                    extra_normals->length += 12;
-
-                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
-                    quad_unload(q, extra_vertices->data + extra_vertices->length);
-                    extra_vertices->length += 12;                    
-
-                    if(extra_textures->capacity - extra_textures->length <= 8) array_list_grow_f(extra_textures);
-                    texture_coords_unload(extra_textures->data + extra_textures->length);
-                    extra_textures->length += 8;
-
-                    if(extra_inds->capacity - extra_inds->length <= 4) array_list_grow_f(extra_inds);
-                    texture_inds_unload(1, extra_inds->data + extra_inds->length);
-                    extra_inds->length += 4;
+                    terrain_vertex_push(extra_vertices, q, normal);                    
                 }else if(height_map[i][j] > height_map[i][j+1]){
                     //current spot is higher than place behind
                     h[0] = height_map[i][j+1];
@@ -308,53 +252,20 @@ void terrain_regen(Terrain *self){
                     q.p[2] = vec3_from_3f(ti[1], h[1], tj[1]);
                     q.p[3] = vec3_from_3f(ti[1], h[0], tj[1]);
                     normal = quad_normal(q);
-
-                    if(extra_normals->capacity - extra_normals->length <= 12) array_list_grow_f(extra_normals);
-                    normal_unload(normal, extra_normals->data + extra_normals->length);
-                    extra_normals->length += 12;
-
-                    if(extra_vertices->capacity - extra_vertices->length <= 12) array_list_grow_f(extra_vertices);
-                    quad_unload(q, extra_vertices->data + extra_vertices->length);
-                    extra_vertices->length += 12;                                      
-
-                    if(extra_textures->capacity - extra_textures->length <= 8) array_list_grow_f(extra_textures);
-                    texture_coords_unload(extra_textures->data + extra_textures->length);
-                    extra_textures->length += 8;
-
-                    if(extra_inds->capacity - extra_inds->length <= 4) array_list_grow_f(extra_inds);
-                    texture_inds_unload(1, extra_inds->data + extra_inds->length);
-                    extra_inds->length += 4;
+                    terrain_vertex_push(extra_vertices, q, normal);                    
                 }
             }
 		}
 	}
-    
-    int new_length = self->num_floats + extra_vertices->length;
-    self->vertices = realloc(self->vertices, new_length * sizeof(float));
-    self->normals = realloc(self->normals, new_length * sizeof(float));
-    memcpy(self->vertices + self->num_floats, extra_vertices->data, extra_vertices->length * sizeof(float));
-    memcpy(self->normals + self->num_floats, extra_normals->data, extra_normals->length * sizeof(float));
-    self->num_floats = new_length;
 
-    new_length = self->num_texture_floats + extra_textures->length;
-    self->texture_coords = realloc(self->texture_coords, new_length * sizeof(float));
-    memcpy(self->texture_coords + self->num_texture_floats, extra_textures->data, extra_textures->length * sizeof(float));
-    self->num_texture_floats = new_length;
-
-    new_length = self->num_texture_inds + extra_inds->length;
-    self->texture_inds = realloc(self->texture_inds, new_length * sizeof(int));
-    memcpy(self->texture_inds + self->num_texture_inds, extra_inds->data, extra_inds->length * sizeof(int));
-    self->num_texture_inds = new_length;
-
-    array_list_free_f(extra_vertices);
-    array_list_free_f(extra_normals);
-    array_list_free_f(extra_textures);
-    array_list_free_f(extra_inds);
+    self->num_grass_dirt_vertices = extra_vertices->length;
+    self->grass_dirt_vertices = extra_vertices->data;
+    extra_vertices->data = NULL;
+    array_list_free_tv(extra_vertices);    
 }
 
 void terrain_free(Terrain self){
-    free(self.vertices);
-	free(self.normals);
-    free(self.texture_coords);
-    free(self.texture_inds);
+	free(self.grass_vertices);
+	free(self.grass_dirt_vertices);
+	free(self.dirt_vertices);
 }

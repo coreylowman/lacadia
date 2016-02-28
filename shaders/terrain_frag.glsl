@@ -1,8 +1,7 @@
 #version 400
 
-uniform sampler2D tex[3];
+uniform sampler2D tex;
 
-flat in int texture_index;
 in vec2 texture_coords;
 in vec3 fragment_position;
 in vec3 fragment_normal;
@@ -15,11 +14,7 @@ void main() {
     vec4 light_color = vec4(1.0, 1.0, 1.0, 1.0);
     float light_power = 0.75;
 
-    vec4 fragment_color;
-    if(texture_index == 0)
-        fragment_color = texture(tex[0], texture_coords);
-    else
-        fragment_color = texture(tex[1], texture_coords);
+    vec4 fragment_color = texture(tex, texture_coords);
 
     vec3 n = normalize(fragment_normal);
     vec3 l = normalize(light_position_camera - fragment_position);

@@ -125,24 +125,19 @@ Renderer *renderer_new() {
     glGenVertexArrays(1, &self->terrain_vao);
     glBindVertexArray(self->terrain_vao);
     
-    glGenBuffers(4, &self->terrain_vbo[0]);
+    glGenBuffers(1, &self->terrain_vbo);
     
     //vertex data buffer object
-    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (const GLvoid *)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (const GLvoid *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[2]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (const GLvoid *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[3]);
-    glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(3);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -287,36 +282,34 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
     glUniformMatrix4fv(self->terrain_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
 	glUniform3f(self->terrain_shader.light_position_location, light_position.x, light_position.y, light_position.z);
     
-    glUniform1i(self->terrain_shader.texture_location + 0, 0);
+    glUniform1i(self->terrain_shader.texture_location, 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);
-
-    glUniform1i(self->terrain_shader.texture_location + 1, 1);
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]);
-    
-    glUniform1i(self->terrain_shader.texture_location + 2, 2);
-    glActiveTexture(GL_TEXTURE0 + 2);
-    glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]);
 
     Terrain t;
     for(i = 0;i < self->num_terrains;i++){
         t = self->terrains[i];
-        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, t.num_floats * sizeof(float), &t.vertices[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[1]);
-        glBufferData(GL_ARRAY_BUFFER, t.num_floats * sizeof(float), &t.normals[0], GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[2]);
-		glBufferData(GL_ARRAY_BUFFER, t.num_texture_floats * sizeof(float), &t.texture_coords[0], GL_STATIC_DRAW);
-		
-        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo[3]);
-        glBufferData(GL_ARRAY_BUFFER, t.num_texture_inds * sizeof(int), &t.texture_inds[0], GL_STATIC_DRAW);
-
         glBindVertexArray(self->terrain_vao);
-        glDrawArrays(GL_QUADS, 0, t.num_floats / 3);
+        glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
+
+        glBufferData(GL_ARRAY_BUFFER, t.num_grass_vertices * sizeof(TerrainVertex), &t.grass_vertices[0], GL_STATIC_DRAW);
+        glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);
+        glDrawArrays(GL_QUADS, 0, t.num_grass_vertices);
+        
+        if(t.num_grass_dirt_vertices > 0){
+            glBufferData(GL_ARRAY_BUFFER, t.num_grass_dirt_vertices * sizeof(TerrainVertex), &t.grass_dirt_vertices[0], GL_STATIC_DRAW);
+            glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]);
+            glDrawArrays(GL_QUADS, 0, t.num_grass_dirt_vertices);            
+        }
+        
+        if(t.num_dirt_vertices > 0){
+            glBufferData(GL_ARRAY_BUFFER, t.num_dirt_vertices * sizeof(TerrainVertex), &t.dirt_vertices[0], GL_STATIC_DRAW);
+            glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]);
+            glDrawArrays(GL_QUADS, 0, t.num_dirt_vertices);            
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
     }
 
 	self->num_terrains = 0;
