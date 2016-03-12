@@ -5,16 +5,19 @@
 #include "game/fireball.h"
 #include "game/wildfire.h"
 #include "game/combust.h"
+#include "game/icicle.h"
 #include "enemies/enemy.h"
 
 extern Ability fireball_ability;
 extern Ability wildfire_ability;
 extern Ability combust_ability;
 
+extern Ability icicle_ability;
+
 Player *mage_new(GameWorld *world){
     Player *self = player_new(world);
     //todo init abilities
-    self->abilities[0] = fireball_ability;
+    self->abilities[0] = icicle_ability;
     self->abilities[1] = wildfire_ability;
     self->abilities[2] = combust_ability;
     // self->abilities[3] = dragons_breath_ability;

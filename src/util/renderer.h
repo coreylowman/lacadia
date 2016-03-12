@@ -23,7 +23,7 @@ typedef struct Renderer {
     char *model_names[MAX_ASSETS];
     ObjectModel *models[MAX_ASSETS];
     ArrayList_m4 *model_model_matrices[MAX_ASSETS]; //ArrayList<Mat4>[MAX_ASSETS]
-    unsigned int model_vbo[3], model_vao;
+    unsigned int model_vbo[2], model_vao;
 
     //ui rects and stuff
     Shader ui_shader;

@@ -74,7 +74,7 @@ int affectable_object_index_of_effect(struct AffectableObject *self, EffectType 
         if (self->effects->data[i] == NULL) continue;
         e = self->effects->data[i];
 
-        if (e->type == EFFECT_TYPE_BURN) return i;
+        if (e->type == type) return i;
     }
     return -1;
 }

@@ -5,47 +5,29 @@
 #include "object_model.h"
 #include "array_list.h"
 #include "mat4.h"
+#include "vec3.h"
 
 #define OBJECT_MODEL_SCALE 0.25
 
 extern Vec3 VEC3_UNIT_X;
 extern Vec3 VEC3_UNIT_Y;
 extern Vec3 VEC3_UNIT_Z;
+extern Vec3 VEC3_ZERO;
 
 typedef struct {
-    unsigned int vertex_indices[3];
-    unsigned int texture_indices[3];
-    unsigned int normal_indices[3];
+    Vec3 vertex_indices, texture_indices, normal_indices;
 } Face;
 
-static Face *face_new(float *p, float *t, float *n){
+static Face *face_new(Vec3 p, Vec3 t, Vec3 n){
     Face *self = malloc(sizeof(*self));
     int i;
-    for(i = 0;i < 3;i++){
-        self->vertex_indices[i] = p[i];
-        self->texture_indices[i] = t[i];
-        self->normal_indices[i] = n[i];
-    }
+    self->vertex_indices = p;
+    self->texture_indices = t;
+    self->normal_indices = n;
     return self;
 }
 
 static void face_free(void *data){
-    free(data);
-}
-
-typedef struct {
-    float x,y,z;
-} Vertex;
-
-static Vertex *vertex_new(float *p){
-    Vertex *self = malloc(sizeof(*self));
-    self->x = p[0];
-    self->y = p[1];
-    self->z = p[2];
-    return self;
-}
-
-static void vertex_free(void *data){
     free(data);
 }
 
@@ -68,15 +50,13 @@ static int load_png_data(const char *filename, unsigned char **image, unsigned *
 
 ObjectModel *obj_model_from_file(const char *filename){
     ArrayList *face_list = array_list_new(face_free);
-    ArrayList *vertex_list = array_list_new(vertex_free);
-    ArrayList *normal_list = array_list_new(vertex_free);
-    ArrayList *texture_list = array_list_new(vertex_free);
+    ArrayList_v3 *vertex_list = array_list_new_v3();
+    ArrayList_v3 *normal_list = array_list_new_v3();
+    ArrayList_v3 *texture_list = array_list_new_v3();
 
     char line[128];
     char *token;
-    float p[3];
-    float t[3]; //used for parsing faces
-    float n[3]; //used for parsing faces
+    Vec3 p, n, t;
     int i;
 
     char obj_filename[128];
@@ -92,31 +72,31 @@ ObjectModel *obj_model_from_file(const char *filename){
         if(strcmp(token, "vn") == 0){
             for(i = 0;i < 3;i++){
                 token = strtok(NULL, " ");
-                n[i] = atof(token);
+                n.data[i] = atof(token);
             }
-            array_list_push(normal_list, vertex_new(n));
+            array_list_push_v3(normal_list, n);
 		}
 		else if (strcmp(token, "vt") == 0){
 			for (i = 0; i < 2; i++){
 				token = strtok(NULL, " ");
-				t[i] = atof(token);
+				t.data[i] = atof(token);
 			}
-			t[i] = 0;
-			array_list_push(texture_list, vertex_new(t));
+			t.data[i] = 0;
+			array_list_push_v3(texture_list, t);
 		}else if (strcmp(token, "v") == 0){
 			for (i = 0; i < 3; i++){
 				token = strtok(NULL, " ");
-				p[i] = atof(token);
+				p.data[i] = atof(token);
 			}
-			array_list_push(vertex_list, vertex_new(p));
+			array_list_push_v3(vertex_list, p);
         }else if(strcmp(token, "f") == 0){
             for(i = 0;i < 3;i++){
                 token = strtok(NULL, "/");
-                p[i] = atof(token);
+                p.data[i] = atof(token);
                 token = strtok(NULL, "/");
-                t[i] = atof(token);
+                t.data[i] = atof(token);
                 token = strtok(NULL, " ");
-                n[i] = atof(token);
+                n.data[i] = atof(token);
             }
             array_list_push(face_list, face_new(p,t,n));            
         }else if(strcmp(token, "mtllib") == 0){
@@ -137,53 +117,55 @@ ObjectModel *obj_model_from_file(const char *filename){
     }
 
     ObjectModel *self = malloc(sizeof(*self));
-	//3 vertices for each face
-	//3 floats for each vertex
-    self->num_floats = 9 * face_list->length;
-    self->vertices = malloc(self->num_floats * sizeof(float));
-    self->colors = malloc(self->num_floats * sizeof(float));
+    self->num_vertices = 3 * face_list->length;
+    self->vertices = malloc(self->num_vertices * sizeof(*(self->vertices)));
 
     Face *f;
-    Vertex *v;
     int j, k;
-	int a, b, c;
 	int tx, ty;
     float inv_255 = 1.0 / 255.0;
 
     float min[3], max[3];
-    float q[3];
     for(i = 0;i < 3;i++){
         min[i] = FLT_MAX;
         max[i] = FLT_MIN;
     }
 
+    ObjectModelVertex objVertex;
     for(i = 0;i < face_list->length;i++){
         f = face_list->data[i];
+        
+        //calc normal
+        n = VEC3_ZERO;
         for(j = 0;j < 3;j++){
-			a = 9 * i + j * 3 + 0;
-			b = a + 1;
-			c = a + 2;
-            v = vertex_list->data[f->vertex_indices[j] - 1];
+            n = vec3_add(n, normal_list->data[(int)f->normal_indices.data[j] - 1]);
+        }
+        vec3_normalize(&n);
 
-            q[0] = v->x * OBJECT_MODEL_SCALE;
-            q[1] = v->y * OBJECT_MODEL_SCALE;
-            q[2] = v->z * OBJECT_MODEL_SCALE;
+        for(j = 0;j < 3;j++){
+            p = vertex_list->data[(int)f->vertex_indices.data[j] - 1];
 
-            self->vertices[a] = q[0];
-            self->vertices[b] = q[1];
-            self->vertices[c] = q[2];
+            objVertex.position[0] = p.x * OBJECT_MODEL_SCALE;
+            objVertex.position[1] = p.y * OBJECT_MODEL_SCALE;
+            objVertex.position[2] = p.z * OBJECT_MODEL_SCALE;
+            
+			t = texture_list->data[(int)f->texture_indices.data[j] - 1];
+			tx = t.x * png_width;
+            ty = t.y * png_height;
+            objVertex.color[0] = png_data[4 * png_width * ty + 4 * tx + 0] * inv_255; //r
+            objVertex.color[1] = png_data[4 * png_width * ty + 4 * tx + 1] * inv_255; //b
+            objVertex.color[2] = png_data[4 * png_width * ty + 4 * tx + 2] * inv_255; //g
+
+            objVertex.normal[0] = n.x;
+            objVertex.normal[1] = n.y;
+            objVertex.normal[2] = n.z;
+
+            self->vertices[3 * i + j] = objVertex;
 
             for(k = 0;k < 3;k++){
-                if(q[k] < min[k]) min[k] = q[k];
-                if(q[k] > max[k]) max[k] = q[k];
+                if(objVertex.position[k] < min[k]) min[k] = objVertex.position[k];
+                if(objVertex.position[k] > max[k]) max[k] = objVertex.position[k];
             }
-
-			v = texture_list->data[f->texture_indices[j] - 1];
-			tx = v->x * png_width;
-            ty = v->y * png_height;
-            self->colors[a] = png_data[4 * png_width * ty + 4 * tx + 0] * inv_255; //r
-            self->colors[b] = png_data[4 * png_width * ty + 4 * tx + 1] * inv_255; //b
-            self->colors[c] = png_data[4 * png_width * ty + 4 * tx + 2] * inv_255; //g
         }
     }
 
@@ -208,27 +190,9 @@ ObjectModel *obj_model_from_file(const char *filename){
     return self;
 }
 
-//to use with global object models
-ObjectModel *obj_model_clone(ObjectModel *self){
-    if(self == NULL) return NULL;
-
-    ObjectModel *other = malloc(sizeof(*other));
-
-    other->num_floats = self->num_floats;
-
-    other->vertices = malloc(self->num_floats * sizeof(float));
-    memcpy(other->vertices, self->vertices, self->num_floats);
-
-    other->colors = malloc(self->num_floats * sizeof(float));
-    memcpy(other->colors, self->colors, self->num_floats);
-
-    return other;
-}
-
 void obj_model_free(ObjectModel *self){
 	if (self == NULL) return;
     free(self->vertices);
-    free(self->colors);
     free(self);
 }
 

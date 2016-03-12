@@ -14,11 +14,17 @@ list(APPEND GAME_SOURCES
     effect.h
     fireball.c
     fireball.h
+    frost.c
+    frost.h
     game_object.c
     game_object.h
     game_world.c
     game_world.h
+    icicle.c
+    icicle.h
     level.c
+    level.c
+    level.h
     level.h
     melee_hit.c
     melee_hit.h
@@ -35,8 +41,6 @@ list(APPEND GAME_SOURCES
     wall.h
     wildfire.c
     wildfire.h
-    level.h
-    level.c
 )
 
 add_library(game OBJECT ${GAME_SOURCES})

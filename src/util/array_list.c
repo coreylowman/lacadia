@@ -3,6 +3,7 @@
 
 extern Mat4 MAT4_IDENT;
 extern TerrainVertex TERRAIN_VERTEX_DEFAULT;
+extern Vec3 VEC3_ZERO;
 
 ArrayList *array_list_new(void (*free_element)(void *element)){
     ArrayList *array = malloc(sizeof(*array));
@@ -152,3 +153,4 @@ IMPL_ARRAY_LIST(int, i, 0)
 IMPL_ARRAY_LIST(short, s, 0)
 IMPL_ARRAY_LIST(Mat4, m4, MAT4_IDENT)
 IMPL_ARRAY_LIST(TerrainVertex, tv, TERRAIN_VERTEX_DEFAULT)
+IMPL_ARRAY_LIST(Vec3, v3, VEC3_ZERO)

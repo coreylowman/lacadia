@@ -40,5 +40,6 @@ DEFINE_ARRAY_LIST(int, i)
 DEFINE_ARRAY_LIST(short, s)
 DEFINE_ARRAY_LIST(Mat4, m4)
 DEFINE_ARRAY_LIST(TerrainVertex, tv)
+DEFINE_ARRAY_LIST(Vec3, v3)
 
 #endif

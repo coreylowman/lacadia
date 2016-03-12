@@ -10,16 +10,6 @@ typedef struct TerrainVertex {
 } TerrainVertex;
 
 typedef struct Terrain {
-    // int num_floats;
-    // float *vertices;
-    // float *normals;
-
-    // int num_texture_floats;
-    // float *texture_coords;
-
-    // int num_texture_inds;
-    // int *texture_inds;
-
     int num_grass_vertices;
     TerrainVertex *grass_vertices;
 
