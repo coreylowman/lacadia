@@ -10,7 +10,7 @@
 #include "game/ability.h"
 
 typedef struct Enemy {
-    GameObject *base_object;
+    GameObject base_object;
 
     //who it is following! (most likely the player :P)
     GameObject *target;

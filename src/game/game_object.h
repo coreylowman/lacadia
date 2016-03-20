@@ -14,7 +14,6 @@ typedef struct {
     //type so we can pass around GameObject * but know what it needs to be
     //cast as
     GameObjectType type;
-    void *container;
     
     //a reference to the gameworld it is currently in
     GameWorld *world;
@@ -23,7 +22,6 @@ typedef struct {
     int destroy;
 } GameObject;
 
-GameObject *game_object_new(GameWorld *world, GameObjectType type);
-void game_object_free(GameObject *self);
+GameObject game_object_init(GameWorld *world, GameObjectType type);
 
 #endif

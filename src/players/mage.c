@@ -34,9 +34,9 @@ Player *mage_new(GameWorld *world){
     self->renderable.model_id = game_world_get_model_id(world, "assets/mage");
     renderable_object_update(&self->renderable, self->moveable);
 
+    self->collidable.container = self;
     self->collidable.is_colliding = collidable_object_is_colliding;
     self->collidable.on_collide = player_on_collide;
-    self->collidable.container = self->base_object;
     self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
     collidable_object_update(&self->collidable, self->moveable);
     
@@ -70,5 +70,5 @@ static void passive_tick(GameWorld *world, Enemy *enemy){
 void mage_passive(Player *self, double dt){
 	this_dt = dt;
     float radius = 5.0f;
-    game_world_apply_to_enemies(self->base_object->world, self->moveable.position, radius, passive_tick);
+    game_world_apply_to_enemies(self->base_object.world, self->moveable.position, radius, passive_tick);
 }

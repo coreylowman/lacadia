@@ -11,7 +11,7 @@
 #define MAX_WALL_LENGTH 32
 
 typedef struct Wall {
-    GameObject *base_object;
+    GameObject base_object;
 
     CollidableObject collidable;
 

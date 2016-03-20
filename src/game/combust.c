@@ -22,7 +22,7 @@ static void combust_apply(GameWorld *world, Enemy *enemy){
 }
 
 void combust_use(GameWorld *world, GameObject *user){
-    Player *player = user->container;
+    Player *player = user;
     float radius = 10;
     game_world_apply_to_enemies(world, player->collidable.bounding_box.center, 10, combust_apply);
 }

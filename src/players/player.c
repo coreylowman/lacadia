@@ -8,14 +8,12 @@ extern Vec3 VEC3_UNIT_Y;
 
 Player *player_new(GameWorld *world){
     Player *self = malloc(sizeof(*self));
-    self->base_object = game_object_new(world, GAME_OBJECT_TYPE_PLAYER);
-    self->base_object->container = self;
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER);
     self->affectable.effects = set_new(effect_free);
     return self;
 }
 
 void player_free(Player *self){
-    game_object_free(self->base_object);
     set_free(self->affectable.effects);
     free(self);
 }
@@ -37,7 +35,7 @@ void player_update(Player *self, double dt){
 
 void player_use_ability(Player *self, int i){
     if(ability_is_ready(self->abilities[i])){
-        ability_use(&self->abilities[i], self->base_object->world, self->base_object);
+        ability_use(&self->abilities[i], self->base_object.world, self);
     }
 }
 
@@ -108,9 +106,9 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
 }
 
 void player_on_collide(GameObject *self, GameObject *other){
-	Player *player = self->container;
+	Player *player = self;
     if(other->type == GAME_OBJECT_TYPE_WALL){
-        Wall *wall = other->container;
+        Wall *wall = other;
 
         Vec3 wall_normal = wall_get_normal(wall, player->collidable.bounding_box.center);
         int i;

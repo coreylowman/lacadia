@@ -9,7 +9,7 @@ extern Ability melee_hit_ability;
 Enemy *bug_new(GameWorld *world, Vec3 position){
     Enemy *self = enemy_new(world);
 
-    self->target = world->player->base_object;
+    self->target = &world->player->base_object;
 
     self->affectable.stats.max_health = 25;
     affectable_object_init(&self->affectable);
@@ -21,7 +21,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
     self->renderable.model_id = game_world_get_model_id(world, "assets/bug");
     renderable_object_update(&self->renderable, self->moveable);
 
-    self->collidable.container = self->base_object;
+    self->collidable.container = self;
     self->collidable.is_colliding = collidable_object_is_colliding;
     self->collidable.on_collide = bug_on_collide;
     self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
@@ -38,7 +38,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 void bug_on_update(Enemy *self, double dt){
     ability_update(&self->attack, dt);
 
-    Player *player = self->target->container;
+    Player *player = self->target;
     Vec3 pos = self->moveable.position;
     Vec3 target_pos = player->moveable.position;
     self->moveable.direction = vec3_sub(target_pos, pos);    
@@ -46,7 +46,7 @@ void bug_on_update(Enemy *self, double dt){
     vec3_normalize(&self->moveable.direction);
     if(ability_is_ready(self->attack)){
         if(dist < 3){
-            ability_use(&self->attack, self->base_object->world, self->base_object);
+            ability_use(&self->attack, self->base_object.world, self);
         }else{
             moveable_object_update(&self->moveable, dt);        
         }
@@ -55,9 +55,9 @@ void bug_on_update(Enemy *self, double dt){
 }
 
 void bug_on_collide(GameObject *self, GameObject *object){
-	Enemy *bug = self->container;
+	Enemy *bug = self;
     if(object->type == GAME_OBJECT_TYPE_PLAYER){
-        Player *player = bug->target->container;
+        Player *player = bug->target;
         
     }
 }

@@ -8,7 +8,7 @@
 #include "game/renderable_object.h"
 
 typedef struct Spell {
-    GameObject *base_object;
+    GameObject base_object;
 
     CollidableObject collidable;
     MoveableObject moveable;

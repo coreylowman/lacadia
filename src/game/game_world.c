@@ -229,7 +229,7 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
         object = collidable->container;
         if(object->type == GAME_OBJECT_TYPE_ENEMY
             && vec3_within_dist(collidable->bounding_box.center, position, radius)){
-            fn(self, (Enemy *)object->container);
+            fn(self, (Enemy *)object);
         }
     }
 }

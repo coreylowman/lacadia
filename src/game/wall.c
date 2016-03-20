@@ -10,8 +10,7 @@ extern Vec3 VEC3_ZERO;
 
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length){
     Wall *self = malloc(sizeof(*self));
-    self->base_object = game_object_new(world, GAME_OBJECT_TYPE_WALL);
-    self->base_object->container = self;
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_WALL);
 
 	Vec3 dims = wall_dimensions(world);
 	int which = grow_direction.x ? 0 : (grow_direction.y ? 1 : 2);
@@ -28,27 +27,16 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
 		mat4_rotate_y(&model_matrix, 3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
         mat4_translate(&model_matrix, pos);
 
-<<<<<<< HEAD
-        self->renderables[i].asset_id = asset_id;
+		self->renderables[i].model_id = model_id;
         renderable_object_set_model_matrix(&self->renderables[i], model_matrix);
     }
 
-    self->collidable.bounding_box = game_world_get_asset_obb(world, asset_id);
-=======
-		self->renderables[i].model_id = model_id;
-        self->renderables[i].model_matrix = model_matrix;
-    }
-
-    
-    
-	self->collidable.bounding_box = game_world_get_model_obb(world, model_id);
->>>>>>> 702ba60... Moving rendering into the renderer object... untested but builds
+    self->collidable.container = self;
+    self->collidable.bounding_box = game_world_get_model_obb(world, model_id);
     self->collidable.bounding_box.center = position;
     self->collidable.bounding_box.center.y += dims.y * 0.5;
     self->collidable.bounding_box.radius.data[which] *= length;
     self->collidable.bounding_box.center.data[which] += width * (length - 1)* 0.5;
-    
-    self->collidable.container = self->base_object;
 
     self->collidable.on_collide = wall_on_collide;
     self->collidable.is_colliding = collidable_object_is_colliding;
@@ -59,7 +47,6 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
 }
 
 void wall_free(Wall *self){
-    game_object_free(self->base_object);
     free(self);
 }
 

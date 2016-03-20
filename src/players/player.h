@@ -13,7 +13,7 @@
 #include "util/inputs.h"
 
 typedef struct Player {
-    GameObject *base_object;
+    GameObject base_object;
     
     //abilities
     Ability abilities[4];

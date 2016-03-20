@@ -4,18 +4,14 @@
 #include <GL/glfw3.h>
 #include "game_object.h"
 
-GameObject *game_object_new(GameWorld *world, GameObjectType type){
-    GameObject *self = malloc(sizeof(*self));
-    self->type = type;
+GameObject game_object_init(GameWorld *world, GameObjectType type){
+    GameObject self;
 
-    self->world = world;
+    self.type = type;
 
-	self->destroy = 0;
+    self.world = world;
 
-    return self;
-}
+    self.destroy = 0;
 
-void game_object_free(GameObject *self){
-    self->world = NULL;
-    free(self);
+    return self;   
 }
