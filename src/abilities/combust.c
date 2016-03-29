@@ -1,5 +1,5 @@
 #include "enemies/enemy.h"
-#include "affectable_object.h"
+#include "game/affectable_object.h"
 #include "effect.h"
 #include "combust.h"
 #include "ability.h"

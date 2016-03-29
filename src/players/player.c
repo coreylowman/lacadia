@@ -82,7 +82,7 @@ void player_handle_inputs(Player *self, double dt, Inputs inputs){
         if(inputs.numbers_pressed[i]) player_use_ability(self, i - 1);
 
     if (inputs.left_mouse_down) {
-        double dx = inputs.mouse_vel[0] / 100.0;
+        double dx = inputs.mouse_vel[0] / 100;
         player_turn(self, dx);
     }
 

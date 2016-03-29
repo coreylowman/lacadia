@@ -1,16 +1,17 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
-#include "game_world.h"
+// forward declaration of GameWorld
+typedef struct GameWorld GameWorld;
 
-typedef enum {
+typedef enum GameObjectType {
     GAME_OBJECT_TYPE_PLAYER,
     GAME_OBJECT_TYPE_ENEMY,
     GAME_OBJECT_TYPE_SPELL,
     GAME_OBJECT_TYPE_WALL,
 } GameObjectType;
 
-typedef struct {
+typedef struct GameObject {
     //type so we can pass around GameObject * but know what it needs to be
     //cast as
     GameObjectType type;

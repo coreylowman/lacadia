@@ -7,7 +7,7 @@
 #include "game/collidable_object.h"
 #include "game/affectable_object.h"
 #include "game/moveable_object.h"
-#include "game/ability.h"
+#include "abilities/ability.h"
 
 typedef struct Enemy {
     GameObject base_object;

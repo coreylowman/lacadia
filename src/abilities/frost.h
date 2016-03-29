@@ -1,10 +1,10 @@
 #ifndef BURN_H
 #define BURN_H
 
-#include "game_world.h"
-#include "moveable_object.h"
+#include "game/game_world.h"
+#include "game/moveable_object.h"
 #include "effect.h"
-#include "particle_system.h"
+#include "game/particle_system.h"
 
 typedef struct {
     int degree;    

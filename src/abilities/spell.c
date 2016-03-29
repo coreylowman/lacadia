@@ -3,7 +3,6 @@
 #include "spell.h"
 #include "util/obb.h"
 
-
 Spell *spell_new(GameWorld *world){
     Spell *self = malloc(sizeof(*self));
     self->base_object = game_object_init(world, GAME_OBJECT_TYPE_SPELL);

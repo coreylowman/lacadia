@@ -3,7 +3,9 @@
 
 void inputs_update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
     if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
-        i->left_mouse_down = 1;        
+        i->left_mouse_down = 1;
+        i->mouse_down_start_pos[0] = i->mouse_pos[0];
+        i->mouse_down_start_pos[1] = i->mouse_pos[1];
     } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         i->left_mouse_down = 0;
     }

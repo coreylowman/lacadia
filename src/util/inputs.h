@@ -7,7 +7,8 @@ typedef struct {
     int a_down, d_down, w_down, s_down;
     int up_down, down_down, left_down, right_down;
     int space_down, space_shift_down;
-    
+
+    double mouse_down_start_pos[2];    
 	int left_mouse_down, right_mouse_down;
     int scroll_amount;
 

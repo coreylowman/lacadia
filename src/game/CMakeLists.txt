@@ -1,46 +1,24 @@
-list(APPEND GAME_SOURCES
-    ability.c
-    ability.h
+list(APPEND GAME_SOURCES    
     affectable_object.c
     affectable_object.h
-    burn.c
-    burn.h
     collidable_object.c
     collidable_object.h
     colors.h
-    combust.c
-    combust.h
-    effect.c
-    effect.h
-    fireball.c
-    fireball.h
-    frost.c
-    frost.h
     game_object.c
     game_object.h
     game_world.c
     game_world.h
-    icicle.c
-    icicle.h
-    level.c
     level.c
     level.h
-    level.h
-    melee_hit.c
-    melee_hit.h
     moveable_object.c
     moveable_object.h
     particle_system.c
     particle_system.h
     renderable_object.c
     renderable_object.h
-    spell.c
-    spell.h
     stats.h
     wall.c
-    wall.h
-    wildfire.c
-    wildfire.h
+    wall.h    
 )
 
 add_library(game OBJECT ${GAME_SOURCES})

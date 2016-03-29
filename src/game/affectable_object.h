@@ -3,7 +3,7 @@
 
 #include "stats.h"
 #include "util/set.h"
-#include "game/effect.h"
+#include "abilities/effect.h"
 #include "util/renderer.h"
 #include "util/mat4.h"
 

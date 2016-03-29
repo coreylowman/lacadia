@@ -11,6 +11,7 @@ add_subdirectory(src/util)
 add_subdirectory(src/game)
 add_subdirectory(src/players)
 add_subdirectory(src/enemies)
+add_subdirectory(src/abilities)
 
 set(GLEW_RUNTIME ${LACADIA_SOURCE_DIR}/external/glew/bin/Release/Win32/glew32.dll)
 set(VERTEX_SHADER ${LACADIA_SOURCE_DIR}/shaders/vertex_shader.glsl)
@@ -26,6 +27,7 @@ list(APPEND LACADIA_SOURCES
     $<TARGET_OBJECTS:game>
     $<TARGET_OBJECTS:players>
     $<TARGET_OBJECTS:enemies>
+    $<TARGET_OBJECTS:abilities>
 )
 
 add_executable(lacadia ${LACADIA_SOURCES})

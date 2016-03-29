@@ -1,5 +1,5 @@
 #include "wildfire.h"
-#include "affectable_object.h"
+#include "game/affectable_object.h"
 #include "effect.h"
 #include "burn.h"
 #include "enemies/enemy.h"

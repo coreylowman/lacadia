@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include "mage.h"
-#include "game/spell.h"
-#include "game/ability.h"
-#include "game/fireball.h"
-#include "game/wildfire.h"
-#include "game/combust.h"
-#include "game/icicle.h"
+#include "abilities/spell.h"
+#include "abilities/ability.h"
+#include "abilities/fireball.h"
+#include "abilities/wildfire.h"
+#include "abilities/combust.h"
+#include "abilities/icicle.h"
 #include "enemies/enemy.h"
 
 extern Ability fireball_ability;

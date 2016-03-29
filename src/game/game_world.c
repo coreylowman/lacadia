@@ -10,7 +10,7 @@
 #include "util/obb.h"
 #include "util/string_helpers.h"
 #include "game_object.h"
-#include "spell.h"
+#include "abilities/spell.h"
 #include "game_world.h"
 #include "collidable_object.h"
 #include "game/particle_system.h"

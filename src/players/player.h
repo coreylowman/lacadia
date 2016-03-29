@@ -7,8 +7,8 @@
 #include "game/moveable_object.h"
 #include "game/collidable_object.h"
 #include "game/affectable_object.h"
-#include "game/ability.h"
-#include "game/effect.h"
+#include "abilities/ability.h"
+#include "abilities/effect.h"
 #include "util/array_list.h"
 #include "util/inputs.h"
 
