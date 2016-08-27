@@ -18,7 +18,7 @@
 #include "game/level.h"
 
 static GLFWwindow *window;
-static int width = 1280,height = 960;
+int width = 1280,height = 960;
 
 static double last_update_seconds;
 static double last_fps_seconds;
@@ -152,6 +152,7 @@ static void update(double total_time){
 
 static void render(){
     mat4_mul(&world->world_to_screen, camera.projection_matrix, camera.view_matrix);
+    mat4_inverse(&world->screen_to_world, world->world_to_screen);
     
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -172,6 +173,7 @@ int main(int argc, char *argv[]){
 	glClearColor(0.52734375, 0.8046875, 0.91796875, 1.0);
 
 	world = game_world_new();
+    world->camera = &camera;
     player = mage_new(world);
     game_world_set_player(world, player);
     world->level = level_new(world);

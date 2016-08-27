@@ -48,8 +48,10 @@ void camera_set_follow(Camera *camera, MoveableObject *follow, float height){
 void camera_follow(Camera *camera, double dt, Inputs inputs){
 	if (camera->follow_target == NULL) return;
 
-    camera->location = vec3_add(camera->follow_target->position, vec3_scale(camera->follow_target->direction, -camera->follow_dist));
-    camera->location.y += 10;
+	// (camera->follow_target->position, vec3_scale(camera->follow_target->direction, -camera->follow_dist));
+	camera->location.x = camera->follow_target->position.x;
+	camera->location.y = camera->follow_target->position.y + 20;
+	camera->location.z = camera->follow_target->position.z + 20;
 
 	camera->look_at = camera->follow_target->position;
 	camera->look_at.y += camera->target_height;
@@ -179,11 +181,11 @@ void camera_handle_inputs(Camera *camera, double dt, Inputs inputs){
         camera_move_vertically(camera, dt, dir);
     }
 
-    if (inputs.left_mouse_down) {
-        double dx = (inputs.mouse_pos[0] - inputs.mouse_down_start_pos[0]) / 100;
-        double dy = -(inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]) / 100;
-        camera_rotate_lookat(camera, dx, dy);
-    }
+     if (inputs.left_mouse_down) {
+         double dx = (inputs.mouse_pos[0] - inputs.mouse_down_start_pos[0]) / 100;
+         double dy = -(inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]) / 100;
+         camera_rotate_lookat(camera, dx, dy);
+     }
 
     if (inputs.w_down) camera_move_forwards(camera, dt, 1.0);
     if (inputs.s_down) camera_move_forwards(camera, dt, -1.0);

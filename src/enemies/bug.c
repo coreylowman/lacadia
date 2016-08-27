@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "bug.h"
@@ -31,7 +32,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
     self->attack = melee_hit_ability;
     self->attack.max_cooldown = 1.0;
 
-	return self;
+    return self;
 }
 
 
@@ -41,14 +42,14 @@ void bug_on_update(Enemy *self, double dt){
     Player *player = self->target;
     Vec3 pos = self->moveable.position;
     Vec3 target_pos = player->moveable.position;
-    self->moveable.direction = vec3_sub(target_pos, pos);    
+    self->moveable.direction = vec3_sub(target_pos, pos);
     float dist = sqrt(vec3_dot(self->moveable.direction, self->moveable.direction));
     vec3_normalize(&self->moveable.direction);
     if(ability_is_ready(self->attack)){
         if(dist < 3){
             ability_use(&self->attack, self->base_object.world, self);
         }else{
-            moveable_object_update(&self->moveable, dt);        
+            moveable_object_update(&self->moveable, dt);
         }
     }
     vec3_normalize(&self->moveable.direction);

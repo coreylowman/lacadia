@@ -15,6 +15,7 @@
 #include "collidable_object.h"
 #include "game/particle_system.h"
 #include "wall.h"
+#include "util/camera.h"
 
 extern Mat4 MAT4_IDENT;
 extern Vec3 VEC3_UNIT_Y;
@@ -237,10 +238,24 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
 Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords){
     Vec3 output;
     float w = mat4_mul_vec3(&output, self->world_to_screen, world_coords);
-	output.x /= w;
-	output.y /= w;
-	output.z /= w;
+    output.x /= w;
+    output.y /= w;
+    output.z /= w;
     return output;
+}
+
+Vec3 game_world_screen_coords_to_world_coords(GameWorld *self, Vec3 screen_coords){
+    Vec3 direction;
+    float w = mat4_mul_vec3(&direction, self->screen_to_world, screen_coords);
+    direction.x /= w;
+    direction.y /= w;
+    direction.z /= w;
+    vec3_normalize(&direction);
+
+	Vec3 position = self->camera->location;
+    double t = -position.y / direction.y;
+
+    return vec3_add(position, vec3_scale(direction, t));
 }
 
 int game_world_is_colliding_with_wall(GameWorld *self, CollidableObject collidable){
