@@ -66,7 +66,7 @@ static void icicle_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other;
         affectable_component_damage(&enemy->affectable, 1);
-        affectable_component_affect(&enemy->affectable, frost_new(self->world, &enemy->base_object, 1, 4));
+        affectable_component_affect(&enemy->affectable, frost_new(self->world, &enemy->base_object, 0.1, 4));
         self->destroy = 1;
     }else if(other->type == GAME_OBJECT_TYPE_WALL){
         Spell *icicle = self;

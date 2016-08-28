@@ -39,7 +39,7 @@ void bug_on_update(Enemy *self, double dt){
         if(dist < 3){
             ability_use(&self->attack, self->base_object.world, self);
         }else{
-            game_object_move(&self->base_object, dt);
+            game_object_move(&self->base_object, self->affectable.speed * dt);
         }
     }
 	vec3_normalize(&self->base_object.direction);

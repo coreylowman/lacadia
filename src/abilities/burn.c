@@ -42,8 +42,10 @@ void burn_increase_degree(Effect *effect){
     effect->duration = effect->max_duration;
     self->particle_system->duration = effect->duration;
 
-    particle_system_double_particles(self->particle_system);
-    self->degree = self->degree + 1;
+	if (self->degree < 3){
+		particle_system_double_particles(self->particle_system);
+		self->degree = self->degree + 1;
+	}
 }
 
 static void burn_on_apply(Effect *self, AffectableComponent *affectable){
