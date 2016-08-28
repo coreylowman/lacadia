@@ -14,7 +14,7 @@ typedef struct Player Player;
 typedef struct Enemy Enemy;
 typedef struct Level Level;
 typedef struct Wall Wall;
-typedef struct CollidableObject CollidableObject;
+typedef struct CollidableComponent CollidableComponent;
 typedef struct Camera Camera;
 
 typedef struct GameWorld {
@@ -26,7 +26,7 @@ typedef struct GameWorld {
     Set *spells; //Set<Spell *>
     Set *enemies; //Set<Enemy *>
     
-    Set *collidables; //Set<CollidableObject *>
+    Set *collidables; //Set<CollidableComponent *>
     //the ith element is the index in spells/enemies of the ith collidable
     Set *indices; //Set<int *>
 
@@ -68,6 +68,6 @@ Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords
 Vec3 game_world_screen_coords_to_world_coords(GameWorld *self, Vec3 screen_coords);
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy));
-int game_world_is_colliding_with_wall(GameWorld *self, CollidableObject collidable);
+int game_world_is_colliding_with_wall(GameWorld *self, CollidableComponent collidable);
 
 #endif

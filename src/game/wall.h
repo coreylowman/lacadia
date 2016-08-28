@@ -3,8 +3,8 @@
 
 #include "game_world.h"
 #include "game_object.h"
-#include "renderable_object.h"
-#include "collidable_object.h"
+#include "components/renderable_component.h"
+#include "components/collidable_component.h"
 #include "util/vec3.h"
 #include "util/renderer.h"
 
@@ -13,10 +13,10 @@
 typedef struct Wall {
     GameObject base_object;
 
-    CollidableObject collidable;
+    CollidableComponent collidable;
 
     int num_renderables;
-    RenderableObject renderables[MAX_WALL_LENGTH];
+    RenderableComponent renderables[MAX_WALL_LENGTH];
 
     Vec3 normal;
 } Wall;

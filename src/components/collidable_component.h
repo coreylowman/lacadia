@@ -6,7 +6,7 @@
 #include "game/game_object.h"
 
 typedef void (*OnCollideCallback)(GameObject *self, GameObject *other);
-typedef void (*IsCollidingCallback)(struct CollidableComponent self, struct CollidableComponent other);
+typedef int (*IsCollidingCallback)(struct CollidableComponent self, struct CollidableComponent other);
 
 typedef struct CollidableComponent {
     Component base_component;

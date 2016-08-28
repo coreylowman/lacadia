@@ -3,10 +3,9 @@
 
 #include "game/game_world.h"
 #include "game/game_object.h"
-#include "game/renderable_object.h"
-#include "game/collidable_object.h"
-#include "game/affectable_object.h"
-#include "game/moveable_object.h"
+#include "components/renderable_component.h"
+#include "components/affectable_component.h"
+#include "components/collidable_component.h"
 #include "abilities/ability.h"
 
 typedef struct Enemy {
@@ -15,10 +14,9 @@ typedef struct Enemy {
     //who it is following! (most likely the player :P)
     GameObject *target;
 
-    AffectableObject affectable;
-    CollidableObject collidable;
-    MoveableObject moveable;
-    RenderableObject renderable;
+    AffectableComponent affectable;
+    CollidableComponent collidable;
+    RenderableComponent renderable;
 
     Ability attack;
 

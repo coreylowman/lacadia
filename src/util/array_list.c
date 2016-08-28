@@ -1,10 +1,6 @@
 #include <stdlib.h>
 #include "array_list.h"
 
-extern Mat4 MAT4_IDENT;
-extern TerrainVertex TERRAIN_VERTEX_DEFAULT;
-extern Vec3 VEC3_ZERO;
-
 ArrayList *array_list_new(void (*free_element)(void *element)){
     ArrayList *array = malloc(sizeof(*array));
     array->length = 0;

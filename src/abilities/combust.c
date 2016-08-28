@@ -1,5 +1,6 @@
+#include <stdlib.h>
 #include "enemies/enemy.h"
-#include "game/affectable_object.h"
+#include "components/affectable_component.h"
 #include "effect.h"
 #include "combust.h"
 #include "ability.h"
@@ -12,13 +13,12 @@ Ability combust_ability = {
 };
 
 static void combust_apply(GameWorld *world, Enemy *enemy){
-    int i = affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN);
-    if(i != -1){
-        Effect *effect = enemy->affectable.effects->data[i];
-        //update with the remainder of the duration
-        effect->on_update(effect, &enemy->affectable, effect->duration);
-        effect->duration = 0.0;
-    }
+    Effect *effect = enemy->affectable.effects[EFFECT_TYPE_BURN];
+	if (effect != NULL) {
+		//update with the remainder of the duration
+		effect->on_update(effect, &enemy->affectable, effect->duration);
+		effect->duration = 0.0;
+	}
 }
 
 void combust_use(GameWorld *world, GameObject *user){

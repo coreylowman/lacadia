@@ -5,15 +5,14 @@
 #include "util/obb.h"
 #include "game/colors.h"
 
-extern Vec3 VEC3_UNIT_Y;
-
-void affectable_component_update(AffectableComponent *self, double dt);
-void affectable_component_render(AffectableComponent *self, Renderer *renderer);
+void affectable_component_update(Component *self, double dt);
+void affectable_component_render(Component *self, Renderer *renderer);
+void affectable_component_free(void *self);
 
 AffectableComponent affectable_component_init(GameObject *container, float max_health, float max_speed, float max_regen, float max_power, float max_lifesteal){
     AffectableComponent self;
 
-    self.base_component = component_init(container, affectable_component_update, affectable_component_render);
+    self.base_component = component_init(container, affectable_component_update, affectable_component_render, affectable_component_free);
 
     self.max_health = max_health;
     self.max_speed = max_speed;
@@ -27,6 +26,11 @@ AffectableComponent affectable_component_init(GameObject *container, float max_h
     self.power = self.max_power;
     self.lifesteal = self.max_lifesteal;
 
+	int i;
+	for (i = 0; i < EFFECT_TYPE_MAX; i++){
+		self.effects[i] = NULL;
+	}
+
     return self;
 }
 
@@ -34,7 +38,8 @@ void affectable_component_affect(AffectableComponent *self, Effect *effect){
     effect->on_apply(effect, self);
 }
 
-void affectable_component_update(AffectableComponent *self, double dt){
+void affectable_component_update(Component *component, double dt){
+	AffectableComponent *self = component;
     int i;
     Effect *e;
     for(i = 0;i < EFFECT_TYPE_MAX;i++){
@@ -48,7 +53,8 @@ void affectable_component_update(AffectableComponent *self, double dt){
     }
 }
 
-void affectable_component_render(AffectableComponent *self, Renderer *renderer){
+void affectable_component_render(Component *component, Renderer *renderer){
+	AffectableComponent *self = component;
     int i;
     Effect *e;
     for(i = 0;i < EFFECT_TYPE_MAX;i++){
@@ -77,6 +83,16 @@ void affectable_component_render(AffectableComponent *self, Renderer *renderer){
     background.width = .1;
     background.height = 0.01;
     renderer_render_rect(renderer, background, COLOR_WHITE);
+}
+
+void affectable_component_free(void *component) {
+    AffectableComponent *self = component;
+    int i;
+    for(i = 0;i < EFFECT_TYPE_MAX;i++) {
+		if (self->effects[i] != NULL){
+			effect_free(self->effects[i]);
+		}
+    }
 }
 
 float affectable_component_damage(AffectableComponent *self, float amt){

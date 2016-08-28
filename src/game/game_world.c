@@ -12,14 +12,12 @@
 #include "game_object.h"
 #include "abilities/spell.h"
 #include "game_world.h"
-#include "collidable_object.h"
+#include "components/collidable_component.h"
 #include "game/particle_system.h"
 #include "wall.h"
 #include "util/camera.h"
 
-extern Mat4 MAT4_IDENT;
-extern Vec3 VEC3_UNIT_Y;
-extern Vec3 light_position;
+Vec3 light_position;
 
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
@@ -48,8 +46,8 @@ void game_world_free(GameWorld *self){
 
 static void destroy_collidable(GameWorld *self, int i){
     int index = *(int *)self->indices->data[i];
-	CollidableObject *c = self->collidables->data[i];
-    switch(c->container->type){
+	CollidableComponent *c = self->collidables->data[i];
+    switch(c->base_component.container->type){
         case GAME_OBJECT_TYPE_SPELL:
             spell_free(self->spells->data[index]);
             self->spells->data[index] = NULL;
@@ -67,7 +65,7 @@ void game_world_update(GameWorld *self, double dt){
     int i, j;
     Spell *s;
     Enemy *e;
-    CollidableObject *c1, *c2;
+    CollidableComponent *c1, *c2;
 
     self->dt = dt;
 
@@ -91,7 +89,7 @@ void game_world_update(GameWorld *self, double dt){
         if(self->collidables->data[i] == NULL) continue;
         c1 = self->collidables->data[i];
 
-        if(c1->container->destroy){
+        if(c1->base_component.container->destroy){
             destroy_collidable(self, i);
             continue;
         }
@@ -100,20 +98,20 @@ void game_world_update(GameWorld *self, double dt){
             if(self->collidables->data[j] == NULL) continue;
             c2 = self->collidables->data[j];
             
-            if(c2->container->destroy){
+			if (c2->base_component.container->destroy){
                 destroy_collidable(self, j);
                 continue;
             }
 
             if(c1->is_colliding(*c1, *c2) && c2->is_colliding(*c2, *c1)){
-                c1->on_collide(c1->container, c2->container);
-                c2->on_collide(c2->container, c1->container);
+				c1->on_collide(c1->base_component.container, c2->base_component.container);
+				c2->on_collide(c2->base_component.container, c1->base_component.container);
 
-                if(c1->container->destroy){
+				if (c1->base_component.container->destroy){
                     destroy_collidable(self, i);
                     break;
                 }
-                if(c2->container->destroy){
+				if (c2->base_component.container->destroy){
                     destroy_collidable(self, j);
                     continue;
                 }
@@ -177,29 +175,25 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
     Spell *s;
 	Enemy *e;
     ParticleSystem *ps;
-    Vec3 above = vec3_scale(VEC3_UNIT_Y, 1);
-    Vec3 healthbar_loc;
 
     renderer_render_sphere(self->renderer, light_position);
 
     //gather updates to the various things
 	Player *p = self->player;
-    renderable_object_render(p->renderable, self->renderer);
-    // collidable_object_render(p->collidable, self->renderer);
+    component_render(&p->renderable, self->renderer);
+    // collidable_component_render(p->collidable, self->renderer);
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
-        renderable_object_render(s->renderable, self->renderer);
-        // collidable_object_render(s->collidable, self->renderer);
+        component_render(&s->renderable, self->renderer);
+        // collidable_component_render(s->collidable, self->renderer);
     }
 	for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
-        healthbar_loc = vec3_add(obb_top(e->collidable.bounding_box), above);
-        healthbar_loc = game_world_world_coords_to_screen_coords(self, healthbar_loc);
-        renderable_object_render(e->renderable, self->renderer);
-        // collidable_object_render(e->collidable, self->renderer);
-        affectable_object_render(e->affectable, healthbar_loc, self->renderer);
+        component_render(&e->renderable, self->renderer);
+        // collidable_component_render(e->collidable, self->renderer);
+        component_render(&e->affectable, self->renderer);
     }
     for (i = 0; i < self->particle_systems->length; i++){
         if(self->particle_systems->data[i] == NULL) continue;
@@ -221,13 +215,13 @@ Obb game_world_get_model_obb(GameWorld *self, int model_id){
 }
 
 void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy)){
-    CollidableObject *collidable;
+    CollidableComponent *collidable;
     GameObject *object;
     int i;
     for(i = 0;i < self->collidables->length;i++){
         if(self->collidables->data[i] == NULL) continue;
         collidable = self->collidables->data[i];
-        object = collidable->container;
+		object = collidable->base_component.container;
         if(object->type == GAME_OBJECT_TYPE_ENEMY
             && vec3_within_dist(collidable->bounding_box.center, position, radius)){
             fn(self, (Enemy *)object);
@@ -258,13 +252,13 @@ Vec3 game_world_screen_coords_to_world_coords(GameWorld *self, Vec3 screen_coord
     return vec3_add(position, vec3_scale(direction, t));
 }
 
-int game_world_is_colliding_with_wall(GameWorld *self, CollidableObject collidable){
+int game_world_is_colliding_with_wall(GameWorld *self, CollidableComponent collidable){
     int i;
-    CollidableObject *other;
+    CollidableComponent *other;
     for(i = 0;i < self->collidables->length;i++){
         if(self->collidables->data[i] == NULL) continue;
         other = self->collidables->data[i];
-        if(other->container->type != GAME_OBJECT_TYPE_WALL) continue;
+		if (other->base_component.container->type != GAME_OBJECT_TYPE_WALL) continue;
         if(collidable.is_colliding(collidable, *other)
             && other->is_colliding(*other, collidable))
             return 1;

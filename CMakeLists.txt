@@ -8,6 +8,7 @@ find_package(OpenGL REQUIRED)
 
 add_subdirectory(external/lodepng)
 add_subdirectory(src/util)
+add_subdirectory(src/components)
 add_subdirectory(src/game)
 add_subdirectory(src/players)
 add_subdirectory(src/enemies)
@@ -24,6 +25,7 @@ list(APPEND LACADIA_SOURCES
 
     $<TARGET_OBJECTS:lodepng>
     $<TARGET_OBJECTS:util>
+    $<TARGET_OBJECTS:components>
     $<TARGET_OBJECTS:game>
     $<TARGET_OBJECTS:players>
     $<TARGET_OBJECTS:enemies>

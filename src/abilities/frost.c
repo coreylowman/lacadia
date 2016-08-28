@@ -2,12 +2,14 @@
 #include "frost.h"
 #include "util/random.h"
 #include "util/renderer.h"
+#include "enemies/enemy.h"
+#include "components/affectable_component.h"
 
 //forward declarations
-static void frost_on_apply(Effect *self, AffectableObject *affectable);
-static void frost_on_update(Effect *self, AffectableObject *affectable, double dt);
+static void frost_on_apply(Effect *self, AffectableComponent *affectable);
+static void frost_on_update(Effect *self, AffectableComponent *affectable, double dt);
 static void frost_on_render(Effect *self, Renderer *renderer);
-static void frost_on_end(Effect *self, AffectableObject *affectable);
+static void frost_on_end(Effect *self, AffectableComponent *affectable);
 static void frost_on_free(Effect *self);
 static int frost_is_over(Effect *self);
 //end forward declarations
@@ -19,13 +21,13 @@ static void frost_particle_init(Particle *p, Vec3 position, float duration){
     p->duration = random_in_rangef(0, duration);
 }
 
-Effect *frost_new(GameWorld *world, MoveableObject *target, float slow_amt, float duration){
+Effect *frost_new(GameWorld *world, GameObject *target, float slow_amt_per_degree, float duration){
     Effect *self = effect_new(EFFECT_TYPE_FROST, duration);
     
     self->data = malloc(sizeof(FrostData));
     FrostData *data = self->data;
     data->degree = 1;
-    data->slow_amt = slow_amt;
+    data->slow_amt_per_degree = slow_amt_per_degree;
     data->particle_system = particle_system_new(world, target->position, "assets/frost_particle", 16, duration, duration * 0.4);
     particle_system_set_particle_init(data->particle_system, frost_particle_init);
     particle_system_set_follow_target(data->particle_system, target);
@@ -54,25 +56,41 @@ void frost_increase_degree(Effect *self){
     data->particle_system->duration = self->duration;
 }
 
-static void frost_on_apply(Effect *self, AffectableObject *affectable){
-    int i = affectable_object_index_of_effect(affectable, EFFECT_TYPE_FROST);
-    
-    if (i != -1){
-        Effect *e = affectable->effects->data[i];
-        FrostData *data = e->data;
+static void fizzle_particle_init(Particle *p, Vec3 position, float duration){
+    p->position = position;
+    p->velocity = random_length_vec3(7.0);
+    p->duration = random_in_rangef(0, duration);
+}
+
+static void frost_on_apply(Effect *self, AffectableComponent *affectable){
+	Effect *frost = affectable->effects[EFFECT_TYPE_FROST];
+    if (frost != NULL){        
+        FrostData *data = frost->data;
         if(data->degree == 3){
+            frost->on_end(frost, affectable);
             //TODO turn into permafrost!
+            
+            // show burst of particles indicating permafrost has hit
+            Enemy *enemy = affectable->base_component.container;
+            ParticleSystem *ps = particle_system_new(enemy->base_object.world, enemy->collidable.bounding_box.center, "assets/frost_particle", 64, 0.0, 0.75);
+            particle_system_set_particle_init(ps, fizzle_particle_init);
+            //this gives ownership to game_world... we don't have to worry about freeing
+            game_world_add_particle_system(enemy->base_object.world, ps);
         }else{
-            frost_increase_degree(e);
+            frost_increase_degree(frost);
         }
         effect_free(self);
         return;
-    }
+	} else {
+		affectable->effects[EFFECT_TYPE_FROST] = self;
+	}
 
-    set_add(affectable->effects, self);
+// TODO figure out how to actually do this slow thing...
+    //FrostData *data = self->data;
+    //data->amt_slowed = affectable_component_slow(affectable, affectable->data->degree * data->slow_amt_per_degree);
 }
 
-static void frost_on_update(Effect *self, AffectableObject *affectable, double dt){
+static void frost_on_update(Effect *self, AffectableComponent *affectable, double dt){
     FrostData *data = self->data;
     self->duration -= dt;
 }
@@ -81,12 +99,11 @@ static void frost_on_render(Effect *self, Renderer *renderer){
 
 }
 
-static void frost_on_end(Effect *self, AffectableObject *affectable){
-    int i = affectable_object_index_of_effect(affectable, EFFECT_TYPE_FROST);
-
+static void frost_on_end(Effect *self, AffectableComponent *affectable){
     //assert i != -1
     //TODO undo slow
-    set_remove_at(affectable->effects, i);    
+	effect_free(affectable->effects[EFFECT_TYPE_FROST]);
+	affectable->effects[EFFECT_TYPE_FROST] = NULL;
 }
 
 static void frost_on_free(Effect *self){

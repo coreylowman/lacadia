@@ -9,18 +9,12 @@
 
 #define OBJECT_MODEL_SCALE 0.25
 
-extern Vec3 VEC3_UNIT_X;
-extern Vec3 VEC3_UNIT_Y;
-extern Vec3 VEC3_UNIT_Z;
-extern Vec3 VEC3_ZERO;
-
 typedef struct {
     Vec3 vertex_indices, texture_indices, normal_indices;
 } Face;
 
 static Face *face_new(Vec3 p, Vec3 t, Vec3 n){
     Face *self = malloc(sizeof(*self));
-    int i;
     self->vertex_indices = p;
     self->texture_indices = t;
     self->normal_indices = n;

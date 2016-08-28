@@ -4,11 +4,6 @@
 #include "util/mat4.h"
 #include "util/terrain.h"
 
-extern Vec3 VEC3_UNIT_X;
-extern Vec3 VEC3_UNIT_Z;
-extern Vec3 VEC3_ZERO;
-extern Mat4 MAT4_IDENT;
-
 Level *level_new(GameWorld *world){
     Level *self = malloc(sizeof(*self));
 

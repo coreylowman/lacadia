@@ -1,8 +1,9 @@
 #ifndef EFFECT_H
 #define EFFECT_H
 
-#include "game/affectable_object.h"
 #include "util/renderer.h"
+
+typedef struct AffectableComponent AffectableComponent;
 
 typedef enum EffectType {
     EFFECT_TYPE_SHIELD,
@@ -13,6 +14,7 @@ typedef enum EffectType {
     EFFECT_TYPE_SOULBURN, //just use a doteffect... just a typed dot
     EFFECT_TYPE_FROST,
     EFFECT_TYPE_PERMAFROST, //just use a sloweffect... just a typed slow
+    EFFECT_TYPE_MAX,
 } EffectType;
 
 //effects are applied by some spells
@@ -34,18 +36,18 @@ typedef struct Effect{
 
     //called when the effect is first applied to an object... usually when a spell
     //collides with an enemy
-    void (*on_apply)(struct Effect *self, struct AffectableObject *obj);
+    void (*on_apply)(struct Effect *self, AffectableComponent *obj);
 
     //called by the affectable object when it updates itself
-    void (*on_update)(struct Effect *self, struct AffectableObject *obj, double dt);
+    void (*on_update)(struct Effect *self, AffectableComponent *obj, double dt);
     
-    //called by affectable_object_update to see whether this effect has ended
+    //called by affectable_component_update to see whether this effect has ended
     //it then calls on_end
     int  (*is_over)(struct Effect *self);
 
     //called when an effect ends, this handles removing itself from the
     //affectable object, which may call the effect_free/on_free method
-    void (*on_end)(struct Effect *self, struct AffectableObject *obj);
+    void (*on_end)(struct Effect *self, AffectableComponent *obj);
     
     //called by effect_free
     void (*on_free)(struct Effect *self);

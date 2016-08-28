@@ -1,11 +1,6 @@
 #include <math.h>
 #include "vec3.h"
 
-Vec3 VEC3_UNIT_X = { .data = {1, 0, 0} };
-Vec3 VEC3_UNIT_Y = { .data = {0, 1, 0} };
-Vec3 VEC3_UNIT_Z = { .data = {0, 0, 1} };
-Vec3 VEC3_ZERO = { .data = {0, 0, 0} };
-
 Vec3 vec3_from_3f(float x, float y, float z){
     return (Vec3){ .x = x, .y = y, .z = z};
 }

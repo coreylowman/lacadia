@@ -3,16 +3,15 @@
 
 #include "game/game_world.h"
 #include "game/game_object.h"
-#include "game/collidable_object.h"
-#include "game/moveable_object.h"
-#include "game/renderable_object.h"
+#include "components/collidable_component.h"
+#include "components/renderable_component.h"
 
 typedef struct Spell {
     GameObject base_object;
+    float speed;
 
-    CollidableObject collidable;
-    MoveableObject moveable;
-    RenderableObject renderable;
+    CollidableComponent collidable;
+    RenderableComponent renderable;
 
     GameObjectType caster_type;
     GameObject *target;
@@ -25,7 +24,7 @@ void spell_free(Spell *self);
 
 void spell_update(Spell *self, double dt);
 
-int spell_is_colliding(CollidableObject self, CollidableObject other);
-int spell_is_colliding_with_target(CollidableObject self, CollidableObject other);
+int spell_is_colliding(CollidableComponent self, CollidableComponent other);
+int spell_is_colliding_with_target(CollidableComponent self, CollidableComponent other);
 
 #endif

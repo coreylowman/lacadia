@@ -1,8 +1,6 @@
 #include <math.h>
 #include "obb.h"
 
-extern Vec3 VEC3_ZERO;
-
 Vec3 obb_top(Obb a){
     Vec3 output = a.center;
     output.y += a.radius.y;

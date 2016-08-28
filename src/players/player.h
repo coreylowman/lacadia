@@ -3,10 +3,9 @@
 
 #include "game/game_world.h"
 #include "game/game_object.h"
-#include "game/renderable_object.h"
-#include "game/moveable_object.h"
-#include "game/collidable_object.h"
-#include "game/affectable_object.h"
+#include "components/renderable_component.h"
+#include "components/collidable_component.h"
+#include "components/affectable_component.h"
 #include "abilities/ability.h"
 #include "abilities/effect.h"
 #include "util/array_list.h"
@@ -18,10 +17,9 @@ typedef struct Player {
     //abilities
     Ability abilities[4];
 
-    RenderableObject renderable;
-    MoveableObject moveable;
-    AffectableObject affectable;
-    CollidableObject collidable;
+    RenderableComponent renderable;
+    AffectableComponent affectable;
+    CollidableComponent collidable;
 
     //generic object methods
     int stance;

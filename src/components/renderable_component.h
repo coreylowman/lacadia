@@ -12,7 +12,7 @@ typedef struct RenderableComponent {
     Mat4 model_matrix;
 } RenderableComponent;
 
-RenderableComponent renderable_object_init(GameObject *container, const char *model_name, Renderer *renderer);
-void renderable_object_set_model_matrix(RenderableComponent *self, Mat4 model_matrix);
+RenderableComponent renderable_component_init(GameObject *container, const char *model_name, Renderer *renderer);
+void renderable_component_set_model_matrix(RenderableComponent *self, Mat4 model_matrix);
 
 #endif

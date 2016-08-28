@@ -1,5 +1,5 @@
 #include "wildfire.h"
-#include "game/affectable_object.h"
+#include "components/affectable_component.h"
 #include "effect.h"
 #include "burn.h"
 #include "enemies/enemy.h"
@@ -29,20 +29,16 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *targe
 
 	if (user->type == GAME_OBJECT_TYPE_PLAYER) {
 		Player *player = user;
-		self->moveable = player->moveable;
+		self->base_object.position = player->base_object.position;
+		self->base_object.direction = player->base_object.direction;
 		//start from center of player
-		self->moveable.speed = 50.0;
-		self->moveable.position.y += player->collidable.bounding_box.radius.y;
+		self->speed = 50.0;
+		self->base_object.position.y += player->collidable.bounding_box.radius.y;
 	}
 
-	self->renderable.model_id = game_world_get_model_id(world, "assets/burn_particle");
-	renderable_object_update(&self->renderable, self->moveable);
-
-	self->collidable.container = self;
-	self->collidable.on_collide = wildfire_on_collide;
+	self->renderable = renderable_component_init(&self->base_object, "assets/burn_particle", world->renderer);
+	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), wildfire_on_collide);
 	self->collidable.is_colliding = spell_is_colliding_with_target;
-	self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
-	collidable_object_update(&self->collidable, self->moveable);
 
 	self->target = target;
 
@@ -58,26 +54,23 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject
 
 	if (user->type == GAME_OBJECT_TYPE_PLAYER) {
 		Player *player = user;
-		self->moveable = player->moveable;
-		self->moveable.speed = 50.0;
+		self->base_object.position = player->base_object.position;
+		self->base_object.direction = player->base_object.direction;
+		self->speed = 50.0;
 		//start from center of player
-		self->moveable.position.y += player->collidable.bounding_box.radius.y;
+		self->base_object.position.y += player->collidable.bounding_box.radius.y;
 	}else if(user->type == GAME_OBJECT_TYPE_ENEMY) {
 		Enemy *enemy = user;
-		self->moveable = enemy->moveable;
-		self->moveable.speed = 50.0;
+		self->base_object.position = enemy->base_object.position;
+		self->base_object.direction = enemy->base_object.direction;
+		self->speed = 50.0;
 		//start from center of enemy
-		self->moveable.position.y += enemy->collidable.bounding_box.radius.y;
+		self->base_object.position.y += enemy->collidable.bounding_box.radius.y;
 	}
 
-	self->renderable.model_id = game_world_get_model_id(world, "assets/burn_particle");
-	renderable_object_update(&self->renderable, self->moveable);
-
-	self->collidable.container = self;
-	self->collidable.on_collide = wildfire_spread_on_collide;
+	self->renderable = renderable_component_init(&self->base_object, "assets/burn_particle", world->renderer);
+	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), wildfire_spread_on_collide);
 	self->collidable.is_colliding = spell_is_colliding_with_target;
-	self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
-	collidable_object_update(&self->collidable, self->moveable);
 
 	self->target = target;
 
@@ -91,35 +84,34 @@ static void wildfire_update(Spell *self, double dt){
 		self->base_object.destroy = 1;
 		return;
 	}
-	Vec3 pos = self->moveable.position;
-	Vec3 target_pos = ((Enemy *)(self->target))->moveable.position;
-	self->moveable.direction = vec3_sub(target_pos, pos);
-	vec3_normalize(&self->moveable.direction);
+	Vec3 pos = self->base_object.position;
+	Vec3 target_pos = ((Enemy *)(self->target))->base_object.position;
+	self->base_object.direction = vec3_sub(target_pos, pos);
+	vec3_normalize(&self->base_object.direction);
 }
 
 static void wildfire_on_collide(GameObject *self, GameObject *other){
 	if (other->type == GAME_OBJECT_TYPE_ENEMY) {
 		GameWorld *world = self->world;
 		Enemy *enemy = other;
-		int i, j;
+		int j;
 		Effect *e;
-		CollidableObject *collidable;
+		CollidableComponent *collidable;
 		GameObject *object;
 
-		i = affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN);
 		//was fired at enemies who are already affected by burn
-		if (i != -1){
-			e = enemy->affectable.effects->data[i];
+		if (enemy->affectable.effects[EFFECT_TYPE_BURN] != NULL){
+			e = enemy->affectable.effects[EFFECT_TYPE_BURN];
 			burn_increase_degree(e);
 		}else{
-			affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+			affectable_component_affect(&enemy->affectable, burn_new(self->world, &enemy->base_object, 1, 4));
 		}
 
 		//search for enemies with 5 radius of this enemy
 	    for(j = 0;j < world->collidables->length;j++){
 	        if(world->collidables->data[j] == NULL) continue;
 	        collidable = world->collidables->data[j];
-	        object = collidable->container;
+	        object = collidable->base_component.container;
 	        if(object->type == GAME_OBJECT_TYPE_ENEMY
 	            && vec3_within_dist(collidable->bounding_box.center, enemy->collidable.bounding_box.center, 10))
 	        {
@@ -138,22 +130,22 @@ static void wildfire_spread_on_collide(GameObject *self, GameObject *other){
 		//same target. so in the time it took this one to collide, another one
 		//could've already applied
 		//if it doesn't have a burn, then apply one!
-		if(affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN) == -1){
-			affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+		if(enemy->affectable.effects[EFFECT_TYPE_BURN] == NULL){
+			affectable_component_affect(&enemy->affectable, burn_new(self->world, &enemy->base_object, 1, 4));
 		}
 	}
 	self->destroy = 1;
 }
 
 static void wildfire_spread(GameWorld *world, Enemy *origin, Enemy *enemy){
-	if(affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN) == -1){
+	if(enemy->affectable.effects[EFFECT_TYPE_BURN] == NULL){
 		//if it doesn't have a burn on it, then shoot a wildfire spread at it 
 		game_world_add_spell(world, wildfire_spread_new(world, origin, enemy));
 	}
 }
 
 static void wildfire_apply(GameWorld *world, Enemy *enemy){
-	if(affectable_object_index_of_effect(&enemy->affectable, EFFECT_TYPE_BURN) != -1){
+	if(enemy->affectable.effects[EFFECT_TYPE_BURN] != NULL){
 		//if it already has a burn on it shoot a wildfire at it
 		game_world_add_spell(world, wildfire_new(world, world->player, enemy));
 	}

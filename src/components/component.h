@@ -6,10 +6,10 @@
 
 typedef void (*ComponentUpdateCallback)(struct Component *self, double dt);
 typedef void (*ComponentRenderCallback)(struct Component *self, Renderer *renderer);
+typedef void (*ComponentFreeCallback)(void *component);
 
 typedef enum ComponentType {
     COMPONENT_TYPE_COLLIDABLE,
-    COMPONENT_TYPE_MOVEABLE,
     COMPONENT_TYPE_RENDERABLE,
     COMPONENT_TYPE_AFFECTABLE,
     COMPONENT_TYPE_MAX,
@@ -20,10 +20,12 @@ typedef struct Component {
 
     ComponentUpdateCallback on_update;
     ComponentRenderCallback on_render;
+    ComponentFreeCallback on_free;
 } Component;
 
-Component component_init(GameObject *container, ComponentUpdateCallback on_update, ComponentRenderCallback on_render);
+Component component_init(GameObject *container, ComponentUpdateCallback on_update, ComponentRenderCallback on_render, ComponentFreeCallback on_free);
 void component_update(Component *self, double dt);
 void component_render(Component *self, Renderer *renderer);
+void component_free(Component *self);
 
 #endif

@@ -13,7 +13,6 @@
 #define DAMPENING 0.5
 //#define RANDOM_TERRAIN
 
-TerrainVertex TERRAIN_VERTEX_DEFAULT = { .position = { 0, 0, 0 }, .normal = { 0, 0, 0 }, .texture = { 0, 0 } };
 /*
 #define TERRAIN_SIZE 64
 #define OCTAVES 3
@@ -192,7 +191,6 @@ void terrain_regen(Terrain *self){
 	int ind;
 	Vec3 normal;
     Quad q;
-    TerrainVertex v;
 	float ti[2], tj[2];
     float h[2];
 	for (i = 0; i < TERRAIN_SIZE; i++){

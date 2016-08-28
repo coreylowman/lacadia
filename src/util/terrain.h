@@ -9,6 +9,8 @@ typedef struct TerrainVertex {
     float texture[2];
 } TerrainVertex;
 
+static TerrainVertex TERRAIN_VERTEX_DEFAULT = { .position = { 0, 0, 0 }, .normal = { 0, 0, 0 }, .texture = { 0, 0 } };
+
 typedef struct Terrain {
     int num_grass_vertices;
     TerrainVertex *grass_vertices;

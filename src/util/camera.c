@@ -24,21 +24,21 @@ void camera_init(Camera *camera, int width, int height){
     camera->speed = 25.0;
 
     camera->follow_dist = 30.0;
-	camera->follow_target = NULL;
+	camera->follow_position = NULL;
 
     camera_update_view_matrix(camera);
     camera_update_projection_matrix(camera);
 }
 
 int camera_is_following(Camera camera){
-    return camera.follow_target != NULL;
+	return camera.follow_position != NULL;
 }
 
-void camera_set_follow(Camera *camera, MoveableObject *follow, float height){
-	camera->follow_target = follow;
-	if (follow != NULL) {
+void camera_set_follow(Camera *camera, Vec3 *follow_position, float height){
+	camera->follow_position = follow_position;
+	if (follow_position != NULL) {
         camera->target_height = height;
-		camera->look_at = follow->position;
+		camera->look_at = *follow_position;
         camera->look_at.y += height;
 		Vec3 diff = vec3_sub(camera->location, camera->look_at);
 		camera->follow_dist = sqrt(vec3_dot(diff, diff));
@@ -46,14 +46,14 @@ void camera_set_follow(Camera *camera, MoveableObject *follow, float height){
 }
 
 void camera_follow(Camera *camera, double dt, Inputs inputs){
-	if (camera->follow_target == NULL) return;
+	if (camera->follow_position == NULL) return;
 
-	// (camera->follow_target->position, vec3_scale(camera->follow_target->direction, -camera->follow_dist));
-	camera->location.x = camera->follow_target->position.x;
-	camera->location.y = camera->follow_target->position.y + 20;
-	camera->location.z = camera->follow_target->position.z + 20;
+	// (*camera->follow_position, vec3_scale(camera->follow_position->direction, -camera->follow_dist));
+	camera->location.x = camera->follow_position->x;
+	camera->location.y = camera->follow_position->y + 20;
+	camera->location.z = camera->follow_position->z + 20;
 
-	camera->look_at = camera->follow_target->position;
+	camera->look_at = *camera->follow_position;
 	camera->look_at.y += camera->target_height;
     
 	camera_update_view_matrix(camera);
@@ -174,7 +174,7 @@ void camera_update_projection_matrix(Camera *camera){
 }
 
 void camera_handle_inputs(Camera *camera, double dt, Inputs inputs){
-	if (camera->follow_target != NULL) return;
+	if (camera->follow_position != NULL) return;
 
 	if (inputs.space_down) { //move vertically
         double dir = inputs.space_shift_down ? -1.0 : 1.0;

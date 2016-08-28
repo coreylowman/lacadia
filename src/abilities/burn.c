@@ -2,12 +2,13 @@
 #include "burn.h"
 #include "util/random.h"
 #include "util/renderer.h"
+#include "components/affectable_component.h"
 
 //forward declarations
-static void burn_on_apply(Effect *self, AffectableObject *affectable);
-static void burn_on_update(Effect *self, AffectableObject *affectable, double dt);
+static void burn_on_apply(Effect *self, AffectableComponent *affectable);
+static void burn_on_update(Effect *self, AffectableComponent *affectable, double dt);
 static void burn_on_render(Effect *self, Renderer *renderer);
-static void burn_on_end(Effect *self, AffectableObject *affectable);
+static void burn_on_end(Effect *self, AffectableComponent *affectable);
 static void burn_on_free(Effect *self);
 static int burn_is_over(Effect *self);
 //end forward declarations
@@ -19,7 +20,7 @@ static void burn_particle_init(Particle *p, Vec3 position, float duration){
     p->duration = random_in_rangef(0, duration);
 }
 
-Effect *burn_new(GameWorld *world, MoveableObject *target, float dmg, float duration){
+Effect *burn_new(GameWorld *world, GameObject *target, float dmg, float duration){
     Effect *self = effect_new(EFFECT_TYPE_BURN, duration);
     
     self->data = malloc(sizeof(BurnData));
@@ -54,24 +55,24 @@ void burn_increase_degree(Effect *self){
     data->particle_system->duration = self->duration;
 }
 
-static void burn_on_apply(Effect *self, AffectableObject *affectable){
-	int i = affectable_object_index_of_effect(affectable, EFFECT_TYPE_BURN);;
-    
-	if (i != -1){
-		Effect *e = affectable->effects->data[i];
+static void burn_on_apply(Effect *self, AffectableComponent *affectable){
+	Effect *e = affectable->effects[EFFECT_TYPE_BURN];
+	
+	if (e != NULL){
 		BurnData *data = e->data;
 		data->particle_system->duration = e->max_duration;
 		e->duration = e->max_duration;
 		effect_free(self);
 		return;
 	}
-
-    set_add(affectable->effects, self);
+	else {
+		affectable->effects[EFFECT_TYPE_BURN] = self;
+	}
 }
 
-static void burn_on_update(Effect *self, AffectableObject *affectable, double dt){
+static void burn_on_update(Effect *self, AffectableComponent *affectable, double dt){
     BurnData *data = self->data;
-    affectable_object_damage(affectable, dt * data->degree * data->dps);
+    affectable_component_damage(affectable, dt * data->degree * data->dps);
     self->duration -= dt;
 }
 
@@ -79,12 +80,13 @@ static void burn_on_render(Effect *self, Renderer *renderer){
 
 }
 
-static void burn_on_end(Effect *self, AffectableObject *affectable){
+static void burn_on_end(Effect *self, AffectableComponent *affectable){
     int i;
-    for(i = 0;i < affectable->effects->length;i++){
-        if(affectable->effects->data[i] == NULL) continue;
-        if(affectable->effects->data[i] == self){
-            set_remove_at(affectable->effects, i);
+    for(i = 0;i < EFFECT_TYPE_MAX;i++){
+        if(affectable->effects[i] == NULL) continue;
+        if(affectable->effects[i] == self){
+			effect_free(affectable->effects[i]);
+			affectable->effects[i] = NULL;
             return;
         }
     }

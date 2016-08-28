@@ -3,7 +3,7 @@
 
 Ability *ability_new(){
     Ability *self = malloc(sizeof(*self));
-    self->max_cooldown = 0;
+    self->max_cooldown = 1;
     self->cooldown = 0;
     return self;
 }

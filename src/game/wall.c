@@ -4,10 +4,6 @@
 #include "util/random.h"
 #include "util/renderer.h"
 
-extern Vec3 VEC3_UNIT_X;
-extern Vec3 VEC3_UNIT_Z;
-extern Vec3 VEC3_ZERO;
-
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length){
     Wall *self = malloc(sizeof(*self));
     self->base_object = game_object_init(world, GAME_OBJECT_TYPE_WALL);
@@ -27,20 +23,17 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
 		// mat4_rotate_y(&model_matrix, 3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
         mat4_translate(&model_matrix, pos);
 
-		self->renderables[i].model_id = model_id;
-        renderable_object_set_model_matrix(&self->renderables[i], model_matrix);
+		self->renderables[i] = renderable_component_init(&self->base_object, "assets/wall", world->renderer);
+        renderable_component_set_model_matrix(&self->renderables[i], model_matrix);
     }
 
-    self->collidable.container = self;
-    self->collidable.bounding_box = game_world_get_model_obb(world, model_id);
-    self->collidable.bounding_box.center = position;
-    self->collidable.bounding_box.center.y += dims.y * 0.5;
-    self->collidable.bounding_box.radius.data[which] *= length;
-    self->collidable.bounding_box.center.data[which] += width * (length - 1)* 0.5;
-
-    self->collidable.on_collide = wall_on_collide;
-    self->collidable.is_colliding = collidable_object_is_colliding;
-
+	Obb bounding_box = game_world_get_model_obb(world, model_id);
+	bounding_box.center = position;
+	bounding_box.center.y += dims.y * 0.5;
+	bounding_box.radius.data[which] *= length;
+	bounding_box.center.data[which] += width * (length - 1)* 0.5;
+	self->collidable = collidable_component_init(&self->base_object, bounding_box, wall_on_collide);
+	
     self->normal = which == 0 ? VEC3_UNIT_Z : VEC3_UNIT_X;
 
     return self;
@@ -53,9 +46,9 @@ void wall_free(Wall *self){
 void wall_render(Wall *self, Renderer *renderer){
     int i;
     for(i = 0;i < self->num_renderables;i++){
-        renderable_object_render(self->renderables[i], renderer);
+        component_render(&self->renderables[i], renderer);
     }
-    //collidable_object_render(self->collidable, renderer);
+    //collidable_component_render(self->collidable, renderer);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other){

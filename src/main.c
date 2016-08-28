@@ -40,7 +40,7 @@ static void mouse_position_callback(GLFWwindow *w, double x, double y){
 }
 
 static void follow(){
-	camera_set_follow(&camera, &player->moveable, 0.75 * player->collidable.bounding_box.radius.y);
+	camera_set_follow(&camera, &player->base_object.position, 0.75 * player->collidable.bounding_box.radius.y);
 }
 
 static void unfollow(){
@@ -58,15 +58,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     }
 
     if(inputs.e_pressed){
-        game_world_add_enemy(world, bug_new(world, player->moveable.position));
-    }
-
-    if(inputs.tab_pressed){
-        if(camera.follow_dist == 1.0){
-			camera.follow_dist = 30.0;
-        }else{
-            camera.follow_dist = 1.0;
-        }
+        game_world_add_enemy(world, bug_new(world, player->base_object.position));
     }
 
 	if (inputs.r_pressed){

@@ -8,10 +8,12 @@
 #include "burn.h"
 #include "spell.h"
 #include "util/random.h"
+#include "components/renderable_component.h"
+#include "components/collidable_component.h"
 
 Ability fireball_ability = {
     .cooldown = 0,
-    .max_cooldown = 0,
+	.max_cooldown = 0.5,
     .on_use = fireball_use
 };
 
@@ -31,23 +33,19 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
 
     if(user->type == GAME_OBJECT_TYPE_PLAYER){
         Player *player = user;
-		self->moveable = player->moveable;
-        self->moveable.speed = 30.0;
-        self->moveable.position = vec3_add(player->moveable.position, player->moveable.direction);
-		self->moveable.position.y += 0.5 * player->collidable.bounding_box.radius.y;
+		self->base_object.position = player->base_object.position;
+		self->base_object.direction = player->base_object.direction;
+        self->speed = 30.0;
+		self->base_object.position = vec3_add(player->base_object.position, player->base_object.direction);
+		self->base_object.position.y += 0.5 * player->collidable.bounding_box.radius.y;
         self->caster_type = GAME_OBJECT_TYPE_PLAYER;
     }else{
         self->caster_type = GAME_OBJECT_TYPE_ENEMY;
     }
 
-    self->renderable.model_id = game_world_get_model_id(world, "assets/fireball");
-    renderable_object_update(&self->renderable, self->moveable);
-
-    self->collidable.container = self;
-    self->collidable.on_collide = fireball_on_collide;
+	self->renderable = renderable_component_init(&self->base_object, "assets/fireball", world->renderer);
+	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), fireball_on_collide);
     self->collidable.is_colliding = spell_is_colliding;
-    self->collidable.bounding_box = game_world_get_model_obb(world, self->renderable.model_id);
-    collidable_object_update(&self->collidable, self->moveable);
 
     self->target = NULL;
 
@@ -69,8 +67,8 @@ static void fizzle_particle_init(Particle *p, Vec3 position, float duration){
 static void fireball_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
         Enemy *enemy = other;
-        affectable_object_damage(&enemy->affectable, 1);
-	    affectable_object_affect(&enemy->affectable, burn_new(self->world, &enemy->moveable, 1, 4));
+        affectable_component_damage(&enemy->affectable, 1);
+	    affectable_component_affect(&enemy->affectable, burn_new(self->world, &enemy->base_object, 1, 4));
         self->destroy = 1;
     }else if(other->type == GAME_OBJECT_TYPE_WALL){
         Spell *fireball = self;

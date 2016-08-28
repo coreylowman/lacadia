@@ -3,15 +3,13 @@
 #include "collidable_component.h"
 #include "util/line.h"
 
-extern Vec3 VEC3_ZERO;
-
-void collidable_component_update(CollidableComponent *self, double dt);
-void collidable_component_render(CollidableComponent *self, Renderer *renderer);
+void collidable_component_update(Component *self, double dt);
+void collidable_component_render(Component *self, Renderer *renderer);
 
 CollidableComponent collidable_component_init(GameObject *container, Obb bounding_box, OnCollideCallback on_collide) {
     CollidableComponent self;
 
-    self.base_component = component_init(container, collidable_component_update, NULL);
+    self.base_component = component_init(container, collidable_component_update, NULL, NULL);
     self.bounding_box = bounding_box;
     self.is_colliding = collidable_component_is_colliding;
     self.on_collide = on_collide;
@@ -23,8 +21,9 @@ int collidable_component_is_colliding(CollidableComponent self, CollidableCompon
     return obb_intersects(self.bounding_box, other.bounding_box);
 }
 
-void collidable_component_update(CollidableComponent *self, double dt){
-    // here we are assuming position/direction has been moved to GameObject
+void collidable_component_update(Component *component, double dt){
+	CollidableComponent *self = component;
+
     GameObject *container = self->base_component.container;
 
     float rotation = game_object_get_y_rotation(container);
@@ -33,7 +32,8 @@ void collidable_component_update(CollidableComponent *self, double dt){
     obb_rotate_y(&self->bounding_box, rotation);
 }
 
-void collidable_component_render(CollidableComponent *self, Renderer *renderer){
+void collidable_component_render(Component *component, Renderer *renderer){
+	CollidableComponent *self = component;
     int i, ti;
     Vec3 r = VEC3_ZERO;
     Vec3 rs[3];
