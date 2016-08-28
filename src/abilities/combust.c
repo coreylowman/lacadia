@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "enemies/enemy.h"
 #include "components/affectable_component.h"
-#include "effect.h"
+#include "effects/effect.h"
 #include "combust.h"
 #include "ability.h"
 #include "players/player.h"

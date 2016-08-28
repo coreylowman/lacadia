@@ -7,7 +7,7 @@
 #include "components/collidable_component.h"
 #include "components/affectable_component.h"
 #include "abilities/ability.h"
-#include "abilities/effect.h"
+#include "effects/effect.h"
 #include "util/array_list.h"
 #include "util/inputs.h"
 

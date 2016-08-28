@@ -2,7 +2,7 @@
 #define AFFECTABLE_COMPONENT_H
 
 #include "component.h"
-#include "abilities/effect.h"
+#include "effects/effect.h"
 
 typedef struct AffectableComponent {
     Component base_component;

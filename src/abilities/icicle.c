@@ -7,7 +7,7 @@
 #include "game/particle_system.h"
 #include "spell.h"
 #include "util/random.h"
-#include "frost.h"
+#include "effects/frost.h"
 
 Ability icicle_ability = {
     .cooldown = 0,

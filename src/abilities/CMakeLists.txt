@@ -1,16 +1,10 @@
 list(APPEND ABILITIES_SOURCES
     ability.c
     ability.h
-    burn.c
-    burn.h
     combust.c
     combust.h
-    effect.c
-    effect.h
     fireball.c
     fireball.h
-    frost.c
-    frost.h
     icicle.c
     icicle.h
     melee_hit.c

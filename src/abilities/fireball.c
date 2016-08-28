@@ -5,7 +5,7 @@
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
-#include "burn.h"
+#include "effects/burn.h"
 #include "spell.h"
 #include "util/random.h"
 #include "components/renderable_component.h"
