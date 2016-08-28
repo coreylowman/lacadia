@@ -23,3 +23,10 @@ Vec3 random_length_vec3(float length){
     Vec3 output = random_unit_vec3();
     return vec3_scale(output, length);
 }
+
+Vec3 random_flat_vec3(float length) {
+    Vec3 output = random_unit_vec3();
+    output.y = 0;
+    vec3_normalize(&output);
+    return vec3_scale(output, length);
+}

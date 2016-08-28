@@ -1,5 +1,5 @@
-#ifndef BURN_H
-#define BURN_H
+#ifndef FROST_H
+#define FROST_H
 
 #include "game/game_world.h"
 #include "effect.h"

@@ -4,6 +4,7 @@
 #include "util/renderer.h"
 #include "enemies/enemy.h"
 #include "components/affectable_component.h"
+#include "permafrost.h"
 
 static void frost_on_apply(Effect *self, AffectableComponent *affectable);
 static void frost_on_update(Effect *self, double dt);
@@ -67,7 +68,7 @@ static void frost_on_apply(Effect *self, AffectableComponent *affectable){
             // remove current frost from affectable
             affectable_component_remove(affectable, EFFECT_TYPE_FROST);
 
-            //TODO add permafrost
+			affectable_component_affect(affectable, permafrost_new(affectable->base_component.container->world, affectable->base_component.container, 4, .5, 2.0));
             
             // show burst of particles indicating permafrost has hit
             Enemy *enemy = affectable->base_component.container;

@@ -5,6 +5,8 @@ list(APPEND EFFECTS_SOURCES
     burn.c
     frost.h
     frost.c
+    permafrost.h
+    permafrost.c
 )
 
 add_library(effects OBJECT ${EFFECTS_SOURCES})
