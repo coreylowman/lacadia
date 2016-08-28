@@ -54,12 +54,12 @@ void mage_on_switch_stance(Player *self){
 // TODO change apply_to_enemies functions to take a dt param
 static double this_dt;
 
-static void passive_tick(GameWorld *world, Enemy *enemy){
+static void passive_tick(GameWorld *world, GameObject *user, Enemy *enemy){
     affectable_component_damage(&enemy->affectable, this_dt * 0.25f);
 }
 
 void mage_passive(Player *self, double dt){
 	this_dt = dt;
     float radius = 5.0f;
-    game_world_apply_to_enemies(self->base_object.world, self->base_object.position, radius, passive_tick);
+    game_world_apply_to_enemies(self->base_object.world, self, radius, passive_tick);
 }

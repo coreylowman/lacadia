@@ -4,15 +4,10 @@
 #include "util/renderer.h"
 #include "components/affectable_component.h"
 
-//forward declarations
 static void burn_on_apply(Effect *self, AffectableComponent *affectable);
-static void burn_on_update(Effect *self, AffectableComponent *affectable, double dt);
+static void burn_on_update(Effect *self, double dt);
 static void burn_on_render(Effect *self, Renderer *renderer);
-static void burn_on_end(Effect *self, AffectableComponent *affectable);
 static void burn_on_free(Effect *self);
-static int burn_is_over(Effect *self);
-//end forward declarations
-
 
 static void burn_particle_init(Particle *p, Vec3 position, float duration){
     p->position = vec3_add(position, random_length_vec3(1.0));
@@ -20,88 +15,71 @@ static void burn_particle_init(Particle *p, Vec3 position, float duration){
     p->duration = random_in_rangef(0, duration);
 }
 
-Effect *burn_new(GameWorld *world, GameObject *target, float dmg, float duration){
-    Effect *self = effect_new(EFFECT_TYPE_BURN, duration);
-    
-    self->data = malloc(sizeof(BurnData));
-    BurnData *data = self->data;
-    data->degree = 1;
-    data->dps = dmg;
-    data->particle_system = particle_system_new(world, target->position, "assets/burn_particle", 16, duration, duration * 0.4);
-    particle_system_set_particle_init(data->particle_system, burn_particle_init);
-    particle_system_set_follow_target(data->particle_system, target);
-    //this gives ownership to game_world... we don't have to worry about freeing
-    game_world_add_particle_system(world, data->particle_system);
+Burn *burn_new(GameWorld *world, GameObject *target, float dmg, float duration){
+    Burn *self = malloc(sizeof(*self));
 
-    self->on_apply = burn_on_apply;
-    self->on_update = burn_on_update;
-    self->on_render = burn_on_render;
-    self->on_end = burn_on_end;
-    self->on_free = burn_on_free;
-    self->is_over = burn_is_over;
+    self->base_effect = effect_init(EFFECT_TYPE_BURN, duration);
+    
+    self->degree = 1;
+    self->dps = dmg;
+
+    self->particle_system = particle_system_new(world, target->position, "assets/burn_particle", 16, duration, duration * 0.4);
+    particle_system_set_particle_init(self->particle_system, burn_particle_init);
+    particle_system_set_follow_target(self->particle_system, target);
+
+    self->base_effect.on_apply = burn_on_apply;
+    self->base_effect.on_update = burn_on_update;
+    self->base_effect.on_render = burn_on_render;
+    self->base_effect.on_end = NULL;
+    self->base_effect.on_free = burn_on_free;
 
     return self;
 }
 
-void burn_increase_degree(Effect *self){
-    self->duration = self->max_duration;
+void burn_increase_degree(Effect *effect){
+    Burn *self = effect;
 
-    BurnData *data;
-    data = self->data;
-    if(data->degree < 3){
-        particle_system_double_particles(data->particle_system);
-        data->degree = data->degree + 1;
-    }
-    data->particle_system->duration = self->duration;
+    effect->duration = effect->max_duration;
+    self->particle_system->duration = effect->duration;
+
+    particle_system_double_particles(self->particle_system);
+    self->degree = self->degree + 1;
 }
 
 static void burn_on_apply(Effect *self, AffectableComponent *affectable){
-	Effect *e = affectable->effects[EFFECT_TYPE_BURN];
-	
-	if (e != NULL){
-		BurnData *data = e->data;
-		data->particle_system->duration = e->max_duration;
-		e->duration = e->max_duration;
-		effect_free(self);
-		return;
-	}
-	else {
-		affectable->effects[EFFECT_TYPE_BURN] = self;
-	}
-}
+    Burn *burn = affectable->effects[EFFECT_TYPE_BURN];
+    
+    if (burn != NULL){
+        // refresh the duration of the existing burn
+        burn->particle_system->duration = burn->base_effect.max_duration;
+        burn->base_effect.duration = burn->base_effect.max_duration;
 
-static void burn_on_update(Effect *self, AffectableComponent *affectable, double dt){
-    BurnData *data = self->data;
-    affectable_component_damage(affectable, dt * data->degree * data->dps);
-    self->duration -= dt;
-}
-
-static void burn_on_render(Effect *self, Renderer *renderer){
-
-}
-
-static void burn_on_end(Effect *self, AffectableComponent *affectable){
-    int i;
-    for(i = 0;i < EFFECT_TYPE_MAX;i++){
-        if(affectable->effects[i] == NULL) continue;
-        if(affectable->effects[i] == self){
-			effect_free(affectable->effects[i]);
-			affectable->effects[i] = NULL;
-            return;
-        }
+        // free the effect we were trying to add, since we just modified the burn
+        // already on the target
+        effect_free(self);
+        return;
+    } else {
+        affectable->effects[EFFECT_TYPE_BURN] = self;
     }
 }
 
-static void burn_on_free(Effect *self){
-    BurnData *data = self->data;
-    //game world will free particle system when it actually ends
-	data->particle_system->duration = 0.0;
-    data->particle_system = NULL;
-    //particle_system_free(data->particle_system);
-    free(self->data);
-    free(self);
+static void burn_on_update(Effect *effect, double dt){
+    Burn *self = effect;
+    AffectableComponent *affectable = self->base_effect.container;
+
+    float amt = affectable_component_damage(affectable, dt * self->degree * self->dps);
+    effect->amount_affected += amt;
+
+    particle_system_update(self->particle_system, dt);
 }
 
-static int burn_is_over(Effect *self){
-    return self->duration <= 0.0;
+static void burn_on_render(Effect *effect, Renderer *renderer){
+    Burn *self = effect;
+    particle_system_render(self->particle_system, renderer);
+}
+
+static void burn_on_free(Effect *effect){
+    Burn *self = effect;
+    particle_system_free(self->particle_system);
+    free(self);
 }

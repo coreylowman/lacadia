@@ -35,33 +35,39 @@ AffectableComponent affectable_component_init(GameObject *container, float max_h
 }
 
 void affectable_component_affect(AffectableComponent *self, Effect *effect){
-    effect->on_apply(effect, self);
+    effect_apply(effect, self);
+}
+
+void affectable_component_remove(struct AffectableComponent *self, EffectType type) {
+    if(self->effects[type] == NULL) return;
+
+    effect_end(self->effects[type]);
+    effect_free(self->effects[type]);
+    self->effects[type] = NULL;
 }
 
 void affectable_component_update(Component *component, double dt){
 	AffectableComponent *self = component;
     int i;
-    Effect *e;
     for(i = 0;i < EFFECT_TYPE_MAX;i++){
         if(self->effects[i] == NULL) continue;
-        e = self->effects[i];
 
-        if(e->is_over(e))
-            e->on_end(e, self);
-        else
-            e->on_update(e, self, dt);
+        if(effect_update(self->effects[i], dt)) {
+            // effect_update returns whether the effect has ended or not.
+            // if it did end, then effect_update called effect_end and effect_free
+            // already, so we just need to remove this from the collection
+            self->effects[i] = NULL;
+        }
     }
 }
 
 void affectable_component_render(Component *component, Renderer *renderer){
 	AffectableComponent *self = component;
     int i;
-    Effect *e;
     for(i = 0;i < EFFECT_TYPE_MAX;i++){
         if(self->effects[i] == NULL) continue;
-        e = self->effects[i];
 
-        e->on_render(e, renderer);
+        effect_render(self->effects[i], renderer);
     }
 
     GameObject *container = self->base_component.container;
@@ -91,6 +97,7 @@ void affectable_component_free(void *component) {
     for(i = 0;i < EFFECT_TYPE_MAX;i++) {
 		if (self->effects[i] != NULL){
 			effect_free(self->effects[i]);
+            self->effects[i] = NULL;
 		}
     }
 }

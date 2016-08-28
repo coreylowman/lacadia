@@ -12,17 +12,15 @@ Ability combust_ability = {
     .on_use = combust_use
 };
 
-static void combust_apply(GameWorld *world, Enemy *enemy){
+static void combust_apply(GameWorld *world, GameObject *user, Enemy *enemy){
     Effect *effect = enemy->affectable.effects[EFFECT_TYPE_BURN];
 	if (effect != NULL) {
 		//update with the remainder of the duration
-		effect->on_update(effect, &enemy->affectable, effect->duration);
-		effect->duration = 0.0;
+		effect_update(effect, effect->duration);
 	}
 }
 
 void combust_use(GameWorld *world, GameObject *user){
-    Player *player = user;
     float radius = 10;
-    game_world_apply_to_enemies(world, player->collidable.bounding_box.center, 10, combust_apply);
+    game_world_apply_to_enemies(world, user, 10, combust_apply);
 }

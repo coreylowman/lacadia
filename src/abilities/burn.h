@@ -5,14 +5,16 @@
 #include "effect.h"
 #include "game/particle_system.h"
 
-typedef struct {
+typedef struct Burn {
+    Effect base_effect;
+
     int degree;
     float dps;
+
     ParticleSystem *particle_system;
-} BurnData;
+} Burn;
 
-Effect *burn_new(GameWorld *world, GameObject *target, float dmg, float duration);
+Burn *burn_new(GameWorld *world, GameObject *target, float dmg, float duration);
 void burn_increase_degree(Effect *self);
-
 
 #endif

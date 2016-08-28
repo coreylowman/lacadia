@@ -19,35 +19,34 @@ typedef enum EffectType {
 
 //effects are applied by some spells
 //e.g. fireball applies a burn effect that deals some damage over time
-typedef struct Effect{
+typedef struct Effect {
     //type... so you know what kinds of effects the object is under... could
     // have spells that need to know that kinda stuff
     EffectType type;
-    
-    //generic effect data
-    void *data;
     
     //how long it lasts
     float duration;
     float max_duration;
 
-    //generic object methods
-    //apply -> update -> ... -> update -> is_over? -> on_end
+    // the affectable component this effect lives in
+    // set in effect_apply
+    AffectableComponent *container;
+
+    // the amoun that the effect has changed the stat
+    // e.g. if a slow effect has slowed a monster with 10 speed by 10%,
+    // this value would be 1. then when the affect is over, this value
+    // would be readded to the speed
+    float amount_affected;
 
     //called when the effect is first applied to an object... usually when a spell
     //collides with an enemy
     void (*on_apply)(struct Effect *self, AffectableComponent *obj);
 
     //called by the affectable object when it updates itself
-    void (*on_update)(struct Effect *self, AffectableComponent *obj, double dt);
-    
-    //called by affectable_component_update to see whether this effect has ended
-    //it then calls on_end
-    int  (*is_over)(struct Effect *self);
+    void (*on_update)(struct Effect *self, double dt);
 
-    //called when an effect ends, this handles removing itself from the
-    //affectable object, which may call the effect_free/on_free method
-    void (*on_end)(struct Effect *self, AffectableComponent *obj);
+    //called when an effect ends
+    void (*on_end)(struct Effect *self);
     
     //called by effect_free
     void (*on_free)(struct Effect *self);
@@ -56,7 +55,12 @@ typedef struct Effect{
     void (*on_render)(struct Effect *self, Renderer *renderer);
 } Effect;
 
-Effect *effect_new(EffectType type, float duration);
+Effect effect_init(EffectType type, float duration);
 void effect_free(Effect *self);
+
+void effect_apply(Effect *self, AffectableComponent *affectable);
+int effect_update(Effect *self, double dt);
+void effect_end(Effect *self);
+void effect_render(Effect *self, Renderer *renderer);
 
 #endif

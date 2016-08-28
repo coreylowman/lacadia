@@ -214,7 +214,7 @@ Obb game_world_get_model_obb(GameWorld *self, int model_id){
     return renderer_get_model_obb(self->renderer, model_id);
 }
 
-void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, void (*fn)(GameWorld *self, Enemy *enemy)){
+void game_world_apply_to_enemies(GameWorld *self, GameObject *user, float radius, void (*fn)(GameWorld *self, GameObject *user, Enemy *enemy)){
     CollidableComponent *collidable;
     GameObject *object;
     int i;
@@ -223,8 +223,8 @@ void game_world_apply_to_enemies(GameWorld *self, Vec3 position, float radius, v
         collidable = self->collidables->data[i];
 		object = collidable->base_component.container;
         if(object->type == GAME_OBJECT_TYPE_ENEMY
-            && vec3_within_dist(collidable->bounding_box.center, position, radius)){
-            fn(self, (Enemy *)object);
+            && vec3_within_dist(collidable->bounding_box.center, user->position, radius)){
+            fn(self, user, (Enemy *)object);
         }
     }
 }
