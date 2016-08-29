@@ -23,7 +23,7 @@ static void wildfire_apply(GameWorld *world, GameObject *user, Enemy *enemy);
 static void wildfire_spread(GameWorld *world, GameObject *origin, Enemy *enemy);
 
 static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *target){
-    Spell *self = spell_new(world, wildfire_update, spell_render);
+    Spell *self = spell_new(world, wildfire_update, spell_render, spell_free);
 
     if (user->type == GAME_OBJECT_TYPE_PLAYER) {
         Player *player = user;
@@ -46,7 +46,7 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *targe
 //this is used once the regular wildfire hits an enemy, it then spreads it to other enemies
 //around the initial target
 static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject *target){
-    Spell *self = spell_new(world, wildfire_update, spell_render);
+    Spell *self = spell_new(world, wildfire_update, spell_render, spell_free);
 
     if (user->type == GAME_OBJECT_TYPE_PLAYER) {
         Player *player = user;
@@ -121,14 +121,14 @@ static void wildfire_spread_on_collide(GameObject *self, GameObject *other){
 static void wildfire_spread(GameWorld *world, GameObject *origin, Enemy *enemy){
     if(enemy->affectable.effects[EFFECT_TYPE_BURN] == NULL){
         //if it doesn't have a burn on it, then shoot a wildfire spread at it 
-        game_world_add_spell(world, wildfire_spread_new(world, origin, enemy));
+        game_world_add_object(world, wildfire_spread_new(world, origin, enemy));
     }
 }
 
 static void wildfire_apply(GameWorld *world, GameObject *user, Enemy *enemy){
     if(enemy->affectable.effects[EFFECT_TYPE_BURN] != NULL){
         //if it already has a burn on it shoot a wildfire at it
-        game_world_add_spell(world, wildfire_new(world, user, enemy));
+        game_world_add_object(world, wildfire_new(world, user, enemy));
     }
 }
 

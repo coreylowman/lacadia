@@ -29,7 +29,7 @@ typedef struct Player {
     void (*passive)(struct Player *self, double dt);
 } Player;
 
-Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render);
+Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
 void player_free(Player *self);
 
 void player_update(Player *self, double dt);

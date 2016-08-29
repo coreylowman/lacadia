@@ -15,7 +15,7 @@ static void particle_init(Particle *p, Vec3 position, float duration){
 
 ParticleSystem *particle_system_new(GameWorld *world, Vec3 position,const char *asset_name, int num_particles, float duration, float particle_duration){
     ParticleSystem *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PARTICLE_SYSTEM, particle_system_update, particle_system_render);
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PARTICLE_SYSTEM, particle_system_update, particle_system_render, particle_system_free);
     self->base_object.position = position;
 
     self->follow_target = NULL;
@@ -72,6 +72,10 @@ void particle_system_update(ParticleSystem *self, double dt){
                 &self->particles[i],
 				self->follow_target ? self->follow_target->position : self->base_object.position,
                 self->particle_duration);
+    }
+
+    if(particle_system_is_over(self)) {
+        self->base_object.destroy = 1;
     }
 }
 

@@ -22,7 +22,7 @@ typedef struct Enemy {
     Ability attack;
 } Enemy;
 
-Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render);
+Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
 void enemy_free(Enemy *self);
 
 void enemy_update(Enemy *self, double dt);

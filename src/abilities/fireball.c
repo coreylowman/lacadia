@@ -21,11 +21,11 @@ static Spell *fireball_new(GameWorld *world, GameObject *user);
 static void fireball_on_collide(GameObject *self, GameObject *other);
 
 void fireball_use(GameWorld *world, GameObject *user){
-    game_world_add_spell(world, fireball_new(world, user));
+    game_world_add_object(world, fireball_new(world, user));
 }
 
 static Spell *fireball_new(GameWorld *world, GameObject *user){
-    Spell *self = spell_new(world, spell_update, spell_render);
+    Spell *self = spell_new(world, spell_update, spell_render, spell_free);
 
     if(user->type == GAME_OBJECT_TYPE_PLAYER){
         Player *player = user;
@@ -65,7 +65,7 @@ static void fireball_on_collide(GameObject *self, GameObject *other){
         ParticleSystem *ps = particle_system_new(self->world, fireball->collidable.bounding_box.center, "assets/burn_particle", 32, 0.0, 0.75);
 		particle_system_set_particle_init(ps, fizzle_particle_init);
         //this gives ownership to game_world... we don't have to worry about freeing
-        game_world_add_particle_system(self->world, ps);
+        game_world_add_object(self->world, ps);
         self->destroy = 1;
     }
 }

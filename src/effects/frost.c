@@ -74,7 +74,7 @@ static void frost_on_apply(Effect *self, AffectableComponent *affectable){
             Enemy *enemy = affectable->base_component.container;
             ParticleSystem *ps = particle_system_new(enemy->base_object.world, enemy->collidable.bounding_box.center, "assets/frost_particle", 64, 0.0, 0.75);
             particle_system_set_particle_init(ps, fizzle_particle_init);
-            game_world_add_particle_system(enemy->base_object.world, ps);
+            game_world_add_object(enemy->base_object.world, ps);
         }else{
             frost_increase_degree(frost);
         }

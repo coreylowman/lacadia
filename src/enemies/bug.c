@@ -8,7 +8,7 @@
 extern Ability melee_hit_ability;
 
 Enemy *bug_new(GameWorld *world, Vec3 position){
-    Enemy *self = enemy_new(world, bug_on_update, enemy_render);
+    Enemy *self = enemy_new(world, bug_on_update, enemy_render, enemy_free);
 
 	self->base_object.position = position;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };

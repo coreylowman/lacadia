@@ -19,7 +19,7 @@ static void fire_passive(Player *self, double dt);
 static void on_switch_stance(Player *self);
 
 Player *mage_new(GameWorld *world){
-    Player *self = player_new(world, player_update, player_render);
+    Player *self = player_new(world, player_update, player_render, player_free);
 	self->base_object.position = VEC3_ZERO;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };
 

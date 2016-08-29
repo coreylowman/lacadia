@@ -5,7 +5,7 @@
 #include <GL/glfw3.h>
 #include "game_object.h"
 
-GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render){
+GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render,GameObjectFreeCallback on_free){
     GameObject self;
 
     self.type = type;
@@ -14,6 +14,7 @@ GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpd
 
     self.on_update =  on_update;
     self.on_render = on_render;
+    self.on_free = on_free;
 
     self.destroy = 0;
 
@@ -44,5 +45,11 @@ void game_object_update(GameObject *self, double dt) {
 void game_object_render(GameObject *self, Renderer *renderer) {
     if (self->on_render != NULL) {
         self->on_render(self, renderer);
+    }
+}
+
+void game_object_free(GameObject *self) {
+    if (self->on_free != NULL) {
+        self->on_free(self);
     }
 }

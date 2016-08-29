@@ -3,13 +3,15 @@
 #include "spell.h"
 #include "util/obb.h"
 
-Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render){
+Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free){
     Spell *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_SPELL, on_update, on_render);
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_SPELL, on_update, on_render, on_free);
     return self;
 }
 
 void spell_free(Spell *self){
+    component_free(&self->collidable);
+    component_free(&self->renderable);
     free(self);
 }
 

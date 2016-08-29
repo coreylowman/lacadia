@@ -18,7 +18,7 @@ typedef struct Spell {
     GameObject *target;
 } Spell;
 
-Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render);
+Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
 void spell_free(Spell *self);
 
 void spell_update(Spell *self, double dt);

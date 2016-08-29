@@ -11,9 +11,6 @@
 typedef struct Level {
     GameWorld *world;
 
-    int num_walls;
-    Wall *walls[MAX_NUM_WALLS];
-
     Terrain terrain;
 } Level;
 

@@ -25,16 +25,11 @@ typedef struct GameWorld {
 
     double dt;
 
-    Set *spells; //Set<Spell *>
-    Set *enemies; //Set<Enemy *>
+    Set *game_objects; //Set<GameObject *>
     
     Set *collidables; //Set<CollidableComponent *>
     //the ith element is the index in spells/enemies of the ith collidable
     Set *indices; //Set<int *>
-
-    
-    Set *particle_systems; //Set<ParticleSystem *>
-
 
     Renderer *renderer;
 
@@ -52,10 +47,7 @@ void game_world_free(GameWorld *self);
 
 void game_world_set_player(GameWorld *self, Player *p);
 
-void game_world_add_spell(GameWorld *self, void *s);
-void game_world_add_enemy(GameWorld *self, void *e);
-void game_world_add_wall(GameWorld *self, Wall *w, int index);
-void game_world_add_particle_system(GameWorld *self, void *ps);
+void game_world_add_object(GameWorld *self, GameObject *object);
 
 void game_world_update(GameWorld *self, double dt);
 

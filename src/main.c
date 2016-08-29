@@ -54,7 +54,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     }
 
     if(world->inputs.e_pressed){
-        game_world_add_enemy(world, bug_new(world, VEC3_ZERO));
+        game_world_add_object(world, bug_new(world, VEC3_ZERO));
     }
 
 	if (world->inputs.r_pressed){

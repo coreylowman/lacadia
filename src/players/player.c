@@ -6,14 +6,16 @@
 
 extern int width, height;
 
-Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render){
+Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free){
     Player *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER, on_update, on_render);
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER, on_update, on_render, on_free);
     return self;
 }
 
 void player_free(Player *self){
     component_free(&self->affectable);
+    component_free(&self->renderable);
+    component_free(&self->collidable);
     free(self);
 }
 

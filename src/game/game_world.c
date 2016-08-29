@@ -24,11 +24,9 @@ Vec3 light_position;
 
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
-    self->spells = set_new(spell_free);
-    self->enemies = set_new(enemy_free);
+	self->game_objects = set_new(game_object_free);
     self->collidables = set_new(NULL); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
-    self->particle_systems = set_new(particle_system_free);
 
     self->renderer = renderer_new();
 
@@ -40,11 +38,9 @@ GameWorld *game_world_new(){
 }
 
 void game_world_free(GameWorld *self){
-    set_free(self->spells);
-    set_free(self->enemies);
+	set_free(self->game_objects);
     set_free(self->collidables);
     set_free(self->indices);
-    set_free(self->particle_systems);
 
 	renderer_free(self->renderer);
 
@@ -57,16 +53,7 @@ void game_world_free(GameWorld *self){
 static void destroy_collidable(GameWorld *self, int i){
     int index = *(int *)self->indices->data[i];
 	CollidableComponent *c = self->collidables->data[i];
-    switch(c->base_component.container->type){
-        case GAME_OBJECT_TYPE_SPELL:
-            spell_free(self->spells->data[index]);
-            self->spells->data[index] = NULL;
-            break;
-        case GAME_OBJECT_TYPE_ENEMY:
-            enemy_free(self->enemies->data[index]);
-            self->enemies->data[index] = NULL;
-            break;
-    }
+	set_remove_at(self->game_objects, index);
     set_remove_at(self->collidables, i);
     set_remove_at(self->indices, i);
 }
@@ -82,19 +69,11 @@ void game_world_update(GameWorld *self, double dt){
     game_object_update(self->player, dt);
 
     GameObject *obj;
-    //note: put enemy_update before spell update,
-    //so targetted spells capture when their targets are about to be destroyed
-    for(i = 0;i < self->enemies->length;i++){
-        if(self->enemies->data[i] == NULL) continue;
-        obj = self->enemies->data[i];
-        game_object_update(obj, dt);
-    }
-
-    for(i = 0;i < self->spells->length;i++){
-        if(self->spells->data[i] == NULL) continue;
-        obj = self->spells->data[i];
-        game_object_update(obj, dt);
-    }
+	for (i = 0; i < self->game_objects->length; i++) {
+		if (self->game_objects->data[i] == NULL) continue;
+		obj = self->game_objects->data[i];
+		game_object_update(obj, dt);
+	}
 
     // this handles collisions as well as removing things from their sets and collidables
     for(i = 0;i < self->collidables->length - 1;i++){
@@ -131,19 +110,6 @@ void game_world_update(GameWorld *self, double dt){
 
         }
     }
-
-    ParticleSystem *p;
-    for(i = 0;i < self->particle_systems->length;i++){
-        if(self->particle_systems->data[i] == NULL) continue;
-        obj = self->particle_systems->data[i];
-        p = self->particle_systems->data[i];
-
-        game_object_update(obj, dt);
-
-        if(particle_system_is_over(p)){
-            set_remove_at(self->particle_systems, i);
-        }
-    }
 }
 
 void game_world_set_player(GameWorld *self, Player *p){
@@ -155,61 +121,48 @@ void game_world_set_player(GameWorld *self, Player *p){
     set_add(self->indices, index);
 }
 
-void game_world_add_spell(GameWorld *self, void *s){
-    Spell *spell = s;
-    int *index = malloc(sizeof(*index));
-    *index	= set_add(self->spells, s);
-    set_add(self->collidables, &spell->collidable);
-    set_add(self->indices, index);
+void game_world_add_object(GameWorld *self, GameObject *object) {
+    CollidableComponent *collidable = NULL;
+    switch(object->type) {
+        case GAME_OBJECT_TYPE_PLAYER:
+            collidable = &((Player *)object)->collidable;
+            break;
+        case GAME_OBJECT_TYPE_ENEMY:
+            collidable = &((Enemy *)object)->collidable;
+            break;
+        case GAME_OBJECT_TYPE_SPELL:
+            collidable = &((Spell *)object)->collidable;
+            break;
+        case GAME_OBJECT_TYPE_WALL:
+            collidable = &((Wall *)object)->collidable;
+            break;
+        default:
+            break;
+    }
+    if (collidable != NULL) {
+        int *index = malloc(sizeof(*index));
+        *index = set_add(self->game_objects, object);
+        set_add(self->collidables, collidable);
+        set_add(self->indices, index);
+    } else {
+        set_add(self->game_objects, object);
+    }
 }
-
-void game_world_add_enemy(GameWorld *self, void *e){
-    Enemy *enemy = e;
-    int *index = malloc(sizeof(*index));
-    *index = set_add(self->enemies, e);
-    set_add(self->collidables, &enemy->collidable);
-    set_add(self->indices, index);
-}
-
-void game_world_add_wall(GameWorld *self, Wall *w, int i){
-    int *index = malloc(sizeof(*index));
-    *index = i;
-    set_add(self->collidables, &w->collidable);
-    set_add(self->indices, index);
-}
-
-void game_world_add_particle_system(GameWorld *self, void *ps){
-    set_add(self->particle_systems, ps);
-}
-
 
 void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix){
-    int i;
-    Spell *s;
-	Enemy *e;
-    ParticleSystem *ps;
-
     renderer_render_sphere(self->renderer, light_position);
 
     //gather updates to the various things
 	Player *p = self->player;
     game_object_render(self->player, self->renderer);
 
-    for(i = 0;i < self->spells->length;i++){
-        if(self->spells->data[i] == NULL) continue;
-        s = self->spells->data[i];
-        game_object_render(s, self->renderer);
+	int i;
+	GameObject *obj;
+    for(i = 0;i < self->game_objects->length;i++){
+		if (self->game_objects->data[i] == NULL) continue;
+		obj = self->game_objects->data[i];
+        game_object_render(obj, self->renderer);
     }
-	for (i = 0; i < self->enemies->length; i++){
-        if(self->enemies->data[i] == NULL) continue;
-        e = self->enemies->data[i];
-        game_object_render(e, self->renderer);
-    }
-    for (i = 0; i < self->particle_systems->length; i++){
-        if(self->particle_systems->data[i] == NULL) continue;
-		ps = self->particle_systems->data[i];
-		game_object_render(ps, self->renderer);
-	}
     level_render(self->level, self->renderer);
 
     //actually draw stuff
