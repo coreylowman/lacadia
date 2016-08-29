@@ -64,6 +64,8 @@ void game_world_update(GameWorld *self, double dt){
 
     self->dt = dt;
 
+    // todo make it so player isn't handled specially. this will involve changes in main.c also
+    // and other places in this file where its handled specially
     game_object_update(self->player, dt);
 
     GameObject *obj;
@@ -176,6 +178,7 @@ Obb game_world_get_model_obb(GameWorld *self, int model_id){
     return renderer_get_model_obb(self->renderer, model_id);
 }
 
+// todo change to take a GameObjectType parameter instead of just enemies?
 void game_world_apply_to_enemies(GameWorld *self, GameObject *user, float radius, void (*fn)(GameWorld *self, GameObject *user, Enemy *enemy)){
     CollidableComponent *collidable;
     GameObject *object;
