@@ -75,6 +75,7 @@ void game_world_update(GameWorld *self, double dt){
 		game_object_update(obj, dt);
 	}
 
+	// TODO improve this whole thing with the collidables, indices set and how things are removed
     // this handles collisions as well as removing things from their sets and collidables
     for(i = 0;i < self->collidables->length - 1;i++){
         if(self->collidables->data[i] == NULL) continue;
