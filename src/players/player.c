@@ -6,9 +6,9 @@
 
 extern int width, height;
 
-Player *player_new(GameWorld *world){
+Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render){
     Player *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER);
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER, on_update, on_render);
     return self;
 }
 
@@ -28,6 +28,12 @@ void player_update(Player *self, double dt){
     for (i = 0; i < 4; i++){
         ability_update(&self->abilities[i], dt);
     }
+}
+
+void player_render(Player *self, Renderer *renderer) {
+    component_render(&self->affectable, renderer);
+    component_render(&self->renderable, renderer);
+    component_render(&self->collidable, renderer);
 }
 
 void player_use_ability(Player *self, int i){

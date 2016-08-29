@@ -6,7 +6,7 @@
 
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length){
     Wall *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_WALL);
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_WALL, NULL, wall_render);
 
 	Vec3 dims = wall_dimensions(world);
 	int which = grow_direction.x ? 0 : (grow_direction.y ? 1 : 2);
@@ -48,7 +48,7 @@ void wall_render(Wall *self, Renderer *renderer){
     for(i = 0;i < self->num_renderables;i++){
         component_render(&self->renderables[i], renderer);
     }
-    //collidable_component_render(self->collidable, renderer);
+    component_render(&self->collidable, renderer);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other){

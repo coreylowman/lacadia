@@ -8,7 +8,8 @@
 extern Ability melee_hit_ability;
 
 Enemy *bug_new(GameWorld *world, Vec3 position){
-    Enemy *self = enemy_new(world);
+    Enemy *self = enemy_new(world, bug_on_update, enemy_render);
+
 	self->base_object.position = position;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };
 
@@ -18,15 +19,15 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 	self->renderable = renderable_component_init(&self->base_object, "assets/bug", world->renderer);
 	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), bug_on_collide);
     
-    self->on_update = bug_on_update;
     self->attack = melee_hit_ability;
     self->attack.max_cooldown = 1.0;
 
     return self;
 }
 
-
 void bug_on_update(Enemy *self, double dt){
+    enemy_update(self, dt);
+
     ability_update(&self->attack, dt);
 
     Player *player = self->target;

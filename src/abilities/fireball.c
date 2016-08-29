@@ -17,19 +17,15 @@ Ability fireball_ability = {
     .on_use = fireball_use
 };
 
-//forward declarations
 static Spell *fireball_new(GameWorld *world, GameObject *user);
-static void fireball_update(Spell *self, double dt);
 static void fireball_on_collide(GameObject *self, GameObject *other);
-//end forward declarations
-
 
 void fireball_use(GameWorld *world, GameObject *user){
     game_world_add_spell(world, fireball_new(world, user));
 }
 
 static Spell *fireball_new(GameWorld *world, GameObject *user){
-    Spell *self = spell_new(world);
+    Spell *self = spell_new(world, spell_update, spell_render);
 
     if(user->type == GAME_OBJECT_TYPE_PLAYER){
         Player *player = user;
@@ -49,13 +45,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user){
 
     self->target = NULL;
 
-    self->on_update = fireball_update;
-
     return self;
-}
-
-static void fireball_update(Spell *self, double dt){
-    //just have to move
 }
 
 static void fizzle_particle_init(Particle *p, Vec3 position, float duration){

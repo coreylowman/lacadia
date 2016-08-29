@@ -10,6 +10,7 @@
 #include "effects/effect.h"
 #include "util/array_list.h"
 #include "util/inputs.h"
+#include "util/renderer.h"
 
 typedef struct Player {
     GameObject base_object;
@@ -28,10 +29,11 @@ typedef struct Player {
     void (*passive)(struct Player *self, double dt);
 } Player;
 
-Player *player_new(GameWorld *world);
+Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render);
 void player_free(Player *self);
 
 void player_update(Player *self, double dt);
+void player_render(Player *self, Renderer *renderer);
 
 void player_use_ability(Player *self, int ability_index);
 

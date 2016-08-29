@@ -79,22 +79,24 @@ void game_world_update(GameWorld *self, double dt){
 
     self->dt = dt;
 
-    player_update(self->player, dt);
+    game_object_update(self->player, dt);
 
+    GameObject *obj;
     //note: put enemy_update before spell update,
     //so targetted spells capture when their targets are about to be destroyed
     for(i = 0;i < self->enemies->length;i++){
         if(self->enemies->data[i] == NULL) continue;
-        e = self->enemies->data[i];
-        enemy_update(e, dt);
+        obj = self->enemies->data[i];
+        game_object_update(obj, dt);
     }
 
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
-        s = self->spells->data[i];
-        spell_update(s, dt);
+        obj = self->spells->data[i];
+        game_object_update(obj, dt);
     }
 
+    // this handles collisions as well as removing things from their sets and collidables
     for(i = 0;i < self->collidables->length - 1;i++){
         if(self->collidables->data[i] == NULL) continue;
         c1 = self->collidables->data[i];
@@ -133,9 +135,10 @@ void game_world_update(GameWorld *self, double dt){
     ParticleSystem *p;
     for(i = 0;i < self->particle_systems->length;i++){
         if(self->particle_systems->data[i] == NULL) continue;
+        obj = self->particle_systems->data[i];
         p = self->particle_systems->data[i];
 
-        particle_system_update(p, dt);
+        game_object_update(obj, dt);
 
         if(particle_system_is_over(p)){
             set_remove_at(self->particle_systems, i);
@@ -190,25 +193,22 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
 
     //gather updates to the various things
 	Player *p = self->player;
-    component_render(&p->renderable, self->renderer);
-    // collidable_component_render(p->collidable, self->renderer);
+    game_object_render(self->player, self->renderer);
+
     for(i = 0;i < self->spells->length;i++){
         if(self->spells->data[i] == NULL) continue;
         s = self->spells->data[i];
-        component_render(&s->renderable, self->renderer);
-        // collidable_component_render(s->collidable, self->renderer);
+        game_object_render(s, self->renderer);
     }
 	for (i = 0; i < self->enemies->length; i++){
         if(self->enemies->data[i] == NULL) continue;
         e = self->enemies->data[i];
-        component_render(&e->renderable, self->renderer);
-        // collidable_component_render(e->collidable, self->renderer);
-        component_render(&e->affectable, self->renderer);
+        game_object_render(e, self->renderer);
     }
     for (i = 0; i < self->particle_systems->length; i++){
         if(self->particle_systems->data[i] == NULL) continue;
 		ps = self->particle_systems->data[i];
-		particle_system_render(ps, self->renderer);
+		game_object_render(ps, self->renderer);
 	}
     level_render(self->level, self->renderer);
 

@@ -14,7 +14,6 @@ Ability wildfire_ability = {
     .on_use = wildfire_use
 };
 
-//forward declarations
 static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *target);
 static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject *target);
 static void wildfire_update(Spell *self, double dt);
@@ -22,10 +21,9 @@ static void wildfire_on_collide(GameObject *self, GameObject *other);
 static void wildfire_spread_on_collide(GameObject *self, GameObject *other);
 static void wildfire_apply(GameWorld *world, GameObject *user, Enemy *enemy);
 static void wildfire_spread(GameWorld *world, GameObject *origin, Enemy *enemy);
-//end forward declarations
 
 static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *target){
-    Spell *self = spell_new(world);
+    Spell *self = spell_new(world, wildfire_update, spell_render);
 
     if (user->type == GAME_OBJECT_TYPE_PLAYER) {
         Player *player = user;
@@ -42,15 +40,13 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *targe
 
     self->target = target;
 
-    self->on_update = wildfire_update;
-
     return self;
 }
 
 //this is used once the regular wildfire hits an enemy, it then spreads it to other enemies
 //around the initial target
 static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject *target){
-    Spell *self = spell_new(world);
+    Spell *self = spell_new(world, wildfire_update, spell_render);
 
     if (user->type == GAME_OBJECT_TYPE_PLAYER) {
         Player *player = user;
@@ -74,8 +70,6 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject
 
     self->target = target;
 
-    self->on_update = wildfire_update;
-
     return self;
 }
 
@@ -84,6 +78,8 @@ static void wildfire_update(Spell *self, double dt){
         self->base_object.destroy = 1;
         return;
     }
+	spell_update(self, dt);
+
     Vec3 pos = self->base_object.position;
     Vec3 target_pos = ((Enemy *)(self->target))->base_object.position;
     self->base_object.direction = vec3_sub(target_pos, pos);

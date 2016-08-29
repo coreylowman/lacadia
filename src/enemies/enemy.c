@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include "enemy.h"
 
-Enemy *enemy_new(GameWorld *world){
+Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render){
     Enemy *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_ENEMY);
+    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_ENEMY, on_update, on_render);
     return self;
 }
 
@@ -15,8 +15,6 @@ void enemy_free(Enemy *self){
 }
 
 void enemy_update(Enemy *self, double dt){
-    self->on_update(self, dt);
-
     component_update(&self->affectable, dt);
     component_update(&self->renderable, dt);
     component_update(&self->collidable, dt);
@@ -24,4 +22,10 @@ void enemy_update(Enemy *self, double dt){
     if(self->affectable.health <= 0.0){
         self->base_object.destroy = 1;
     }
+}
+
+void enemy_render(Enemy *self, Renderer *renderer) {
+    component_render(&self->affectable, renderer);
+    component_render(&self->renderable, renderer);
+    component_render(&self->collidable, renderer);
 }

@@ -2,6 +2,10 @@
 #define GAME_OBJECT_H
 
 #include "util/vec3.h"
+#include "util/renderer.h"
+
+typedef void (*GameObjectUpdateCallback)(struct GameObject *self, double dt);
+typedef void (*GameObjectRenderCallback)(struct GameObject *self, Renderer *renderer);
 
 typedef struct GameWorld GameWorld;
 typedef struct Component Component;
@@ -26,14 +30,21 @@ typedef struct GameObject {
 	Vec3 position;
 	Vec3 direction;
 
+	// callbacks to update and render passed into the init function.
+    GameObjectUpdateCallback on_update;
+    GameObjectRenderCallback on_render;
+
     //set to true if this object should be destroyed
     int destroy;
 } GameObject;
 
-GameObject game_object_init(GameWorld *world, GameObjectType type);
+GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render);
 float game_object_get_y_rotation(GameObject *self);
 
 void game_object_move_by(GameObject *self, Vec3 velocity);
 void game_object_move(GameObject *self, double scalar);
+
+void game_object_update(GameObject *self, double dt);
+void game_object_render(GameObject *self, Renderer *renderer);
 
 #endif
