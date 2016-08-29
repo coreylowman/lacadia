@@ -21,6 +21,7 @@ typedef struct Inputs {
     double mouse_vel[2];
 } Inputs;
 
+Inputs inputs_init();
 void inputs_update_mouse_position(Inputs *i, GLFWwindow *w, double x, double y);
 void inputs_update_mouse(Inputs *i, GLFWwindow *w, int button, int action, int mods);
 void inputs_update_keys(Inputs *i, GLFWwindow *w, int key, int scancode, int action, int mod);

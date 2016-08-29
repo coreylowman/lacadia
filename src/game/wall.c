@@ -20,7 +20,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
     for(i = 0;i < length;i++){
         pos = vec3_add(position, vec3_scale(grow_direction, width * (float)i));
         mat4_ident(&model_matrix);
-		// mat4_rotate_y(&model_matrix, 3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
+		mat4_rotate_y(&model_matrix, 3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
         mat4_translate(&model_matrix, pos);
 
 		self->renderables[i] = renderable_component_init(&self->base_object, "assets/wall", world->renderer);

@@ -19,7 +19,7 @@ void main() {
     gl_Position = MVP * vec4(vertex_position, 1.0);
 
     fragment_color = vec4(vertex_color, 1.0);
-    fragment_position = (view_matrix * vec4(vertex_position, 1.0)).xyz;
+    fragment_position = (view_matrix * model_matrix * vec4(vertex_position, 1.0)).xyz;
     light_position_camera = (view_matrix * vec4(light_position, 1.0)).xyz;
-    fragment_normal = normalize((view_matrix * vec4(vertex_normal, 0.0)).xyz);
+    fragment_normal = normalize((view_matrix * model_matrix * vec4(vertex_normal, 0.0)).xyz);
 }

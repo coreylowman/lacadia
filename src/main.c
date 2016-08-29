@@ -24,50 +24,46 @@ static double last_update_seconds;
 static double last_fps_seconds;
 static int draw_count;
 
-static Inputs inputs;
-static Camera camera;
-
 GameWorld *world;
-Player *player;
 
 static void mouse_callback(GLFWwindow *w,int button, int action, int mods)
 {
-    inputs_update_mouse(&inputs, w, button, action, mods);
+    inputs_update_mouse(&world->inputs, w, button, action, mods);
 }
 
 static void mouse_position_callback(GLFWwindow *w, double x, double y){
-	inputs_update_mouse_position(&inputs, w, x, y);
+	inputs_update_mouse_position(&world->inputs, w, x, y);
 }
 
 static void follow(){
-	camera_set_follow(&camera, &player->base_object.position, 0.75 * player->collidable.bounding_box.radius.y);
+	camera_set_follow(&world->camera, &world->player->base_object.position, 0.75 * world->player->collidable.bounding_box.radius.y);
 }
 
 static void unfollow(){
-	camera_set_follow(&camera, NULL, 0);
+	camera_set_follow(&world->camera, NULL, 0);
 }
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod){
-    inputs_update_keys(&inputs, window, key, scancode, action, mod);
+    inputs_update_keys(&world->inputs, window, key, scancode, action, mod);
 
-    if (inputs.l_pressed){
-		if (!camera_is_following(camera))
+    if (world->inputs.l_pressed){
+		if (!camera_is_following(world->camera))
 			follow();
 		else
 			unfollow();
     }
 
-    if(inputs.e_pressed){
-        game_world_add_enemy(world, bug_new(world, player->base_object.position));
+    if(world->inputs.e_pressed){
+        game_world_add_enemy(world, bug_new(world, VEC3_ZERO));
     }
 
-	if (inputs.r_pressed){
+	if (world->inputs.r_pressed){
 		terrain_regen(&world->level->terrain);
 	}
 }
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-    inputs_update_scroll(&inputs, window, xoffset, yoffset);
+    inputs_update_scroll(&world->inputs, window, xoffset, yoffset);
 }
 
 void window_size_callback (GLFWwindow* window, int _width, int _height) {
@@ -129,26 +125,26 @@ static void update(double total_time){
     if (update_dt > 0.01) {
         last_update_seconds = total_time;
 
-        if(!camera_is_following(camera))
-            camera_handle_inputs(&camera, update_dt, inputs);
+        if(!camera_is_following(world->camera))
+            camera_handle_inputs(&world->camera, update_dt, world->inputs);
 		else{
-			player_handle_inputs(player, update_dt, inputs);
-			camera_follow(&camera, update_dt, inputs);
+			player_handle_inputs(world->player, update_dt, world->inputs);
+			camera_follow(&world->camera, update_dt, world->inputs);
 		}
         
 		game_world_update(world, update_dt);
 
-        inputs_reset_frame(&inputs);
+        inputs_reset_frame(&world->inputs);
     }
 }
 
 static void render(){
-    mat4_mul(&world->world_to_screen, camera.projection_matrix, camera.view_matrix);
+    mat4_mul(&world->world_to_screen, world->camera.projection_matrix, world->camera.view_matrix);
     mat4_inverse(&world->screen_to_world, world->world_to_screen);
     
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    game_world_render(world, camera.projection_matrix, camera.view_matrix);
+    game_world_render(world, world->camera.projection_matrix, world->camera.view_matrix);
 }
 
 int main(int argc, char *argv[]){
@@ -159,16 +155,12 @@ int main(int argc, char *argv[]){
 
     init_glfw();
     init_glew();
-    camera_init(&camera, width, height);
 
-	//sky blue
-	glClearColor(0.52734375, 0.8046875, 0.91796875, 1.0);
+    //sky blue
+    glClearColor(0.52734375, 0.8046875, 0.91796875, 1.0);
 
-	world = game_world_new();
-    world->camera = &camera;
-    player = mage_new(world);
-    game_world_set_player(world, player);
-    world->level = level_new(world);
+    world = game_world_new();
+    game_world_set_player(world, mage_new(world));
 
 	follow();
 
@@ -188,17 +180,11 @@ int main(int argc, char *argv[]){
         glfwPollEvents();
         temp_time = glfwGetTime() - temp_time;
         last_update_seconds += temp_time;
-
-		if (inputs.esc_pressed) break;
     }
 
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    level_free(world->level);
-    world->level = NULL;
-	player_free(player);
-    world->player = NULL;
     game_world_free(world);
 
     // for debugging only

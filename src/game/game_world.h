@@ -9,13 +9,14 @@
 #include "util/rect.h"
 #include "util/mat4.h"
 #include "util/renderer.h"
+#include "util/camera.h"
+#include "util/inputs.h"
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;
 typedef struct Level Level;
 typedef struct Wall Wall;
 typedef struct CollidableComponent CollidableComponent;
-typedef struct Camera Camera;
 typedef struct GameObject GameObject;
 
 typedef struct GameWorld {
@@ -42,7 +43,8 @@ typedef struct GameWorld {
     Mat4 world_to_screen;
     Mat4 screen_to_world;
 
-    Camera *camera;
+    Camera camera;
+    Inputs inputs;
 } GameWorld;
 
 GameWorld *game_world_new();

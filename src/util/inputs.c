@@ -1,6 +1,55 @@
 #include <stdio.h>
 #include "inputs.h"
 
+Inputs inputs_init() {
+    Inputs self;
+
+    self.a_down = 0;
+    self.d_down = 0;
+    self.w_down = 0;
+    self.s_down = 0;
+
+    self.up_down = 0;
+    self.down_down = 0;
+    self.left_down = 0;
+    self.right_down = 0;
+
+    self.space_down = 0;
+    self.space_shift_down = 0;
+
+    self.mouse_down_start_pos[0] = 0;
+    self.mouse_down_start_pos[1] = 0;
+    
+    self.left_mouse_down = 0;
+    self.right_mouse_down = 0;
+    
+    self.scroll_amount = 0;
+
+    
+    self.q_pressed = 0;
+    self.e_pressed = 0;
+    self.p_pressed = 0;
+    self.r_pressed = 0;
+    self.l_pressed = 0;
+    
+    self.tab_pressed = 0;
+    
+    self.esc_pressed = 0;
+
+    int i;
+    for(i = 0;i < 10;i++){
+        self.numbers_pressed[i] = 0;
+    }
+
+    self.mouse_pos[0] = 0;
+    self.mouse_pos[1] = 0;
+
+    self.mouse_vel[0] = 0;
+    self.mouse_vel[1] = 0;
+
+	return self;
+}
+
 void inputs_update_mouse(Inputs *i, GLFWwindow *w,int button, int action, int mods){
     if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
         i->left_mouse_down = 1;

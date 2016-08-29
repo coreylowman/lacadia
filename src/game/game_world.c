@@ -16,6 +16,9 @@
 #include "game/particle_system.h"
 #include "wall.h"
 #include "util/camera.h"
+#include "util/inputs.h"
+
+extern int width, height;
 
 Vec3 light_position;
 
@@ -29,6 +32,10 @@ GameWorld *game_world_new(){
 
     self->renderer = renderer_new();
 
+    self->inputs = inputs_init();
+    camera_init(&self->camera, width, height);
+    self->level = level_new(self);
+
     return self;
 }
 
@@ -40,6 +47,9 @@ void game_world_free(GameWorld *self){
     set_free(self->particle_systems);
 
 	renderer_free(self->renderer);
+
+    level_free(self->level);
+    player_free(self->player);
 
     free(self);
 }
@@ -246,7 +256,7 @@ Vec3 game_world_screen_coords_to_world_coords(GameWorld *self, Vec3 screen_coord
     direction.z /= w;
     vec3_normalize(&direction);
 
-	Vec3 position = self->camera->location;
+	Vec3 position = self->camera.location;
     double t = -position.y / direction.y;
 
     return vec3_add(position, vec3_scale(direction, t));
