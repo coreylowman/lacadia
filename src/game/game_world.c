@@ -60,8 +60,6 @@ static void destroy_collidable(GameWorld *self, int i){
 
 void game_world_update(GameWorld *self, double dt){
     int i, j;
-    Spell *s;
-    Enemy *e;
     CollidableComponent *c1, *c2;
 
     self->dt = dt;
