@@ -13,7 +13,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 	self->base_object.position = position;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };
 
-    self->target = &world->player->base_object;
+    self->target = game_world_get_player(world);
 
 	self->affectable = affectable_component_init(&self->base_object, 25, 6.5, 0, 0, 0);
 	self->renderable = renderable_component_init(&self->base_object, "assets/bug", world->renderer);

@@ -30,6 +30,30 @@ void player_update(Player *self, double dt){
     for (i = 0; i < 4; i++){
         ability_update(&self->abilities[i], dt);
     }
+
+    Inputs inputs = self->base_object.world->inputs;
+
+    if (inputs.tab_pressed) { //move vertically
+        printf("switched stance!");
+        self->on_switch_stance(self);
+    }
+
+    if (inputs.left_mouse_down) player_use_ability(self, 0);
+    if (inputs.right_mouse_down) player_use_ability(self, 1);
+    
+    double width_2 = (double)(width)* 0.5;
+    double height_2 = (double)(height)* 0.5;
+    double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
+    double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
+    Vec3 mouse_screen = (Vec3) { .data = { mousex, mousey, 1 } };
+    Vec3 mouse_world = game_world_screen_coords_to_world_coords(self->base_object.world, mouse_screen);
+    self->base_object.direction = vec3_sub(mouse_world, self->base_object.position);
+    vec3_normalize(&self->base_object.direction);
+
+    if (inputs.w_down) player_move_forwards(self, dt, 1.0);
+    if (inputs.s_down) player_move_forwards(self, dt, -1.0);
+    if (inputs.d_down) player_strafe(self, dt, 1.0);
+    if (inputs.a_down) player_strafe(self, dt, -1.0);
 }
 
 void player_render(Player *self, Renderer *renderer) {
@@ -74,30 +98,6 @@ void player_strafe(Player *self, double dt, float direction){
     //vec3_normalize(&sideways);
 
 	game_object_move_by(&self->base_object, vec3_scale(VEC3_UNIT_X, dt * speed * direction));
-}
-
-void player_handle_inputs(Player *self, double dt, Inputs inputs){
-    if (inputs.tab_pressed) { //move vertically
-        printf("switched stance!");
-        self->on_switch_stance(self);
-    }
-
-	if (inputs.left_mouse_down) player_use_ability(self, 0);
-	if (inputs.right_mouse_down) player_use_ability(self, 1);
-    
-    double width_2 = (double)(width)* 0.5;
-    double height_2 = (double)(height)* 0.5;
-    double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
-    double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
-    Vec3 mouse_screen = (Vec3) { .data = { mousex, mousey, 1 } };
-    Vec3 mouse_world = game_world_screen_coords_to_world_coords(self->base_object.world, mouse_screen);
-	self->base_object.direction = vec3_sub(mouse_world, self->base_object.position);
-	vec3_normalize(&self->base_object.direction);
-
-    if (inputs.w_down) player_move_forwards(self, dt, 1.0);
-    if (inputs.s_down) player_move_forwards(self, dt, -1.0);
-    if (inputs.d_down) player_strafe(self, dt, 1.0);
-    if (inputs.a_down) player_strafe(self, dt, -1.0);
 }
 
 void player_on_collide(GameObject *self, GameObject *other){

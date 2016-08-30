@@ -43,7 +43,6 @@ void player_move_forwards(Player *self, double dt, float direction);
 void player_turn(Player *self, double side_amt);
 void player_strafe(Player *self, double dt, float direction);
 
-void player_handle_inputs(Player *self, double dt, Inputs inputs);
 void player_on_collide(GameObject *self, GameObject *other);
 
 #endif

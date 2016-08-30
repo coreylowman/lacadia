@@ -20,7 +20,6 @@ typedef struct CollidableComponent CollidableComponent;
 typedef struct GameObject GameObject;
 
 typedef struct GameWorld {
-    Player *player;
     Level *level;
 
     double dt;
@@ -45,7 +44,7 @@ typedef struct GameWorld {
 GameWorld *game_world_new();
 void game_world_free(GameWorld *self);
 
-void game_world_set_player(GameWorld *self, Player *p);
+GameObject *game_world_get_player(GameWorld *self);
 
 void game_world_add_object(GameWorld *self, GameObject *object);
 
@@ -54,7 +53,7 @@ void game_world_update(GameWorld *self, double dt);
 int game_world_get_asset_id(GameWorld *self, const char *name);
 Obb game_world_get_asset_obb(GameWorld *self, int asset_id);
 
-void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix);
+void game_world_render(GameWorld *self);
 
 int game_world_get_model_id(GameWorld *self, const char *name);
 Obb game_world_get_model_obb(GameWorld *self, int asset_id);

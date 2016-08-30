@@ -35,31 +35,8 @@ static void mouse_position_callback(GLFWwindow *w, double x, double y){
 	inputs_update_mouse_position(&world->inputs, w, x, y);
 }
 
-static void follow(){
-	camera_set_follow(&world->camera, &world->player->base_object.position, 0.75 * world->player->collidable.bounding_box.radius.y);
-}
-
-static void unfollow(){
-	camera_set_follow(&world->camera, NULL, 0);
-}
-
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod){
     inputs_update_keys(&world->inputs, window, key, scancode, action, mod);
-
-    if (world->inputs.l_pressed){
-		if (!camera_is_following(world->camera))
-			follow();
-		else
-			unfollow();
-    }
-
-    if(world->inputs.e_pressed){
-        game_world_add_object(world, bug_new(world, VEC3_ZERO));
-    }
-
-	if (world->inputs.r_pressed){
-		terrain_regen(&world->level->terrain);
-	}
 }
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
@@ -125,26 +102,14 @@ static void update(double total_time){
     if (update_dt > 0.01) {
         last_update_seconds = total_time;
 
-        if(!camera_is_following(world->camera))
-            camera_handle_inputs(&world->camera, update_dt, world->inputs);
-		else{
-			player_handle_inputs(world->player, update_dt, world->inputs);
-			camera_follow(&world->camera, update_dt, world->inputs);
-		}
-        
-		game_world_update(world, update_dt);
-
-        inputs_reset_frame(&world->inputs);
+        game_world_update(world, update_dt);
     }
 }
 
 static void render(){
-    mat4_mul(&world->world_to_screen, world->camera.projection_matrix, world->camera.view_matrix);
-    mat4_inverse(&world->screen_to_world, world->world_to_screen);
-    
     draw_count += 1;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    game_world_render(world, world->camera.projection_matrix, world->camera.view_matrix);
+    game_world_render(world);
 }
 
 int main(int argc, char *argv[]){
@@ -160,9 +125,7 @@ int main(int argc, char *argv[]){
     glClearColor(0.52734375, 0.8046875, 0.91796875, 1.0);
 
     world = game_world_new();
-    game_world_set_player(world, mage_new(world));
-
-	follow();
+    game_world_add_object(world, mage_new(world));
 
     total_time = glfwGetTime();
     last_update_seconds = total_time;

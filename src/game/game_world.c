@@ -17,6 +17,7 @@
 #include "wall.h"
 #include "util/camera.h"
 #include "util/inputs.h"
+#include "enemies/bug.h"
 
 extern int width, height;
 
@@ -45,9 +46,21 @@ void game_world_free(GameWorld *self){
 	renderer_free(self->renderer);
 
     level_free(self->level);
-    player_free(self->player);
 
     free(self);
+}
+
+GameObject *game_world_get_player(GameWorld *self) {
+    int i;
+    GameObject *obj;
+    for(i = 0;i < self->game_objects->length;i++) {
+        obj = self->game_objects->data[i];
+        if (obj != NULL && obj->type == GAME_OBJECT_TYPE_PLAYER) {
+            return obj;
+        }
+    }
+
+    return NULL;
 }
 
 static void destroy_collidable(GameWorld *self, int i){
@@ -62,11 +75,28 @@ void game_world_update(GameWorld *self, double dt){
     int i, j;
     CollidableComponent *c1, *c2;
 
-    self->dt = dt;
+    //if (self->inputs.l_pressed){
+    //    if (!camera_is_following(self->camera))
+    //        follow();
+    //    else
+    //        unfollow();
+    //}
 
-    // todo make it so player isn't handled specially. this will involve changes in main.c also
-    // and other places in this file where its handled specially
-    game_object_update(self->player, dt);
+    if(self->inputs.e_pressed){
+        game_world_add_object(self, bug_new(self, VEC3_ZERO));
+    }
+
+    if (self->inputs.r_pressed){
+        terrain_regen(&self->level->terrain);
+    }
+
+    if(!camera_is_following(self->camera))
+        camera_handle_inputs(&self->camera, dt, self->inputs);
+    else{
+        camera_follow(&self->camera, dt, self->inputs);
+    }
+
+    self->dt = dt;
 
     GameObject *obj;
 	for (i = 0; i < self->game_objects->length; i++) {
@@ -111,15 +141,8 @@ void game_world_update(GameWorld *self, double dt){
 
         }
     }
-}
 
-void game_world_set_player(GameWorld *self, Player *p){
-    self->player = p;
-    int *index = malloc(sizeof(*index));
-    //bogus value...deestroy collidable will never be called for player
-    *index = 0;
-    set_add(self->collidables, &p->collidable);
-    set_add(self->indices, index);
+    inputs_reset_frame(&self->inputs);
 }
 
 void game_world_add_object(GameWorld *self, GameObject *object) {
@@ -127,6 +150,7 @@ void game_world_add_object(GameWorld *self, GameObject *object) {
     switch(object->type) {
         case GAME_OBJECT_TYPE_PLAYER:
             collidable = &((Player *)object)->collidable;
+			camera_set_follow(&self->camera, &object->position, 0.75 * collidable->bounding_box.radius.y);
             break;
         case GAME_OBJECT_TYPE_ENEMY:
             collidable = &((Enemy *)object)->collidable;
@@ -150,13 +174,13 @@ void game_world_add_object(GameWorld *self, GameObject *object) {
     }
 }
 
-void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix){
+void game_world_render(GameWorld *self){
+    mat4_mul(&self->world_to_screen, self->camera.projection_matrix, self->camera.view_matrix);
+    mat4_inverse(&self->screen_to_world, self->world_to_screen);
+
     renderer_render_sphere(self->renderer, light_position);
 
     //gather updates to the various things
-	Player *p = self->player;
-    game_object_render(self->player, self->renderer);
-
 	int i;
 	GameObject *obj;
     for(i = 0;i < self->game_objects->length;i++){
@@ -167,7 +191,7 @@ void game_world_render(GameWorld *self, Mat4 projection_matrix, Mat4 view_matrix
     level_render(self->level, self->renderer);
 
     //actually draw stuff
-    renderer_render(self->renderer, projection_matrix, view_matrix);
+    renderer_render(self->renderer, self->camera.projection_matrix, self->camera.view_matrix);
 }
 
 int game_world_get_model_id(GameWorld *self, const char *name){
