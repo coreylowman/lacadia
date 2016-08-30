@@ -43,6 +43,13 @@ int effect_update(Effect *self, double dt) {
     }
 }
 
+void effect_advance(Effect *self, double dt) {
+    if (self->duration > 0 && self->on_update != NULL) {
+        self->on_update(self, dt);
+    }
+	self->duration -= dt;
+}
+
 void effect_end(Effect *self) {
     if (self->on_end != NULL) {
         self->on_end(self);

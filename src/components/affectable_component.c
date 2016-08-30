@@ -102,6 +102,11 @@ void affectable_component_free(void *component) {
     }
 }
 
+float affectable_component_heal(AffectableComponent *self, float amt){
+    self->health += amt;
+    return amt;
+}
+
 float affectable_component_damage(AffectableComponent *self, float amt){
     self->health -= amt;
     return amt;

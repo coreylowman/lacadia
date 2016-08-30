@@ -63,4 +63,7 @@ int effect_update(Effect *self, double dt);
 void effect_end(Effect *self);
 void effect_render(Effect *self, Renderer *renderer);
 
+// function to advance an effect, without ending/freeing like update does
+void effect_advance(Effect *self, double dt);
+
 #endif

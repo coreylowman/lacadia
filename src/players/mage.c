@@ -11,6 +11,7 @@
 extern Ability fireball_ability;
 extern Ability wildfire_ability;
 extern Ability combust_ability;
+extern Ability dragons_breath_ability;
 
 extern Ability icicle_ability;
 extern Ability frost_nova_ability;
@@ -52,7 +53,7 @@ void on_switch_stance(Player *self){
         self->abilities[0] = fireball_ability;
         self->abilities[1] = wildfire_ability;
         self->abilities[2] = combust_ability;
-        // self->abilities[3] = dragons_breath_ability;
+        self->abilities[3] = dragons_breath_ability;
     }
 }
 

@@ -81,7 +81,7 @@ cooldown | damage | type | applies
 --- | --- | --- | ---
 long | depends | instant aoe | -
 
-All enemies affected by burn in a medium radius around the caster, are instantly dealt the remaining damage of the burn
+All enemies affected by burn or soulburn in a medium radius around the caster, are instantly dealt the remaining damage of the effect
 
 
 ##### V. Dragon’s Breath
@@ -92,5 +92,5 @@ short-medium | medium | frontal cone aoe | soulburn
 Blasts targets in front of mage dealing medium damage, and applying soulburn to the targets
 
 ###### Soulburn
-Deals medium-high damage over short-medium time
+Deals medium-high damage over short-medium time, and transfers a percentage of the damage dealt back to the user as health
 

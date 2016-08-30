@@ -7,6 +7,8 @@ list(APPEND EFFECTS_SOURCES
     frost.c
     permafrost.h
     permafrost.c
+    soulburn.h
+    soulburn.c
 )
 
 add_library(effects OBJECT ${EFFECTS_SOURCES})

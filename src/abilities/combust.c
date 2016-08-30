@@ -13,11 +13,16 @@ Ability combust_ability = {
 };
 
 static void combust_apply(GameWorld *world, GameObject *user, Enemy *enemy){
+    //update burns with the remainder of the duration
     Effect *effect = enemy->affectable.effects[EFFECT_TYPE_BURN];
-	if (effect != NULL) {
-		//update with the remainder of the duration
-		effect_update(effect, effect->duration);
-	}
+    if (effect != NULL) {
+        effect_advance(effect, effect->duration);
+    }
+
+    effect = enemy->affectable.effects[EFFECT_TYPE_SOULBURN];
+    if(effect != NULL) {
+        effect_advance(effect, effect->duration);
+    }
 }
 
 void combust_use(GameWorld *world, GameObject *user){
