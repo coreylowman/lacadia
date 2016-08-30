@@ -18,7 +18,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
 	self->affectable = affectable_component_init(&self->base_object, 25, 6.5, 0, 0, 0);
 	self->renderable = renderable_component_init(&self->base_object, "assets/bug", world->renderer);
 	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), bug_on_collide);
-    
+
     self->attack = melee_hit_ability;
     self->attack.max_cooldown = 1.0;
 

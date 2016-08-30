@@ -15,6 +15,7 @@
 #include "players/mage.h"
 #include "enemies/enemy.h"
 #include "enemies/bug.h"
+#include "enemies/bug_spawner.h"
 #include "game/level.h"
 
 static GLFWwindow *window;
@@ -126,7 +127,8 @@ int main(int argc, char *argv[]){
 
     world = game_world_new();
     game_world_add_object(world, mage_new(world));
-
+    game_world_add_object(world, bug_spawner_new(world, VEC3_ZERO, 5.0));
+    
     total_time = glfwGetTime();
     last_update_seconds = total_time;
     last_fps_seconds = total_time;

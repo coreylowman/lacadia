@@ -19,5 +19,6 @@ typedef struct CollidableComponent {
 
 CollidableComponent collidable_component_init(GameObject *container, Obb bounding_box, OnCollideCallback on_collide);
 int collidable_component_is_colliding(CollidableComponent self, CollidableComponent other);
+void collidable_component_set_scale(CollidableComponent *self, float scale);
 
 #endif

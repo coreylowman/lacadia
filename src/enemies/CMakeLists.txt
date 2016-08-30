@@ -3,6 +3,8 @@ list(APPEND ENEMIES_SOURCES
     bug.h
     enemy.c
     enemy.h
+    bug_spawner.c
+    bug_spawner.h
 )
 
 add_library(enemies OBJECT ${ENEMIES_SOURCES})
