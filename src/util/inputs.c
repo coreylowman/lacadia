@@ -31,7 +31,8 @@ Inputs inputs_init() {
     self.p_pressed = 0;
     self.r_pressed = 0;
     self.l_pressed = 0;
-    
+    self.m_pressed = 0;
+
     self.tab_pressed = 0;
     
     self.esc_pressed = 0;
@@ -85,6 +86,7 @@ void inputs_update_keys(Inputs *i, GLFWwindow *window, int key, int scancode, in
     if(key == GLFW_KEY_R && action == GLFW_PRESS) i->r_pressed = 1;
     if(key == GLFW_KEY_L && action == GLFW_PRESS) i->l_pressed = 1;
     if(key == GLFW_KEY_E && action == GLFW_PRESS) i->e_pressed = 1;
+    if(key == GLFW_KEY_M && action == GLFW_PRESS) i->m_pressed = 1;
     if(key == GLFW_KEY_TAB && action == GLFW_PRESS) i->tab_pressed = 1;
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) i->esc_pressed = 1;
 
@@ -131,6 +133,7 @@ void inputs_reset_frame(Inputs *i){
     i->l_pressed = 0;
     i->q_pressed = 0;
     i->e_pressed = 0;
+    i->m_pressed = 0;
     i->tab_pressed = 0;
 
     int j;

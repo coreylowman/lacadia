@@ -82,7 +82,7 @@ void game_world_update(GameWorld *self, double dt){
     //        unfollow();
     //}
 
-    if(self->inputs.e_pressed){
+    if(self->inputs.m_pressed){
         game_world_add_object(self, bug_new(self, VEC3_ZERO));
     }
 

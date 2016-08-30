@@ -31,6 +31,8 @@ ParticleSystem *particle_system_new(GameWorld *world, Vec3 position,const char *
 
 	self->renderable = renderable_component_init(&self->base_object, asset_name, world->renderer);
 
+    self->scale_over_duration = 1;
+
     return self;
 }
 
@@ -47,6 +49,10 @@ void particle_system_double_particles(ParticleSystem *self){
             self->follow_target ? self->follow_target->position : self->base_object.position,
             self->particle_duration);
     }
+}
+
+void particle_system_set_scale_over_duration(ParticleSystem *self, int scale_over_duration) {
+    self->scale_over_duration = scale_over_duration;
 }
 
 void particle_system_set_particle_init(ParticleSystem *self, void (*particle_init_arg)(Particle *p, Vec3 position, float duration)){
@@ -86,7 +92,9 @@ void particle_system_render(ParticleSystem *self, Renderer *renderer){
         if(self->particles[i].duration <= 0.0) continue;
         mat4_ident(&model_matrix);
         mat4_translate(&model_matrix, self->particles[i].position);
-        mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
+        if(self->scale_over_duration) {
+            mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
+        }
         renderable_component_set_model_matrix(&self->renderable, model_matrix);
         component_render(&self->renderable, renderer);
     }

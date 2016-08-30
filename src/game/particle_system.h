@@ -26,6 +26,8 @@ typedef struct {
     int num_particles;
     Particle particles[MAX_PARTICLES];
 
+    int scale_over_duration;
+
     //the renderable for each particle
     RenderableComponent renderable;
 } ParticleSystem;
@@ -34,6 +36,7 @@ ParticleSystem *particle_system_new(GameWorld *world, Vec3 position, const char 
 void particle_system_free(ParticleSystem *self);
 
 void particle_system_set_follow_target(ParticleSystem *self, GameObject *follow_target);
+void particle_system_set_scale_over_duration(ParticleSystem *self, int scale_over_duration);
 void particle_system_double_particles(ParticleSystem *self);
 
 void particle_system_set_particle_init(ParticleSystem *self, void (*particle_init)(Particle *p, Vec3 position, float duration));

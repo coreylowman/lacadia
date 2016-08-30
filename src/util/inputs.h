@@ -16,6 +16,7 @@ typedef struct Inputs {
     int scroll_amount;
 
     int q_pressed, e_pressed, p_pressed, r_pressed, l_pressed;
+    int m_pressed;
     int tab_pressed;
     int esc_pressed;
 	int numbers_pressed[10];

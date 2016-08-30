@@ -37,6 +37,19 @@ Vec3 vec3_scale(Vec3 v, float scale){
     return out;
 }
 
+Vec3 vec3_rotate_around_y(Vec3 vec, float degrees) {
+    double radians = degrees * 3.14159265358979323846 / 180;
+    double sin_t = sin(radians);
+    double cos_t = cos(radians);
+    float x = cos_t * vec.x - sin_t * vec.z;
+    float z = sin_t * vec.x + cos_t * vec.z;
+    return vec3_from_3f(x, vec.y, z);
+}
+
+float vec3_length(Vec3 vec) {
+    return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
+
 float vec3_dot(Vec3 vec1, Vec3 vec2){
     float sum = 0;
     int i;
@@ -44,6 +57,12 @@ float vec3_dot(Vec3 vec1, Vec3 vec2){
         sum += vec1.data[i] * vec2.data[i];
     }
     return sum;
+}
+
+float vec3_degrees_between(Vec3 vec1, Vec3 vec2) {
+    float dot = vec3_dot(vec1, vec2);
+	float mag = vec3_length(vec2) * vec3_length(vec1);
+	return acos((double)(dot / mag)) * 180 / 3.14159265358979323846;
 }
 
 void vec3_normalize(Vec3 *self){

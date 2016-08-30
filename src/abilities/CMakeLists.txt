@@ -15,6 +15,8 @@ list(APPEND ABILITIES_SOURCES
     wildfire.h
     frost_nova.c
     frost_nova.h
+    arctic_winds.c
+    arctic_winds.h
 )
 
 add_library(abilities OBJECT ${ABILITIES_SOURCES})

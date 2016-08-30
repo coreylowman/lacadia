@@ -40,6 +40,7 @@ void player_update(Player *self, double dt){
 
     if (inputs.left_mouse_down) player_use_ability(self, 0);
     if (inputs.right_mouse_down) player_use_ability(self, 1);
+    if (inputs.e_pressed) player_use_ability(self, 2);
     
     double width_2 = (double)(width)* 0.5;
     double height_2 = (double)(height)* 0.5;
@@ -92,11 +93,6 @@ void player_turn(Player *self, double side_amt){
 
 void player_strafe(Player *self, double dt, float direction){
     float speed = self->affectable.speed;
-    //Vec3 sideways;
-
-    //sideways = vec3_cross(self->moveable.direction, VEC3_UNIT_Y);
-    //vec3_normalize(&sideways);
-
 	game_object_move_by(&self->base_object, vec3_scale(VEC3_UNIT_X, dt * speed * direction));
 }
 
