@@ -87,7 +87,7 @@ static void init_glew(){
 
 static void update_fps(double total_time){
     double fps_dt = total_time - last_fps_seconds;
-    if (fps_dt > 0.25) {
+    if (fps_dt >= 1.0) {
         last_fps_seconds = total_time;
         char title[64];
         sprintf(title, "lacadia (fps: %.2f)", (double)draw_count / fps_dt);
