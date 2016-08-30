@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "players/player.h"
-#include "fireball.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
@@ -10,12 +9,6 @@
 #include "util/random.h"
 #include "components/renderable_component.h"
 #include "components/collidable_component.h"
-
-Ability fireball_ability = {
-    .cooldown = 0,
-	.max_cooldown = 0.5,
-    .on_use = fireball_use
-};
 
 static Spell *fireball_new(GameWorld *world, GameObject *user);
 static void fireball_on_collide(GameObject *self, GameObject *other);
@@ -70,5 +63,9 @@ static void fireball_on_collide(GameObject *self, GameObject *other){
     }
 }
 
-
+Ability fireball_ability = {
+	.cooldown = 0,
+	.max_cooldown = 0.5,
+	.on_use = fireball_use
+};
 

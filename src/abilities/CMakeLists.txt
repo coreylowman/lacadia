@@ -2,24 +2,15 @@ list(APPEND ABILITIES_SOURCES
     ability.c
     ability.h
     combust.c
-    combust.h
     fireball.c
-    fireball.h
     icicle.c
-    icicle.h
     melee_hit.c
-    melee_hit.h
     spell.c
     spell.h
     wildfire.c
-    wildfire.h
     frost_nova.c
-    frost_nova.h
     arctic_winds.c
-    arctic_winds.h
     crystalize.c
-    crystalize.c
-    dragons_breath.h
     dragons_breath.c
 )
 

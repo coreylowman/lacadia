@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "players/player.h"
-#include "crystalize.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
@@ -9,12 +8,6 @@
 #include "components/affectable_component.h"
 #include "spell.h"
 #include "util/random.h"
-
-Ability crystalize_ability = {
-    .cooldown = 0,
-    .max_cooldown = 4.0,
-    .on_use = crystalize_use
-};
 
 // todo make this look better... have it go faster or something
 static void particle_init(Particle *p, Vec3 position, float duration){
@@ -52,3 +45,10 @@ void crystalize_use(GameWorld *world, GameObject *user){
 
     game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius, crystalize_apply);
 }
+
+Ability crystalize_ability = {
+	.cooldown = 0,
+	.max_cooldown = 4.0,
+	.on_use = crystalize_use
+};
+

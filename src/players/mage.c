@@ -2,10 +2,6 @@
 #include "mage.h"
 #include "abilities/spell.h"
 #include "abilities/ability.h"
-#include "abilities/fireball.h"
-#include "abilities/wildfire.h"
-#include "abilities/combust.h"
-#include "abilities/icicle.h"
 #include "enemies/enemy.h"
 
 extern Ability fireball_ability;

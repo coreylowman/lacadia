@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "players/player.h"
-#include "arctic_winds.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
 #include "effects/frost.h"
 #include "spell.h"
 #include "util/random.h"
-
-Ability arctic_winds_ability = {
-    .cooldown = 0,
-    .max_cooldown = 2.0,
-    .on_use = arctic_winds_use
-};
 
 static void arctic_winds_apply(GameWorld *world, GameObject *user, GameObject *target) {
     Enemy *enemy = target;
@@ -49,3 +42,9 @@ void arctic_winds_use(GameWorld *world, GameObject *user){
     particle_system_set_scale_over_duration(ps, 0);
     game_world_add_object(world, ps);
 }
+
+Ability arctic_winds_ability = {
+	.cooldown = 0,
+	.max_cooldown = 2.0,
+	.on_use = arctic_winds_use
+};

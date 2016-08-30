@@ -1,4 +1,3 @@
-#include "wildfire.h"
 #include "components/affectable_component.h"
 #include "effects/effect.h"
 #include "effects/burn.h"
@@ -7,12 +6,6 @@
 #include "ability.h"
 #include "spell.h"
 #include "util/vec3.h"
-
-Ability wildfire_ability = {
-    .cooldown = 0,
-    .max_cooldown = 0,
-    .on_use = wildfire_use
-};
 
 static Spell *wildfire_new(GameWorld *world, GameObject *user, GameObject *target);
 static Spell *wildfire_spread_new(GameWorld *world, GameObject *user, GameObject *target);
@@ -139,3 +132,8 @@ void wildfire_use(GameWorld *world, GameObject *user){
     game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius, wildfire_apply);
 }
 
+Ability wildfire_ability = {
+	.cooldown = 0,
+	.max_cooldown = 0,
+	.on_use = wildfire_use
+};

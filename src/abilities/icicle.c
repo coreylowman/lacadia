@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "players/player.h"
-#include "icicle.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
 #include "spell.h"
 #include "util/random.h"
 #include "effects/frost.h"
-
-Ability icicle_ability = {
-    .cooldown = 0,
-    .max_cooldown = 0.33,
-    .on_use = icicle_use
-};
 
 static Spell *icicle_new(GameWorld *world, GameObject *user);
 static void icicle_on_collide(GameObject *self, GameObject *other);
@@ -68,5 +61,9 @@ static void icicle_on_collide(GameObject *self, GameObject *other){
     }
 }
 
-
+Ability icicle_ability = {
+	.cooldown = 0,
+	.max_cooldown = 0.33,
+	.on_use = icicle_use
+};
 

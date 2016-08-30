@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "players/player.h"
-#include "frost_nova.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
 #include "effects/frost.h"
 #include "spell.h"
 #include "util/random.h"
-
-Ability frost_nova_ability = {
-    .cooldown = 0,
-    .max_cooldown = 2.0,
-    .on_use = frost_nova_use
-};
 
 static void frost_nova_apply(GameWorld *world, GameObject *user, GameObject *target) {
     Enemy *enemy = target;
@@ -38,3 +31,9 @@ void frost_nova_use(GameWorld *world, GameObject *user){
     particle_system_set_particle_init(ps, particle_init);
     game_world_add_object(world, ps);
 }
+
+Ability frost_nova_ability = {
+	.cooldown = 0,
+	.max_cooldown = 2.0,
+	.on_use = frost_nova_use
+};

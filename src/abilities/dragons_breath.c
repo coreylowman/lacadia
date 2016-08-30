@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "players/player.h"
-#include "dragons_breath.h"
 #include "enemies/enemy.h"
 #include "util/set.h"
 #include "game/particle_system.h"
 #include "effects/soulburn.h"
 #include "spell.h"
 #include "util/random.h"
-
-Ability dragons_breath_ability = {
-    .cooldown = 0,
-    .max_cooldown = 1.5,
-    .on_use = dragons_breath_use
-};
 
 static void dragons_breath_apply(GameWorld *world, GameObject *user, GameObject *target) {
     Enemy *enemy = target;
@@ -48,3 +41,9 @@ void dragons_breath_use(GameWorld *world, GameObject *user){
     particle_system_set_scale_over_duration(ps, 0);
     game_world_add_object(world, ps);
 }
+
+Ability dragons_breath_ability = {
+	.cooldown = 0,
+	.max_cooldown = 1.5,
+	.on_use = dragons_breath_use
+};
