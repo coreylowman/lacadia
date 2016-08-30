@@ -15,7 +15,8 @@ Ability frost_nova_ability = {
     .on_use = frost_nova_use
 };
 
-static void frost_nova_apply(GameWorld *world, GameObject *user, Enemy *enemy) {
+static void frost_nova_apply(GameWorld *world, GameObject *user, GameObject *target) {
+    Enemy *enemy = target;
     affectable_component_damage(&enemy->affectable, 1);
     affectable_component_affect(&enemy->affectable, frost_new(world, &enemy->base_object, 0.1, 4));
     affectable_component_affect(&enemy->affectable, frost_new(world, &enemy->base_object, 0.1, 4));
@@ -31,7 +32,7 @@ static void particle_init(Particle *p, Vec3 position, float duration){
 void frost_nova_use(GameWorld *world, GameObject *user){
     float radius = 10.0f;
 
-    game_world_apply_to_enemies(world, user, radius, frost_nova_apply);
+    game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius, frost_nova_apply);
 
     ParticleSystem *ps = particle_system_new(world, user->position, "assets/frost_particle", 64, 0.0, 0.5);
     particle_system_set_particle_init(ps, particle_init);

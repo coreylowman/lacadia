@@ -27,7 +27,7 @@ Player *mage_new(GameWorld *world){
 	self->base_object.position = VEC3_ZERO;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };
 
-	self->affectable = affectable_component_init(&self->base_object, 100, 5.0, 0, 0, 0);
+	self->affectable = affectable_component_init(&self->base_object, 20, 5.0, 0, 0, 0);
 	self->renderable = renderable_component_init(&self->base_object, "assets/mage", world->renderer);
 	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), player_on_collide);
     
@@ -61,11 +61,12 @@ static void ice_passive(Player *self, double dt) {
 
 }
 
-static void fire_passive_tick(GameWorld *world, GameObject *user, Enemy *enemy){
+static void fire_passive_tick(GameWorld *world, GameObject *user, GameObject *target){
+    Enemy *enemy = target;
     affectable_component_damage(&enemy->affectable, world->dt * 0.25f);
 }
 
 static void fire_passive(Player *self, double dt) {
     float radius = 5.0f;
-    game_world_apply_to_enemies(self->base_object.world, self, radius, fire_passive_tick);
+    game_world_apply(self->base_object.world, GAME_OBJECT_TYPE_ENEMY, self, radius, fire_passive_tick);
 }

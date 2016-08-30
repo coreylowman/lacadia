@@ -18,6 +18,7 @@ typedef struct Level Level;
 typedef struct Wall Wall;
 typedef struct CollidableComponent CollidableComponent;
 typedef struct GameObject GameObject;
+typedef enum GameObjectType GameObjectType;
 
 typedef struct GameWorld {
     Level *level;
@@ -61,7 +62,7 @@ Obb game_world_get_model_obb(GameWorld *self, int asset_id);
 Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords);
 Vec3 game_world_screen_coords_to_world_coords(GameWorld *self, Vec3 screen_coords);
 
-void game_world_apply_to_enemies(GameWorld *self, GameObject *user, float radius, void (*fn)(GameWorld *world, GameObject *obj, Enemy *enemy));
+void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user, float radius, void (*fn)(GameWorld *world, GameObject *obj, GameObject *target));
 int game_world_is_colliding_with_wall(GameWorld *self, CollidableComponent collidable);
 
 #endif

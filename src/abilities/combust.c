@@ -12,7 +12,8 @@ Ability combust_ability = {
     .on_use = combust_use
 };
 
-static void combust_apply(GameWorld *world, GameObject *user, Enemy *enemy){
+static void combust_apply(GameWorld *world, GameObject *user, GameObject *target){
+    Enemy *enemy = target;
     //update burns with the remainder of the duration
     Effect *effect = enemy->affectable.effects[EFFECT_TYPE_BURN];
     if (effect != NULL) {
@@ -27,5 +28,5 @@ static void combust_apply(GameWorld *world, GameObject *user, Enemy *enemy){
 
 void combust_use(GameWorld *world, GameObject *user){
     float radius = 10;
-    game_world_apply_to_enemies(world, user, 10, combust_apply);
+    game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, 10, combust_apply);
 }

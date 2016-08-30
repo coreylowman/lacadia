@@ -10,10 +10,11 @@ typedef struct Soulburn {
 
     float dps;
     float leech_pct;
+    GameObject *user;
 
     ParticleSystem *particle_system;
 } Soulburn;
 
-Soulburn *soulburn_new(GameWorld *world, GameObject *target, float dps, float leech_pct, float duration);
+Soulburn *soulburn_new(GameWorld *world, GameObject *target, GameObject *user, float dps, float leech_pct, float duration);
 
 #endif

@@ -98,7 +98,7 @@ static void wildfire_on_collide(GameObject *self, GameObject *other){
             affectable_component_affect(&enemy->affectable, burn_new(self->world, &enemy->base_object, 1, 4));
         }
 
-        game_world_apply_to_enemies(world, enemy, 10, wildfire_spread);
+        game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, enemy, 10, wildfire_spread);
     }
     self->destroy = 1;
 }
@@ -118,14 +118,16 @@ static void wildfire_spread_on_collide(GameObject *self, GameObject *other){
     self->destroy = 1;
 }
 
-static void wildfire_spread(GameWorld *world, GameObject *origin, Enemy *enemy){
+static void wildfire_spread(GameWorld *world, GameObject *origin, GameObject *target){
+    Enemy *enemy = target;
     if(enemy->affectable.effects[EFFECT_TYPE_BURN] == NULL){
         //if it doesn't have a burn on it, then shoot a wildfire spread at it 
         game_world_add_object(world, wildfire_spread_new(world, origin, enemy));
     }
 }
 
-static void wildfire_apply(GameWorld *world, GameObject *user, Enemy *enemy){
+static void wildfire_apply(GameWorld *world, GameObject *user, GameObject *target){
+    Enemy *enemy = target;
     if(enemy->affectable.effects[EFFECT_TYPE_BURN] != NULL){
         //if it already has a burn on it shoot a wildfire at it
         game_world_add_object(world, wildfire_new(world, user, enemy));
@@ -134,6 +136,6 @@ static void wildfire_apply(GameWorld *world, GameObject *user, Enemy *enemy){
 
 void wildfire_use(GameWorld *world, GameObject *user){
     float radius = 10;
-    game_world_apply_to_enemies(world, user, radius, wildfire_apply);
+    game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius, wildfire_apply);
 }
 

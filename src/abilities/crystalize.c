@@ -24,7 +24,8 @@ static void particle_init(Particle *p, Vec3 position, float duration){
     p->duration = duration;
 }
 
-static void crystalize_apply(GameWorld *world, GameObject *user, Enemy *enemy) {
+static void crystalize_apply(GameWorld *world, GameObject *user, GameObject *target) {
+    Enemy *enemy = target;
     float damage = 2.0f;
 
     AffectableComponent *affectable = &enemy->affectable;
@@ -49,5 +50,5 @@ static void crystalize_apply(GameWorld *world, GameObject *user, Enemy *enemy) {
 void crystalize_use(GameWorld *world, GameObject *user){
     float radius = 10.0f;
 
-    game_world_apply_to_enemies(world, user, radius, crystalize_apply);
+    game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius, crystalize_apply);
 }

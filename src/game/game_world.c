@@ -203,7 +203,7 @@ Obb game_world_get_model_obb(GameWorld *self, int model_id){
 }
 
 // todo change to take a GameObjectType parameter instead of just enemies?
-void game_world_apply_to_enemies(GameWorld *self, GameObject *user, float radius, void (*fn)(GameWorld *self, GameObject *user, Enemy *enemy)){
+void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user, float radius, void (*fn)(GameWorld *world, GameObject *obj, GameObject *target)){
     CollidableComponent *collidable;
     GameObject *object;
     int i;
@@ -211,9 +211,9 @@ void game_world_apply_to_enemies(GameWorld *self, GameObject *user, float radius
         if(self->collidables->data[i] == NULL) continue;
         collidable = self->collidables->data[i];
 		object = collidable->base_component.container;
-        if(object->type == GAME_OBJECT_TYPE_ENEMY
+        if(object->type == type
             && vec3_within_dist(collidable->bounding_box.center, user->position, radius)){
-            fn(self, user, (Enemy *)object);
+            fn(self, user, object);
         }
     }
 }

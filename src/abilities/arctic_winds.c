@@ -15,8 +15,9 @@ Ability arctic_winds_ability = {
     .on_use = arctic_winds_use
 };
 
-static void arctic_winds_apply(GameWorld *world, GameObject *user, Enemy *enemy) {
-	Vec3 to_enemy = vec3_sub(enemy->base_object.position, user->position);
+static void arctic_winds_apply(GameWorld *world, GameObject *user, GameObject *target) {
+    Enemy *enemy = target;
+    Vec3 to_enemy = vec3_sub(enemy->base_object.position, user->position);
     float degrees_between = vec3_degrees_between(user->direction, to_enemy);
     if (degrees_between <= 45) {
         affectable_component_damage(&enemy->affectable, 2);
@@ -41,7 +42,7 @@ void arctic_winds_use(GameWorld *world, GameObject *user){
     direction = user->direction;
     direction.y = 0;
     vec3_normalize(&direction);
-    game_world_apply_to_enemies(world, user, radius, arctic_winds_apply);
+    game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius, arctic_winds_apply);
 
     ParticleSystem *ps = particle_system_new(world, user->position, "assets/frost_particle", 64, 0.0, 0.75);
     particle_system_set_particle_init(ps, particle_init);
