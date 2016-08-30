@@ -41,6 +41,7 @@ void player_update(Player *self, double dt){
     if (inputs.left_mouse_down) player_use_ability(self, 0);
     if (inputs.right_mouse_down) player_use_ability(self, 1);
     if (inputs.e_pressed) player_use_ability(self, 2);
+    if (inputs.q_pressed) player_use_ability(self, 3);
     
     double width_2 = (double)(width)* 0.5;
     double height_2 = (double)(height)* 0.5;

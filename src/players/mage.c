@@ -15,6 +15,7 @@ extern Ability combust_ability;
 extern Ability icicle_ability;
 extern Ability frost_nova_ability;
 extern Ability arctic_winds_ability;
+extern Ability crystalize_ability;
 
 static void ice_passive(Player *self, double dt);
 static void fire_passive(Player *self, double dt);
@@ -45,7 +46,7 @@ void on_switch_stance(Player *self){
         self->abilities[0] = icicle_ability;
         self->abilities[1] = frost_nova_ability;
         self->abilities[2] = arctic_winds_ability;
-        // self->abilities[3] = ice_storm_ability;
+        self->abilities[3] = crystalize_ability;
     }else{
         self->passive = fire_passive;
         self->abilities[0] = fireball_ability;
