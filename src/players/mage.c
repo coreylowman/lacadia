@@ -13,6 +13,7 @@ extern Ability wildfire_ability;
 extern Ability combust_ability;
 
 extern Ability icicle_ability;
+extern Ability frost_nova_ability;
 
 static void ice_passive(Player *self, double dt);
 static void fire_passive(Player *self, double dt);
@@ -41,12 +42,13 @@ void on_switch_stance(Player *self){
     if(self->stance){
         self->passive = ice_passive;
         self->abilities[0] = icicle_ability;
-        // self->abilities[1] = frost_nova_ability;
+        self->abilities[1] = frost_nova_ability;
         // self->abilities[3] = ice_storm_ability;
     }else{
         self->passive = fire_passive;
         self->abilities[0] = fireball_ability;
-        // self->abilities[1] = spread_burn_ability;
+        self->abilities[1] = wildfire_ability;
+        self->abilities[2] = combust_ability;
         // self->abilities[3] = dragons_breath_ability;
     }
 }

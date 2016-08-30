@@ -13,6 +13,8 @@ list(APPEND ABILITIES_SOURCES
     spell.h
     wildfire.c
     wildfire.h
+    frost_nova.c
+    frost_nova.h
 )
 
 add_library(abilities OBJECT ${ABILITIES_SOURCES})

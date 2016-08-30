@@ -23,20 +23,20 @@ Each stack slows target by 10%, once it reaches 4 stacks it turns into permafros
 Deals high damage instantly, and slows the target by 50% for a short time
 
 
-##### III. Ice Nova
+##### III. Frost Nova
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium | low | spread aoe | large slow
+medium | low | spread aoe | 2 stacks of frost
 
-A wave of ice spreads out and deals little damage, but slows target immensely
+A wave of frost spreads out and deals little damage, but applies 2 stacks of frost to all enemies affected
 
 
 ##### IV. Arctic Winds
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium | medium | frontal cone aoe | very short stun
+medium | medium | frontal cone aoe | 1 stack of frost
 
-Blasts targets in front of mage dealing medium damage, and stunning for a very short duration
+Blasts targets in front of mage dealing medium damage, and applying 1 stack of frost
 
 
 ##### V. Crystalize
