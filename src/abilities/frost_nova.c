@@ -10,7 +10,7 @@
 
 static void frost_nova_apply(GameWorld *world, GameObject *user, GameObject *target) {
     Enemy *enemy = target;
-    affectable_component_damage(&enemy->affectable, 1);
+    // affectable_component_damage(&enemy->affectable, 1);
     affectable_component_affect(&enemy->affectable, frost_new(world, &enemy->base_object, 0.1, 4));
     affectable_component_affect(&enemy->affectable, frost_new(world, &enemy->base_object, 0.1, 4));
 }

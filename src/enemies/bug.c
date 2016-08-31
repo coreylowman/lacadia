@@ -34,8 +34,8 @@ void bug_on_update(Enemy *self, double dt){
     Vec3 pos = self->base_object.position;
     Vec3 target_pos = player->base_object.position;
     self->base_object.direction = vec3_sub(target_pos, pos);
-	float dist = sqrt(vec3_dot(self->base_object.direction, self->base_object.direction));
-	vec3_normalize(&self->base_object.direction);
+    float dist = sqrt(vec3_dot(self->base_object.direction, self->base_object.direction));
+    vec3_normalize(&self->base_object.direction);
     if(ability_is_ready(self->attack)){
         if(dist < 3){
             ability_use(&self->attack, self->base_object.world, self);
@@ -43,7 +43,7 @@ void bug_on_update(Enemy *self, double dt){
             game_object_move(&self->base_object, self->affectable.speed * dt);
         }
     }
-	vec3_normalize(&self->base_object.direction);
+    vec3_normalize(&self->base_object.direction);
 }
 
 void bug_on_collide(GameObject *self, GameObject *object){

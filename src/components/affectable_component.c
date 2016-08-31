@@ -102,9 +102,39 @@ void affectable_component_free(void *component) {
     }
 }
 
-float affectable_component_heal(AffectableComponent *self, float amt){
+void affectable_component_scale_max(struct AffectableComponent *self, float scale) {
+    float amt;
+
+    amt = (scale - 1) * self->max_health;
+    self->max_health += amt;
     self->health += amt;
-    return amt;
+
+    amt = (scale - 1) * self->max_speed;
+    self->max_speed += amt;
+    self->speed += amt;
+
+    amt = (scale - 1) * self->max_regen;
+    self->max_regen += amt;
+    self->regen += amt;
+
+    amt = (scale - 1) * self->max_power;
+    self->max_power += amt;
+    self->power += amt;
+
+    amt = (scale - 1) * self->max_lifesteal;
+    self->max_lifesteal += amt;
+    self->lifesteal += amt;
+}
+
+float affectable_component_heal(AffectableComponent *self, float amt){
+    if (self->health + amt > self->max_health) {
+        amt = self->max_health - self->health;
+        self->health = self->max_health;
+        return amt;
+    } else {
+        self->health += amt;
+        return amt;
+    }
 }
 
 float affectable_component_damage(AffectableComponent *self, float amt){
@@ -118,6 +148,12 @@ float affectable_component_slow(AffectableComponent *self, float amt) {
 }
 
 float affectable_component_quicken(AffectableComponent *self, float amt) {
-    self->speed += amt;
-    return amt;
+    if (self->speed + amt > self->max_speed) {
+        amt = self->max_speed - self->speed;
+        self->speed = self->max_speed;
+        return amt;
+    } else {
+        self->speed += amt;
+        return amt;
+    }
 }

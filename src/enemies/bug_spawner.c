@@ -20,15 +20,19 @@ GameObject *bug_spawner_new(GameWorld *world, Vec3 position, double time_to_spaw
     return self;
 }
 
+static void scale_bug(Enemy *bug, float scale) {
+    renderable_component_set_scale(&bug->renderable, scale);
+    collidable_component_set_scale(&bug->collidable, scale);
+    affectable_component_scale_max(&bug->affectable, scale);
+}
+
 static void on_update(GameObject *obj, double dt) {
     BugSpawner *self = obj;
 
     self->time_till_next -= dt;
     if (self->time_till_next <= 0.0) {
         Enemy *bug = bug_new(obj->world, self->base_object.position);
-        float scale = random_in_rangef(0.6, 1.4);
-        renderable_component_set_scale(&bug->renderable, scale);
-		collidable_component_set_scale(&bug->collidable, scale);
+		scale_bug(bug, random_in_rangef(0.6, 1.4));
 
         game_world_add_object(obj->world, bug);
 

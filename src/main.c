@@ -47,6 +47,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 void window_size_callback (GLFWwindow* window, int _width, int _height) {
     width = _width;
     height = _height;
+    world->camera.aspect_ratio = (float) width / height;
     glViewport(0, 0, width, height);
 }
 

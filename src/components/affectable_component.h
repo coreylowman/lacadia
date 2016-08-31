@@ -23,6 +23,8 @@ AffectableComponent affectable_component_init(GameObject *container, float max_h
 void affectable_component_affect(struct AffectableComponent *self, struct Effect *effect);
 void affectable_component_remove(struct AffectableComponent *self, EffectType type);
 
+void affectable_component_scale_max(struct AffectableComponent *self, float scale);
+
 float affectable_component_damage(struct AffectableComponent *self, float amt);
 float affectable_component_heal(struct AffectableComponent *self, float amt);
 float affectable_component_slow(struct AffectableComponent *self, float amt);

@@ -3,6 +3,7 @@
 #include <math.h>
 #include "player.h"
 #include "game/wall.h"
+#include "game/colors.h"
 
 extern int width, height;
 
@@ -62,6 +63,22 @@ void player_render(Player *self, Renderer *renderer) {
     component_render(&self->affectable, renderer);
     component_render(&self->renderable, renderer);
     component_render(&self->collidable, renderer);
+
+    // render the abilities cooldowns
+    float spacing = 0.05;
+    float width = 0.1;
+    float max_height = width * self->base_object.world->camera.aspect_ratio;
+    int i;
+    Rect2 ability_square;
+    ability_square.x = -2 * width - 1.5 * spacing;
+    ability_square.y = -0.95;
+    ability_square.width = width;
+    ability_square.height = max_height;
+    for (i = 0;i < 4;i++) {
+        ability_square.height = max_height * (1 - self->abilities[i].cooldown / self->abilities[i].max_cooldown);
+        renderer_render_rect(renderer, ability_square, COLOR_RED);
+        ability_square.x += width + spacing;
+    }
 }
 
 void player_use_ability(Player *self, int i){
