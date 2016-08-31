@@ -134,6 +134,6 @@ void wildfire_use(GameWorld *world, GameObject *user){
 
 Ability wildfire_ability = {
 	.cooldown = 0,
-	.max_cooldown = 0,
+	.max_cooldown = 1,
 	.on_use = wildfire_use
 };

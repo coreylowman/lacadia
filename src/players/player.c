@@ -23,9 +23,9 @@ void player_free(Player *self){
 void player_update(Player *self, double dt){
     self->passive(self, dt);
 
-	component_update(&self->affectable, dt);
-	component_update(&self->renderable, dt);
-	component_update(&self->collidable, dt);
+    component_update(&self->affectable, dt);
+    component_update(&self->renderable, dt);
+    component_update(&self->collidable, dt);
 
     int i;
     for (i = 0; i < 4; i++){
