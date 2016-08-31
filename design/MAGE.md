@@ -26,26 +26,28 @@ Deals high damage instantly, and slows the target by 50% for a short time
 ##### III. Frost Nova
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium | low | spread aoe | 2 stacks of frost
+medium | none | spread aoe | 2 stacks of frost
 
-A wave of frost spreads out and deals little damage, but applies 2 stacks of frost to all enemies affected
+A wave of frost spreads out and applies 2 stacks of frost to all enemies affected
 
 
 ##### IV. Arctic Winds
 cooldown | damage | type | applies
 --- | --- | --- | ---
-medium | medium | frontal cone aoe | 1 stack of frost
+medium | low | frontal cone aoe | 1 stack of frost
 
-Blasts targets in front of mage dealing medium damage, and applying 1 stack of frost
+Blasts targets in front of mage dealing low damage, and applying 1 stack of frost
 
 
 ##### V. Crystalize
 cooldown | damage | type | applies
 --- | --- | --- | ---
-long | medium {+ frost, ++ permafrost} | instant aoe | -
+medium-long | low {+ frost, ++ permafrost} | instant aoe | -
 
-Crystalize enemies around the mage, dealing very high damage to enemies affected with permafrost, high damage to enemies affected with frost, and medium damage otherwise
+Crystalize enemies around the mage, medium damage, and bonus damage based on stacks of frost and permafrost.
 
+Frost bonus damage: low for each stack
+Permafrost bonus damage: bonus damage equal to 5 frost stacks
 
 ---
 

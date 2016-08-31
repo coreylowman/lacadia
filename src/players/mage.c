@@ -23,7 +23,7 @@ Player *mage_new(GameWorld *world){
 	self->base_object.position = VEC3_ZERO;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };
 
-	self->affectable = affectable_component_init(&self->base_object, 20, 5.0, 0, 0, 0);
+	self->affectable = affectable_component_init(&self->base_object, 20, 5.0, 0.1, 0, 0);
 	self->renderable = renderable_component_init(&self->base_object, "assets/mage", world->renderer);
 	self->collidable = collidable_component_init(&self->base_object, game_world_get_model_obb(world, self->renderable.model_id), player_on_collide);
     

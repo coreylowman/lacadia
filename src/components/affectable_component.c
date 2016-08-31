@@ -59,6 +59,8 @@ void affectable_component_update(Component *component, double dt){
             self->effects[i] = NULL;
         }
     }
+
+    affectable_component_heal(self, self->regen * dt);
 }
 
 void affectable_component_render(Component *component, Renderer *renderer){

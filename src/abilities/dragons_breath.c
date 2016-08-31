@@ -44,6 +44,6 @@ void dragons_breath_use(GameWorld *world, GameObject *user){
 
 Ability dragons_breath_ability = {
 	.cooldown = 0,
-	.max_cooldown = 1.5,
+	.max_cooldown = 3,
 	.on_use = dragons_breath_use
 };

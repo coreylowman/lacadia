@@ -26,6 +26,6 @@ void combust_use(GameWorld *world, GameObject *user){
 
 Ability combust_ability = {
 	.cooldown = 0,
-	.max_cooldown = 1,
+	.max_cooldown = 7,
 	.on_use = combust_use
 };

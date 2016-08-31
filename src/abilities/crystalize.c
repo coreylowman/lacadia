@@ -5,6 +5,7 @@
 #include "util/set.h"
 #include "game/particle_system.h"
 #include "effects/effect.h"
+#include "effects/frost.h"
 #include "components/affectable_component.h"
 #include "spell.h"
 #include "util/random.h"
@@ -20,15 +21,17 @@ static void particle_init(Particle *p, Vec3 position, float duration){
 static void crystalize_apply(GameWorld *world, GameObject *user, GameObject *target) {
     Enemy *enemy = target;
     float damage = 2.0f;
+    float dmg_per_degree = 1.0f;
 
     AffectableComponent *affectable = &enemy->affectable;
 
     if (affectable->effects[EFFECT_TYPE_FROST] != NULL) {
-        damage += 1.0f;
+        Frost *frost = affectable->effects[EFFECT_TYPE_FROST];
+        damage += frost->degree * dmg_per_degree;
     }
 
     if (affectable->effects[EFFECT_TYPE_PERMAFROST] != NULL) {
-        damage += 2.0f;
+        damage += 5 * dmg_per_degree;
     }
 
     affectable_component_damage(&enemy->affectable, damage);

@@ -13,7 +13,7 @@ static void arctic_winds_apply(GameWorld *world, GameObject *user, GameObject *t
     Vec3 to_enemy = vec3_sub(enemy->base_object.position, user->position);
     float degrees_between = vec3_degrees_between(user->direction, to_enemy);
     if (degrees_between <= 45) {
-        affectable_component_damage(&enemy->affectable, 2);
+        affectable_component_damage(&enemy->affectable, 1);
         affectable_component_affect(&enemy->affectable, frost_new(world, &enemy->base_object, 0.1, 4));
     }
 }
@@ -45,6 +45,6 @@ void arctic_winds_use(GameWorld *world, GameObject *user){
 
 Ability arctic_winds_ability = {
 	.cooldown = 0,
-	.max_cooldown = 2.0,
+	.max_cooldown = 5.0,
 	.on_use = arctic_winds_use
 };
