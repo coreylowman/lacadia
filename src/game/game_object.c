@@ -12,6 +12,9 @@ GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpd
 
     self.world = world;
 
+    self.position = VEC3_ZERO;
+    self.direction = VEC3_UNIT_X;
+
     self.on_update =  on_update;
     self.on_render = on_render;
     self.on_free = on_free;
@@ -26,6 +29,12 @@ float game_object_get_y_rotation(GameObject *self) {
 	if (self->direction.z <= 0.0)
 		rotation += 3.14159265358979323846;
 	return rotation;
+}
+
+void game_object_rotate_by(GameObject *self, float radians) {
+    Mat4 rotation_matrix = MAT4_IDENT;
+    mat4_rotate_y(&rotation_matrix, radians);
+    mat4_mul_vec3(&self->direction, rotation_matrix, self->direction);
 }
 
 void game_object_move_by(GameObject *self, Vec3 velocity) {

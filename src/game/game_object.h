@@ -18,6 +18,7 @@ typedef enum GameObjectType {
     GAME_OBJECT_TYPE_WALL,
     GAME_OBJECT_TYPE_PARTICLE_SYSTEM,
     GAME_OBJECT_TYPE_SPAWNER,
+    GAME_OBJECT_TYPE_COLLECTABLE,
     GAME_OBJECT_TYPE_MAX,
 } GameObjectType;
 
@@ -44,6 +45,8 @@ typedef struct GameObject {
 
 GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
 float game_object_get_y_rotation(GameObject *self);
+
+void game_object_rotate_by(GameObject *self, float radians);
 
 void game_object_move_by(GameObject *self, Vec3 velocity);
 void game_object_move(GameObject *self, double scalar);

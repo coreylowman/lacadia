@@ -31,7 +31,7 @@ Renderer *renderer_new() {
 	//MODELS
 	//
 	shader_init(&self->model_shader, "shaders/model_vert.glsl", "shaders/model_frag.glsl");
-	self->num_models = 10;
+	self->num_models = 11;
 	self->model_names[0] = "assets/default_box";
 	self->model_names[1] = "assets/mage";
 	self->model_names[2] = "assets/hunter";
@@ -42,6 +42,7 @@ Renderer *renderer_new() {
 	self->model_names[7] = "assets/wall";
 	self->model_names[8] = "assets/sphere";
 	self->model_names[9] = "assets/frost_particle";
+	self->model_names[10] = "assets/coin";
 
 	printf("Loading assets... ");
 	int i;

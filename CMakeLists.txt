@@ -11,6 +11,7 @@ add_subdirectory(src/util)
 add_subdirectory(src/components)
 add_subdirectory(src/game)
 add_subdirectory(src/players)
+add_subdirectory(src/collectables)
 add_subdirectory(src/enemies)
 add_subdirectory(src/effects)
 add_subdirectory(src/abilities)
@@ -29,6 +30,7 @@ list(APPEND LACADIA_SOURCES
     $<TARGET_OBJECTS:components>
     $<TARGET_OBJECTS:game>
     $<TARGET_OBJECTS:players>
+    $<TARGET_OBJECTS:collectables>
     $<TARGET_OBJECTS:enemies>
     $<TARGET_OBJECTS:effects>
     $<TARGET_OBJECTS:abilities>

@@ -14,6 +14,7 @@
 #include "game_world.h"
 #include "components/collidable_component.h"
 #include "game/particle_system.h"
+#include "collectables/collectable.h"
 #include "wall.h"
 #include "util/camera.h"
 #include "util/inputs.h"
@@ -160,6 +161,8 @@ void game_world_add_object(GameWorld *self, GameObject *object) {
             break;
         case GAME_OBJECT_TYPE_WALL:
             collidable = &((Wall *)object)->collidable;
+		case GAME_OBJECT_TYPE_COLLECTABLE:
+			collidable = &((Collectable *)object)->collidable;
             break;
         default:
             break;
