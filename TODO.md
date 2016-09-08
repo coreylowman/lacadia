@@ -20,7 +20,7 @@
 - [ ] Main Screen UI
 - [ ] Character Selection Screen UI
 - [ ] Game UI
-- [ ] Floating Text
+- [x] Text
 - [x] Floating Healthbar
 
 #### Characters
@@ -29,9 +29,9 @@
 
 ###### Mage
 - [x] Spell Design
-- [ ] Spell Implementation
+- [x] Spell Implementation
 - [x] Model
-- [ ] Model Animations
+- [x] Model Animations
 
 ###### Ranger
 - [x] Spell Design
