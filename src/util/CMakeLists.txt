@@ -34,8 +34,5 @@ list(APPEND UTIL_SOURCES
 
 add_library(util OBJECT ${UTIL_SOURCES})
 target_include_directories(util
-    PUBLIC ${LACADIA_SOURCE_DIR}/src
-    PUBLIC ${LACADIA_SOURCE_DIR}/external/glew/include
-    PUBLIC ${LACADIA_SOURCE_DIR}/external/glfw3/include
-    PUBLIC ${LACADIA_SOURCE_DIR}/external/lodepng/include
+    PUBLIC ${LACADIA_INCLUDE_DIRS}
 )

@@ -6,7 +6,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
 find_package(OpenGL REQUIRED)
 
+set(SKIP_INSTALL_HEADERS TRUE)
+set(SKIP_INSTALL_LIBRARIES TRUE)
+set(SKIP_INSTALL_ALL TRUE)
+
+list(APPEND LACADIA_INCLUDE_DIRS
+    ${LACADIA_SOURCE_DIR}/src
+    ${LACADIA_SOURCE_DIR}/external/glew/include
+    ${LACADIA_SOURCE_DIR}/external/glfw3/include
+    ${LACADIA_SOURCE_DIR}/external/lodepng/include
+    ${LACADIA_SOURCE_DIR}/external/freetype-2.6.5/include
+)
+
 add_subdirectory(external/lodepng)
+add_subdirectory(external/freetype-2.6.5)
 add_subdirectory(src/util)
 add_subdirectory(src/components)
 add_subdirectory(src/game)
@@ -25,6 +38,7 @@ set(LINE_FRAGMENT_SHADER ${LACADIA_SOURCE_DIR}/shaders/line_fragment_shader.glsl
 list(APPEND LACADIA_SOURCES
     src/main.c
 
+    $<TARGET_OBJECTS:freetype>
     $<TARGET_OBJECTS:lodepng>
     $<TARGET_OBJECTS:util>
     $<TARGET_OBJECTS:components>
@@ -38,9 +52,7 @@ list(APPEND LACADIA_SOURCES
 
 add_executable(lacadia ${LACADIA_SOURCES})
 target_include_directories(lacadia
-    PUBLIC ${LACADIA_SOURCE_DIR}/src
-    PUBLIC ${LACADIA_SOURCE_DIR}/external/glew/include
-    PUBLIC ${LACADIA_SOURCE_DIR}/external/glfw3/include
+    PUBLIC ${LACADIA_INCLUDE_DIRS}
 )
 target_link_libraries(lacadia
     ${OPENGL_LIBRARIES}
