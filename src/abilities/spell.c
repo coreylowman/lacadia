@@ -9,25 +9,28 @@ Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjec
     return self;
 }
 
-void spell_free(Spell *self){
-    component_free(&self->collidable);
-    component_free(&self->renderable);
+void spell_free(GameObject *obj){
+    Spell *self = (Spell *)obj;
+    component_free((Component *)&self->collidable);
+    component_free((Component *)&self->renderable);
     free(self);
 }
 
-void spell_update(Spell *self, double dt){
-	component_update(&self->collidable, dt);
-	component_update(&self->renderable, dt);
-    game_object_move(&self->base_object, self->speed * dt);
+void spell_update(GameObject *obj, double dt){
+    Spell *self = (Spell *)obj;
+	component_update((Component *)&self->collidable, dt);
+	component_update((Component *)&self->renderable, dt);
+    game_object_move((GameObject *)&self->base_object, self->speed * dt);
 }
 
-void spell_render(Spell *self, Renderer *renderer) {
-    component_render(&self->renderable, renderer);
-    component_render(&self->collidable, renderer);
+void spell_render(GameObject *obj, Renderer *renderer) {
+    Spell *self = (Spell *)obj;
+    component_render((Component *)&self->renderable, renderer);
+    component_render((Component *)&self->collidable, renderer);
 }
 
 int spell_is_colliding(CollidableComponent self, CollidableComponent other){
-    Spell *spell = self.base_component.container;
+    Spell *spell = (Spell *)self.base_component.container;
 	if (spell->caster_type != other.base_component.container->type){
         return obb_intersects(self.bounding_box, other.bounding_box);
     }
@@ -35,7 +38,7 @@ int spell_is_colliding(CollidableComponent self, CollidableComponent other){
 }
 
 int spell_is_colliding_with_target(CollidableComponent self, CollidableComponent other){
-    Spell *spell = self.base_component.container;
+    Spell *spell = (Spell *)self.base_component.container;
     if(spell->target == other.base_component.container){
         return obb_intersects(self.bounding_box, other.bounding_box);
     }

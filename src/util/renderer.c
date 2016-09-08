@@ -35,19 +35,19 @@ Renderer *renderer_new() {
 	//
 	//MODELS
 	//
-	shader_init(&self->model_shader, "shaders/model_vert.glsl", "shaders/model_frag.glsl");
+	shader_init(&self->model_shader, "./shaders/model_vert.glsl", "./shaders/model_frag.glsl");
 	self->num_models = 11;
-	self->model_names[0] = "assets/default_box";
-	self->model_names[1] = "assets/mage";
-	self->model_names[2] = "assets/hunter";
-	self->model_names[3] = "assets/bug";
-	self->model_names[4] = "assets/fireball";
-	self->model_names[5] = "assets/icicle";
-	self->model_names[6] = "assets/burn_particle";
-	self->model_names[7] = "assets/wall";
-	self->model_names[8] = "assets/sphere";
-	self->model_names[9] = "assets/frost_particle";
-	self->model_names[10] = "assets/coin";
+	self->model_names[0] = "./assets/default_box";
+	self->model_names[1] = "./assets/mage";
+	self->model_names[2] = "./assets/hunter";
+	self->model_names[3] = "./assets/bug";
+	self->model_names[4] = "./assets/fireball";
+	self->model_names[5] = "./assets/icicle";
+	self->model_names[6] = "./assets/burn_particle";
+	self->model_names[7] = "./assets/wall";
+	self->model_names[8] = "./assets/sphere";
+	self->model_names[9] = "./assets/frost_particle";
+	self->model_names[10] = "./assets/coin";
 
 	printf("Loading models... ");
 	int i;
@@ -93,7 +93,7 @@ Renderer *renderer_new() {
 	//
 	// UI
 	//
-	shader_init(&self->ui_shader, "shaders/ui_vert.glsl", "shaders/ui_frag.glsl");
+	shader_init(&self->ui_shader, "./shaders/ui_vert.glsl", "./shaders/ui_frag.glsl");
 	self->num_ui_rects = 0;
 	//ui vbo/vao
 	glGenVertexArrays(1, &self->ui_vao);
@@ -117,7 +117,7 @@ Renderer *renderer_new() {
 	//
 	// LINES
 	//
-	shader_init(&self->line_shader, "shaders/line_vert.glsl", "shaders/line_frag.glsl");
+	shader_init(&self->line_shader, "./shaders/line_vert.glsl", "./shaders/line_frag.glsl");
 	self->num_lines = 0;
 	glGenVertexArrays(1, &self->line_vao);
 	glBindVertexArray(self->line_vao);
@@ -136,7 +136,7 @@ Renderer *renderer_new() {
 	//
 	// TERRAINS
 	//
-	shader_init(&self->terrain_shader, "shaders/terrain_vert.glsl", "shaders/terrain_frag.glsl");
+	shader_init(&self->terrain_shader, "./shaders/terrain_vert.glsl", "./shaders/terrain_frag.glsl");
 	self->num_terrains = 0;
 	glGenVertexArrays(1, &self->terrain_vao);
 	glBindVertexArray(self->terrain_vao);
@@ -161,16 +161,16 @@ Renderer *renderer_new() {
 	unsigned png_width, png_height;
 
 	//size should be 256x256
-	if (!load_png_data("assets/grass.2d.png", &self->textures[0], &png_width, &png_height)){
-		printf("error: cannot load \"assets/grass.2d.png\"\n");
+	if (!load_png_data("./assets/grass.2d.png", &self->textures[0], &png_width, &png_height)){
+		printf("error: cannot load \"./assets/grass.2d.png\"\n");
 	}
 
-	if (!load_png_data("assets/grass_dirt.2d.png", &self->textures[1], &png_width, &png_height)){
-		printf("error: cannot load \"assets/grass_dirt.2d.png\"\n");
+	if (!load_png_data("./assets/grass_dirt.2d.png", &self->textures[1], &png_width, &png_height)){
+		printf("error: cannot load \"./assets/grass_dirt.2d.png\"\n");
 	}
 
-	if (!load_png_data("assets/dirt.2d.png", &self->textures[2], &png_width, &png_height)){
-		printf("error: cannot load \"assets/dirt.2d.png\"\n");
+	if (!load_png_data("./assets/dirt.2d.png", &self->textures[2], &png_width, &png_height)){
+		printf("error: cannot load \"./assets/dirt.2d.png\"\n");
 	}
 
 	glGenTextures(3, &self->texture_ids[0]);
@@ -203,7 +203,7 @@ Renderer *renderer_new() {
 
 // tutorial here : http://learnopengl.com/#!In-Practice/Text-Rendering
 static void init_text(Renderer *self) {
-	shader_init(&self->text_shader, "shaders/text_vert.glsl", "shaders/text_frag.glsl");
+	shader_init(&self->text_shader, "./shaders/text_vert.glsl", "./shaders/text_frag.glsl");
 
 	glGenVertexArrays(1, &self->text_vao);
 	glBindVertexArray(self->text_vao);
@@ -228,7 +228,7 @@ static void init_text(Renderer *self) {
 	}
 
 	FT_Face face;
-	if (FT_New_Face(ft_library, "assets/fonts/arial.ttf", 0, &face)) {
+	if (FT_New_Face(ft_library, "./assets/fonts/arial.ttf", 0, &face)) {
 		printf("Error: Freetype failed to load font\n");
 		exit(1);
 	}
@@ -468,7 +468,7 @@ void renderer_render_terrain(Renderer *self, Terrain terrain){
 }
 
 void renderer_render_sphere(Renderer *self, Vec3 position){
-	int model_id = renderer_get_model_id(self, "assets/sphere");
+	int model_id = renderer_get_model_id(self, "./assets/sphere");
 	Mat4 model_matrix;
 	mat4_ident(&model_matrix);
 	mat4_translate(&model_matrix, position);

@@ -4,9 +4,11 @@
 #include "util/vec3.h"
 #include "util/renderer.h"
 
-typedef void (*GameObjectUpdateCallback)(struct GameObject *self, double dt);
-typedef void (*GameObjectRenderCallback)(struct GameObject *self, Renderer *renderer);
-typedef void (*GameObjectFreeCallback)(struct GameObject *self);
+typedef struct GameObject GameObject;
+
+typedef void (*GameObjectUpdateCallback)(GameObject *self, double dt);
+typedef void (*GameObjectRenderCallback)(GameObject *self, Renderer *renderer);
+typedef void (*GameObjectFreeCallback)(GameObject *self);
 
 typedef struct GameWorld GameWorld;
 typedef struct Component Component;
@@ -22,7 +24,7 @@ typedef enum GameObjectType {
     GAME_OBJECT_TYPE_MAX,
 } GameObjectType;
 
-typedef struct GameObject {
+struct GameObject {
     //type so we can pass around GameObject * but know what it needs to be
     //cast as
     GameObjectType type;
@@ -41,7 +43,9 @@ typedef struct GameObject {
 
     //set to true if this object should be destroyed
     int destroy;
-} GameObject;
+};
+
+typedef struct GameObject GameObject;
 
 GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
 float game_object_get_y_rotation(GameObject *self);

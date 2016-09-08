@@ -12,14 +12,14 @@ static Spell *icicle_new(GameWorld *world, GameObject *user);
 static void icicle_on_collide(GameObject *self, GameObject *other);
 
 void icicle_use(GameWorld *world, GameObject *user){
-    game_world_add_object(world, icicle_new(world, user));
+    game_world_add_object(world, (GameObject *)icicle_new(world, user));
 }
 
 static Spell *icicle_new(GameWorld *world, GameObject *user){
     Spell *self = spell_new(world, spell_update, spell_render, spell_free);
 
     if(user->type == GAME_OBJECT_TYPE_PLAYER){
-        Player *player = user;
+        Player *player = (Player *)user;
         self->base_object.position = player->base_object.position;
 		self->base_object.direction = player->base_object.direction;
         self->speed = 30.0;
@@ -47,16 +47,16 @@ static void fizzle_particle_init(Particle *p, Vec3 position, float duration){
 
 static void icicle_on_collide(GameObject *self, GameObject *other){
     if(other->type == GAME_OBJECT_TYPE_ENEMY){
-        Enemy *enemy = other;
+        Enemy *enemy = (Enemy *)other;
         affectable_component_damage(&enemy->affectable, 1);
-        affectable_component_affect(&enemy->affectable, frost_new(self->world, &enemy->base_object, 0.1, 4));
+        affectable_component_affect(&enemy->affectable, (Effect *)frost_new(self->world, &enemy->base_object, 0.1, 4));
         self->destroy = 1;
     }else if(other->type == GAME_OBJECT_TYPE_WALL){
-        Spell *icicle = self;
+        Spell *icicle = (Spell *)self;
         ParticleSystem *ps = particle_system_new(self->world, icicle->collidable.bounding_box.center, "assets/frost_particle", 32, 0.0, 0.75);
         particle_system_set_particle_init(ps, fizzle_particle_init);
         //this gives ownership to game_world... we don't have to worry about freeing
-        game_world_add_object(self->world, ps);
+        game_world_add_object(self->world, (GameObject *)ps);
         self->destroy = 1;
     }
 }

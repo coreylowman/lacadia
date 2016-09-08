@@ -1,7 +1,7 @@
 #ifndef INPUTS_H
 #define INPUTS_H
 
-#include <GL/glfw3.h>
+#include <GLFW/glfw3.h>
 
 // TODO rename this Input
 // TODO get rid of the _down fields (only need for tracking mouse movement while its down...)

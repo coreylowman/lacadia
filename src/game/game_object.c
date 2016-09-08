@@ -1,8 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
-#include <GL/glfw3.h>
 #include "game_object.h"
 
 GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render,GameObjectFreeCallback on_free){

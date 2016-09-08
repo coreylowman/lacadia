@@ -3,8 +3,8 @@
 #include "ability.h"
 
 void melee_hit_use(GameWorld *world, GameObject *user){
-    Enemy *enemy = user;
-    Player *player = enemy->target;
+    Enemy *enemy = (Enemy *)user;
+    Player *player = (Player *)enemy->target;
     affectable_component_damage(&player->affectable, 1 * enemy->affectable.power);
 }
 

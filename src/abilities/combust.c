@@ -6,7 +6,7 @@
 #include "players/player.h"
 
 static void combust_apply(GameWorld *world, GameObject *user, GameObject *target){
-    Enemy *enemy = target;
+    Enemy *enemy = (Enemy *)target;
     //update burns with the remainder of the duration
     Effect *effect = enemy->affectable.effects[EFFECT_TYPE_BURN];
     if (effect != NULL) {

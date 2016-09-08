@@ -76,7 +76,7 @@ void array_list_shrink_to_fit(ArrayList *array){
 }
 
 #define IMPL_ARRAY_LIST(T, name, default_value) \
-ArrayList_##name *array_list_new_##name##(){ \
+ArrayList_##name *array_list_new_##name(){ \
     ArrayList_##name *array = malloc(sizeof(*array)); \
     array->length = 0; \
     array->capacity = 16; \
@@ -88,7 +88,7 @@ ArrayList_##name *array_list_new_##name##(){ \
     return array; \
 } \
 \
-void array_list_free_##name##(void *data){ \
+void array_list_free_##name(void *data){ \
     if(data == NULL) return; \
 \
     ArrayList_##name *array = (ArrayList_##name *)data; \
@@ -96,7 +96,7 @@ void array_list_free_##name##(void *data){ \
     free(array); \
 } \
 \
-void array_list_push_##name##(ArrayList_##name *array, T data){ \
+void array_list_push_##name(ArrayList_##name *array, T data){ \
     if(array->length == array->capacity){ \
         int i = array->capacity; \
         array->capacity = 2 * array->capacity; \
@@ -109,7 +109,7 @@ void array_list_push_##name##(ArrayList_##name *array, T data){ \
     array->length += 1; \
 } \
 \
-void array_list_remove_at_##name##(ArrayList_##name *array, int index){ \
+void array_list_remove_at_##name(ArrayList_##name *array, int index){ \
     if(index >= array->length) return; \
 \
     int i; \
@@ -120,7 +120,7 @@ void array_list_remove_at_##name##(ArrayList_##name *array, int index){ \
     array->length = array->length - 1; \
 } \
 \
-void array_list_grow_##name##(ArrayList_##name *array){ \
+void array_list_grow_##name(ArrayList_##name *array){ \
     int i = array->capacity; \
     array->capacity = 2 * array->capacity; \
     array->data = realloc(array->data,array->capacity * sizeof(*(array->data))); \
@@ -129,7 +129,7 @@ void array_list_grow_##name##(ArrayList_##name *array){ \
     } \
 } \
 \
-void array_list_grow_to_capactiy_##name##(ArrayList_##name *array, size_t size) { \
+void array_list_grow_to_capactiy_##name(ArrayList_##name *array, size_t size) { \
     int i = array->capacity; \
     array->capacity = size; \
     array->data = realloc(array->data, array->capacity * sizeof(*(array->data))); \
@@ -138,7 +138,7 @@ void array_list_grow_to_capactiy_##name##(ArrayList_##name *array, size_t size) 
     } \
 } \
 \
-void array_list_shrink_to_fit_##name##(ArrayList_##name *array) { \
+void array_list_shrink_to_fit_##name(ArrayList_##name *array) { \
     int i = array->capacity; \
     array->capacity = array->length; \
     array->data = realloc(array->data,array->capacity * sizeof(*(array->data))); \

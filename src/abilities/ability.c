@@ -14,7 +14,7 @@ void ability_free(Ability *self){
 
 void ability_update(Ability *self, double dt){
     self->cooldown -= dt;
-    self->cooldown = max(self->cooldown, 0.0);
+    self->cooldown = self->cooldown > 0.0 ? self->cooldown : 0.0;
 }
 
 void ability_use(Ability *self, GameWorld *world, GameObject *user){

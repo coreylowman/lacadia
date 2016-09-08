@@ -1,11 +1,16 @@
+#ifdef _WIN32
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
 #include <Windows.h>
+#endif
+
+#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+
 #include <GL/glew.h>
-#include <GL/glfw3.h>
+#include <GLFW/glfw3.h>
+
 #include "util/inputs.h"
 #include "util/camera.h"
 #include "util/shader.h"
@@ -157,8 +162,10 @@ int main(int argc, char *argv[]){
 
     game_world_free(world);
 
+#ifdef _WIN32
     // for debugging only
     _CrtDumpMemoryLeaks();
+#endif
 
     return 0;
 }
