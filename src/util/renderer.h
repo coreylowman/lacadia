@@ -14,9 +14,22 @@
 #define MAX_UI_RECTS 128
 #define MAX_LINES 2048
 #define MAX_TERRAINS 4
+#define MAX_CHARS 64
+#define MAX_CHAR_VERTS (6 * MAX_CHARS)
+
+typedef struct CharacterStats {
+    unsigned int textureID;
+    int size[2];
+    int bearing[2];
+    unsigned int advance;
+} CharacterStats;
+
+typedef struct TextCharacterVertex {
+    float x, y, u, v;
+    Vec3 color;
+} TextCharacterVertex;
 
 typedef struct Renderer {
-
     //models and stuff aka assets
     Shader model_shader;
     int num_models;
@@ -37,6 +50,13 @@ typedef struct Renderer {
     int num_lines;
     Line lines[MAX_LINES];
     unsigned int line_vbo, line_vao;
+
+    // text
+    Shader text_shader;
+    CharacterStats char_stats[128];
+    int num_character_vertices[128];
+    TextCharacterVertex characters[128][MAX_CHAR_VERTS];
+    unsigned int text_vbo, text_vao;
 
     //terrains and stuff
     Shader terrain_shader;
@@ -60,5 +80,6 @@ void renderer_render_rect(Renderer *self, Rect2 rect, Vec3 color);
 void renderer_render_line(Renderer *self, Line line);
 void renderer_render_terrain(Renderer *self, Terrain terrain);
 void renderer_render_sphere(Renderer *self, Vec3 position);
+void renderer_render_text(Renderer *self, const char *buffer, int len, Vec3 xyscale, Vec3 color);
 
 #endif

@@ -19,6 +19,7 @@
 #include "util/camera.h"
 #include "util/inputs.h"
 #include "enemies/bug.h"
+#include "colors.h"
 
 extern int width, height;
 
@@ -184,11 +185,11 @@ void game_world_render(GameWorld *self){
     renderer_render_sphere(self->renderer, light_position);
 
     //gather updates to the various things
-	int i;
-	GameObject *obj;
+    int i;
+    GameObject *obj;
     for(i = 0;i < self->game_objects->length;i++){
-		if (self->game_objects->data[i] == NULL) continue;
-		obj = self->game_objects->data[i];
+        if (self->game_objects->data[i] == NULL) continue;
+        obj = self->game_objects->data[i];
         game_object_render(obj, self->renderer);
     }
     level_render(self->level, self->renderer);

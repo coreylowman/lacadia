@@ -76,6 +76,8 @@ static void init_glfw(){
     glfwGetFramebufferSize(window, &width, &height);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 static void init_glew(){
@@ -130,7 +132,7 @@ int main(int argc, char *argv[]){
     world = game_world_new();
     game_world_add_object(world, mage_new(world));
     game_world_add_object(world, bug_spawner_new(world, VEC3_ZERO, 5.0));
-	game_world_add_object(world, coin_new(world, (Vec3) { .x = 5, .y = 2, .z = 0 }));
+    game_world_add_object(world, coin_new(world, (Vec3) { .x = 5, .y = 2, .z = 0 }));
     
     total_time = glfwGetTime();
     last_update_seconds = total_time;

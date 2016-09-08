@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glew.h>
+#include "ft2build.h"
+#include FT_FREETYPE_H
 #include "lodepng.h"
 #include "renderer.h"
 #include "util/string_helpers.h"
@@ -24,6 +26,9 @@ static int load_png_data(const char *filename, unsigned char **image, unsigned *
 	return 1;
 }
 
+static void render_text(Renderer *self);
+static void init_text(Renderer *self);
+
 Renderer *renderer_new() {
 	Renderer *self = malloc(sizeof(*self));
 
@@ -44,7 +49,7 @@ Renderer *renderer_new() {
 	self->model_names[9] = "assets/frost_particle";
 	self->model_names[10] = "assets/coin";
 
-	printf("Loading assets... ");
+	printf("Loading models... ");
 	int i;
 	for (i = 0; i < self->num_models; i++){
 		self->models[i] = obj_model_from_file(self->model_names[i]);
@@ -126,6 +131,8 @@ Renderer *renderer_new() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	init_text(self);
+
 	//
 	// TERRAINS
 	//
@@ -194,6 +201,82 @@ Renderer *renderer_new() {
 	return self;
 }
 
+// tutorial here : http://learnopengl.com/#!In-Practice/Text-Rendering
+static void init_text(Renderer *self) {
+	shader_init(&self->text_shader, "shaders/text_vert.glsl", "shaders/text_frag.glsl");
+
+	glGenVertexArrays(1, &self->text_vao);
+	glBindVertexArray(self->text_vao);
+
+	glGenBuffers(1, &self->text_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, self->text_vbo);
+
+	// vertex/uv coordinates buffer object	
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(TextCharacterVertex), (const GLvoid *)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TextCharacterVertex), (const GLvoid *)(4 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	FT_Library ft_library;
+	if (FT_Init_FreeType(&ft_library)) {
+		printf("Error: Freetype could not init freetype library\n");
+		exit(1);
+	}
+
+	FT_Face face;
+	if (FT_New_Face(ft_library, "assets/fonts/arial.ttf", 0, &face)) {
+		printf("Error: Freetype failed to load font\n");
+		exit(1);
+	}
+
+	FT_Set_Pixel_Sizes(face, 0, 48);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	printf("Loading characters...");
+	for (GLubyte c = 0; c < 128; c++) {
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+			printf("Error: Freetype failed to load char %c\n", c);
+			continue;
+		}
+
+		// Generate texture
+		GLuint texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width,
+			face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE,
+			face->glyph->bitmap.buffer);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Now store character for later use
+		CharacterStats stat = {
+			.textureID = texture,
+			.size[0] = face->glyph->bitmap.width,
+			.size[1] = face->glyph->bitmap.rows,
+			.bearing[0] = face->glyph->bitmap_left,
+			.bearing[1] = face->glyph->bitmap_top,
+			.advance = face->glyph->advance.x
+		};
+		printf("Loaded '%c' with size (%d, %d) bearing (%d, %d), advance (%d)\n", c, stat.size[0], stat.size[1], stat.bearing[0], stat.bearing[1], stat.advance);
+
+		self->char_stats[c] = stat;
+		self->num_character_vertices[c] = 0;
+	}
+	printf("done.\n");
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	FT_Done_Face(face);
+	FT_Done_FreeType(ft_library);
+}
+
 void renderer_free(Renderer *self){
 	int i;
 	for (i = 0; i < self->num_models; i++){
@@ -236,11 +319,11 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
 
 		//upload vertices of model
 		glBindBuffer(GL_ARRAY_BUFFER, self->model_vbo[0]);
-		glBufferData(GL_ARRAY_BUFFER, model->num_vertices * sizeof(ObjectModelVertex), &model->vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, model->num_vertices * sizeof(ObjectModelVertex), &model->vertices[0], GL_DYNAMIC_DRAW);
 
 		//upload instace model matrices
 		glBindBuffer(GL_ARRAY_BUFFER, self->model_vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, model_matrices->length * sizeof(Mat4), &model_matrices->data[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, model_matrices->length * sizeof(Mat4), &model_matrices->data[0], GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -257,11 +340,11 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
 
 	//upload vertices of model
 	glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, 8 * self->num_ui_rects * sizeof(float), &self->rects[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 8 * self->num_ui_rects * sizeof(float), &self->rects[0], GL_DYNAMIC_DRAW);
 
 	//upload colors of model
 	glBindBuffer(GL_ARRAY_BUFFER, self->ui_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, 12 * self->num_ui_rects * sizeof(float), &self->rect_colors[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * self->num_ui_rects * sizeof(float), &self->rect_colors[0], GL_DYNAMIC_DRAW);
 
 	glBindVertexArray(self->ui_vao);
 	glDrawArrays(GL_QUADS, 0, 4 * self->num_ui_rects);
@@ -275,7 +358,7 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
 	glUniformMatrix4fv(self->line_shader.view_matrix_location, 1, GL_TRUE, &view_matrix.data[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, self->line_vbo);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 3 * self->num_lines * sizeof(float), &self->lines[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2 * 3 * self->num_lines * sizeof(float), &self->lines[0], GL_DYNAMIC_DRAW);
 
 	glBindVertexArray(self->line_vao);
 	glDrawArrays(GL_LINES, 0, 2 * self->num_lines);
@@ -298,18 +381,18 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
 		glBindVertexArray(self->terrain_vao);
 		glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
 
-		glBufferData(GL_ARRAY_BUFFER, t.num_grass_vertices * sizeof(TerrainVertex), &t.grass_vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, t.num_grass_vertices * sizeof(TerrainVertex), &t.grass_vertices[0], GL_DYNAMIC_DRAW);
 		glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);
 		glDrawArrays(GL_QUADS, 0, t.num_grass_vertices);
 
 		if (t.num_grass_dirt_vertices > 0){
-			glBufferData(GL_ARRAY_BUFFER, t.num_grass_dirt_vertices * sizeof(TerrainVertex), &t.grass_dirt_vertices[0], GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, t.num_grass_dirt_vertices * sizeof(TerrainVertex), &t.grass_dirt_vertices[0], GL_DYNAMIC_DRAW);
 			glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]);
 			glDrawArrays(GL_QUADS, 0, t.num_grass_dirt_vertices);
 		}
 
 		if (t.num_dirt_vertices > 0){
-			glBufferData(GL_ARRAY_BUFFER, t.num_dirt_vertices * sizeof(TerrainVertex), &t.dirt_vertices[0], GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, t.num_dirt_vertices * sizeof(TerrainVertex), &t.dirt_vertices[0], GL_DYNAMIC_DRAW);
 			glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]);
 			glDrawArrays(GL_QUADS, 0, t.num_dirt_vertices);
 		}
@@ -320,6 +403,9 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix){
 	}
 
 	self->num_terrains = 0;
+
+	//render text
+	render_text(self);
 }
 
 void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix){
@@ -388,5 +474,103 @@ void renderer_render_sphere(Renderer *self, Vec3 position){
 	mat4_translate(&model_matrix, position);
 	mat4_transpose(&model_matrix);
 	renderer_render_model(self, model_id, model_matrix);
+}
+
+static float vertices[6][4] = {
+	{ 0, 0, 0.0, 0.0 },
+	{ 0, 0, 0.0, 1.0 },
+	{ 0, 0, 1.0, 1.0 },
+	{ 0, 0, 0.0, 0.0 },
+	{ 0, 0, 1.0, 1.0 },
+	{ 0, 0, 1.0, 0.0 }
+};
+
+static void fill_vertices(float x, float y, float w, float h) {
+	vertices[0][0] = x;
+	vertices[0][1] = y + h;
+
+	vertices[1][0] = x;
+	vertices[1][1] = y;
+
+	vertices[2][0] = x + w;
+	vertices[2][1] = y;
+
+	vertices[3][0] = x;
+	vertices[3][1] = y + h;
+
+	vertices[4][0] = x + w;
+	vertices[4][1] = y;
+
+	vertices[5][0] = x + w;
+	vertices[5][1] = y + h;
+}
+
+static void render_text(Renderer *self) {
+	glUseProgram(self->text_shader.program);
+
+	glUniform1i(glGetUniformLocation(self->text_shader.program, "text"), 0);
+	glActiveTexture(GL_TEXTURE0);
+
+	int i;
+	for (i = 0; i < 128; i++) {
+		if (self->num_character_vertices[i] == 0) continue;
+
+		glBindVertexArray(self->text_vao);
+		glBindTexture(GL_TEXTURE_2D, self->char_stats[i].textureID);
+
+		glBindBuffer(GL_ARRAY_BUFFER, self->text_vbo);
+		glBufferData(GL_ARRAY_BUFFER, self->num_character_vertices[i] * sizeof(TextCharacterVertex), &self->characters[i][0], GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glDrawArraysInstanced(GL_TRIANGLES, 0, self->num_character_vertices[i], self->num_character_vertices[i] / 6);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+
+		self->num_character_vertices[i] = 0;
+	}
+}
+
+void renderer_render_text(Renderer *self, const char *buffer, int len, Vec3 xyscale, Vec3 color) {
+	float x = xyscale.x;
+	float y = xyscale.y;
+	float scale = xyscale.z;
+
+	int i, j;
+	char c;
+	CharacterStats stat;
+	for (i = 0; i < len; i++) {
+		c = buffer[i];
+		stat = self->char_stats[c];
+
+		float xpos = x + stat.bearing[0] * scale;
+		// note: multiple by 0.5 so the scaling in next section doesn't apply to the offset
+		float ypos = y - (stat.size[1] - stat.bearing[1]) * scale * 0.5;
+		float w = stat.size[0] * scale;
+		float h = stat.size[1] * scale;
+
+		xpos = xpos * 2.0 / 1280.0 - 1;
+		ypos = ypos * 2.0 / 960.0 - 1;
+		w = w / 1280.0;
+		h = h / 960.0;
+
+		fill_vertices(xpos, ypos, w, h);
+
+		for (j = 0; j < 6; j++) {
+			if (self->num_character_vertices[c] < MAX_CHAR_VERTS) {
+				self->characters[c][self->num_character_vertices[c]].x = vertices[j][0];
+				self->characters[c][self->num_character_vertices[c]].y = vertices[j][1];
+				self->characters[c][self->num_character_vertices[c]].u = vertices[j][2];
+				self->characters[c][self->num_character_vertices[c]].v = vertices[j][3];
+				self->characters[c][self->num_character_vertices[c]].color = color;
+				self->num_character_vertices[c]++;
+			} else {
+				printf("Error: too many '%c'\n", c);
+			}
+		}
+
+		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += (stat.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+	}
 }
 
