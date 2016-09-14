@@ -28,7 +28,7 @@ Frost *frost_new(GameWorld *world, GameObject *target,
   self->slow_pct_per_degree = slow_pct_per_degree;
 
   self->particle_system =
-      particle_system_new(world, target->position, "assets/frost_particle", 8,
+      particle_system_new(world, target->position, "./assets/frost_particle", 8,
                           duration, duration * 0.4);
   particle_system_set_particle_init(self->particle_system, frost_particle_init);
   particle_system_set_follow_target(self->particle_system, target);
@@ -80,8 +80,8 @@ static void frost_on_apply(Effect *self, AffectableComponent *affectable) {
       // show burst of particles indicating permafrost has hit
       Enemy *enemy = (Enemy *)affectable->base_component.container;
       ParticleSystem *ps = particle_system_new(
-          enemy->base_object.world, enemy->collidable->bounding_box.center,
-          "assets/frost_particle", 64, 0.0, 0.75);
+          enemy->base_object.world, enemy->collidable.bounding_box.center,
+          "./assets/frost_particle", 64, 0.0, 0.75);
       particle_system_set_particle_init(ps, fizzle_particle_init);
       game_world_add_object(enemy->base_object.world, (GameObject *)ps);
     } else {
