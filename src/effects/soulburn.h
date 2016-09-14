@@ -6,15 +6,16 @@
 #include "game/particle_system.h"
 
 typedef struct Soulburn {
-    Effect base_effect;
+  Effect base_effect;
 
-    float dps;
-    float leech_pct;
-    GameObject *user;
+  float dps;
+  float leech_pct;
+  GameObject *user;
 
-    ParticleSystem *particle_system;
+  ParticleSystem *particle_system;
 } Soulburn;
 
-Soulburn *soulburn_new(GameWorld *world, GameObject *target, GameObject *user, float dps, float leech_pct, float duration);
+Soulburn *soulburn_new(GameWorld *world, GameObject *target, GameObject *user,
+                       float dps, float leech_pct, float duration);
 
 #endif

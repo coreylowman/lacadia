@@ -6,12 +6,13 @@
 #include "game/game_world.h"
 
 typedef struct BugSpawner {
-    GameObject base_object;
+  GameObject base_object;
 
-    double time_till_next;
-    double time_to_spawn;
+  double time_till_next;
+  double time_to_spawn;
 } BugSpawner;
 
-GameObject *bug_spawner_new(GameWorld *world, Vec3 position, double time_to_spawn);
+GameObject *bug_spawner_new(GameWorld *world, Vec3 position,
+                            double time_to_spawn);
 
 #endif

@@ -13,23 +13,25 @@
 #include "util/renderer.h"
 
 typedef struct Player {
-    GameObject base_object;
-    
-    //abilities
-    Ability abilities[4];
+  GameObject base_object;
 
-    RenderableComponent renderable;
-    AffectableComponent affectable;
-    CollidableComponent collidable;
+  // abilities
+  Ability abilities[4];
 
-    //generic object methods
-    int stance;
-    void (*on_switch_stance)(struct Player *self);
-    void (*on_collide)(GameObject *self, GameObject *other);
-    void (*passive)(struct Player *self, double dt);
+  RenderableComponent renderable;
+  AffectableComponent affectable;
+  CollidableComponent collidable;
+
+  // generic object methods
+  int stance;
+  void (*on_switch_stance)(struct Player *self);
+  void (*on_collide)(GameObject *self, GameObject *other);
+  void (*passive)(struct Player *self, double dt);
 } Player;
 
-Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
+Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
+                   GameObjectRenderCallback on_render,
+                   GameObjectFreeCallback on_free);
 void player_free(GameObject *self);
 
 void player_update(GameObject *self, double dt);

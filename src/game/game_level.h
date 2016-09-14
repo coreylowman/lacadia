@@ -5,7 +5,7 @@
 #include "wall.h"
 
 typedef struct {
-    ArrayList *walls; //ArrayList<Wall *>
+  ArrayList *walls; // ArrayList<Wall *>
 } GameLevel;
 
 GameLevel *game_level_new();

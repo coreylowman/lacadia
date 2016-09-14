@@ -8,13 +8,16 @@
 #include "util/renderer.h"
 
 typedef struct Collectable {
-    GameObject base_object;
+  GameObject base_object;
 
-    CollidableComponent collidable;
-    RenderableComponent renderable;
+  CollidableComponent collidable;
+  RenderableComponent renderable;
 } Collectable;
 
-Collectable *collectable_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
+Collectable *collectable_new(GameWorld *world,
+                             GameObjectUpdateCallback on_update,
+                             GameObjectRenderCallback on_render,
+                             GameObjectFreeCallback on_free);
 void collectable_free(GameObject *self);
 
 void collectable_update(GameObject *self, double dt);

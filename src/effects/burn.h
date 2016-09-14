@@ -6,12 +6,12 @@
 #include "game/particle_system.h"
 
 typedef struct Burn {
-    Effect base_effect;
+  Effect base_effect;
 
-    int degree;
-    float dps;
+  int degree;
+  float dps;
 
-    ParticleSystem *particle_system;
+  ParticleSystem *particle_system;
 } Burn;
 
 Burn *burn_new(GameWorld *world, GameObject *target, float dmg, float duration);

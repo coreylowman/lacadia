@@ -3,8 +3,6 @@
 
 #include "vec3.h"
 
-typedef struct Line {
-    Vec3 start, end;
-} Line;
+typedef struct Line { Vec3 start, end; } Line;
 
 #endif

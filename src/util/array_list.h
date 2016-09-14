@@ -5,26 +5,27 @@
 #include "mat4.h"
 #include "terrain.h"
 
-#define DEFINE_ARRAY_LIST(T, name) \
-typedef struct { \
-    T *data; \
-    int capacity; \
-    int length; \
-} ArrayList_ ## name; \
-ArrayList_ ## name *array_list_new_ ## name (); \
-void array_list_free_##name(void *data); \
-void array_list_push_##name(ArrayList_##name *array, T data); \
-void array_list_remove_at_##name(ArrayList_##name *array, int index); \
-void array_list_grow_##name(ArrayList_##name *array); \
-void array_list_grow_to_capacity_##name(ArrayList_##name *array, size_t size); \
-void array_list_shrink_to_fit_##name(ArrayList_##name *array);
+#define DEFINE_ARRAY_LIST(T, name)                                             \
+  typedef struct {                                                             \
+    T *data;                                                                   \
+    int capacity;                                                              \
+    int length;                                                                \
+  } ArrayList_##name;                                                          \
+  ArrayList_##name *array_list_new_##name();                                   \
+  void array_list_free_##name(void *data);                                     \
+  void array_list_push_##name(ArrayList_##name *array, T data);                \
+  void array_list_remove_at_##name(ArrayList_##name *array, int index);        \
+  void array_list_grow_##name(ArrayList_##name *array);                        \
+  void array_list_grow_to_capacity_##name(ArrayList_##name *array,             \
+                                          size_t size);                        \
+  void array_list_shrink_to_fit_##name(ArrayList_##name *array);
 
 // array list of void pointers... needs a free element function pointer
 typedef struct {
-    void **data;
-    void (*free_element)(void *element);
-    int capacity;
-    int length;
+  void **data;
+  void (*free_element)(void *element);
+  int capacity;
+  int length;
 } ArrayList;
 
 ArrayList *array_list_new(void (*free_element)(void *element));

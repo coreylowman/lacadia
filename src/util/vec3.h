@@ -2,22 +2,22 @@
 #define VEC3_H
 
 typedef union {
-    float data[3];
-    struct {
-        float x, y, z;
-    };
+  float data[3];
+  struct {
+    float x, y, z;
+  };
 } Vec3;
 
-static Vec3 VEC3_UNIT_X = { .data = {1, 0, 0} };
-static Vec3 VEC3_UNIT_Y = { .data = {0, 1, 0} };
-static Vec3 VEC3_UNIT_Z = { .data = {0, 0, 1} };
-static Vec3 VEC3_ZERO = { .data = {0, 0, 0} };
+static Vec3 VEC3_UNIT_X = {.data = {1, 0, 0}};
+static Vec3 VEC3_UNIT_Y = {.data = {0, 1, 0}};
+static Vec3 VEC3_UNIT_Z = {.data = {0, 0, 1}};
+static Vec3 VEC3_ZERO = {.data = {0, 0, 0}};
 
 typedef union {
-    int data[3];
-    struct {
-        int x, y, z;
-    };
+  int data[3];
+  struct {
+    int x, y, z;
+  };
 } Vec3_i;
 
 Vec3 vec3_from_3f(float x, float y, float z);

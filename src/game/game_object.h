@@ -14,40 +14,43 @@ typedef struct GameWorld GameWorld;
 typedef struct Component Component;
 
 typedef enum GameObjectType {
-    GAME_OBJECT_TYPE_PLAYER,
-    GAME_OBJECT_TYPE_ENEMY,
-    GAME_OBJECT_TYPE_SPELL,
-    GAME_OBJECT_TYPE_WALL,
-    GAME_OBJECT_TYPE_PARTICLE_SYSTEM,
-    GAME_OBJECT_TYPE_SPAWNER,
-    GAME_OBJECT_TYPE_COLLECTABLE,
-    GAME_OBJECT_TYPE_MAX,
+  GAME_OBJECT_TYPE_PLAYER,
+  GAME_OBJECT_TYPE_ENEMY,
+  GAME_OBJECT_TYPE_SPELL,
+  GAME_OBJECT_TYPE_WALL,
+  GAME_OBJECT_TYPE_PARTICLE_SYSTEM,
+  GAME_OBJECT_TYPE_SPAWNER,
+  GAME_OBJECT_TYPE_COLLECTABLE,
+  GAME_OBJECT_TYPE_MAX,
 } GameObjectType;
 
 struct GameObject {
-    //type so we can pass around GameObject * but know what it needs to be
-    //cast as
-    GameObjectType type;
-    
-    //a reference to the gameworld it is currently in
-    GameWorld *world;
+  // type so we can pass around GameObject * but know what it needs to be
+  // cast as
+  GameObjectType type;
 
-	// all game objects have a position and direction that they are facing
-	Vec3 position;
-	Vec3 direction;
+  // a reference to the gameworld it is currently in
+  GameWorld *world;
 
-	// callbacks to update and render passed into the init function.
-    GameObjectUpdateCallback on_update;
-    GameObjectRenderCallback on_render;
-    GameObjectFreeCallback on_free;
+  // all game objects have a position and direction that they are facing
+  Vec3 position;
+  Vec3 direction;
 
-    //set to true if this object should be destroyed
-    int destroy;
+  // callbacks to update and render passed into the init function.
+  GameObjectUpdateCallback on_update;
+  GameObjectRenderCallback on_render;
+  GameObjectFreeCallback on_free;
+
+  // set to true if this object should be destroyed
+  int destroy;
 };
 
 typedef struct GameObject GameObject;
 
-GameObject game_object_init(GameWorld *world, GameObjectType type, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
+GameObject game_object_init(GameWorld *world, GameObjectType type,
+                            GameObjectUpdateCallback on_update,
+                            GameObjectRenderCallback on_render,
+                            GameObjectFreeCallback on_free);
 float game_object_get_y_rotation(GameObject *self);
 
 void game_object_rotate_by(GameObject *self, float radians);

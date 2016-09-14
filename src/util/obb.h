@@ -4,9 +4,9 @@
 #include "vec3.h"
 
 typedef struct {
-    Vec3 center;
-    Vec3 radius;
-    Vec3 axis[3];
+  Vec3 center;
+  Vec3 radius;
+  Vec3 axis[3];
 } Obb;
 
 Vec3 obb_top(Obb a);

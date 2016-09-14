@@ -6,24 +6,24 @@
 #include "inputs.h"
 
 typedef struct Camera {
-    Mat4 projection_matrix;
-    Mat4 view_matrix;
+  Mat4 projection_matrix;
+  Mat4 view_matrix;
 
-    //view parameters
-    Vec3 location;
-    Vec3 look_at;
-    Vec3 up;
+  // view parameters
+  Vec3 location;
+  Vec3 look_at;
+  Vec3 up;
 
-    //perspective projection parameters
-    float fov;
-    float aspect_ratio;
-    float z_near, z_far;
+  // perspective projection parameters
+  float fov;
+  float aspect_ratio;
+  float z_near, z_far;
 
-    float speed;
+  float speed;
 
-    float follow_dist;
-    float target_height;
-	Vec3 *follow_position;
+  float follow_dist;
+  float target_height;
+  Vec3 *follow_position;
 } Camera;
 
 void camera_init(Camera *camera, int width, int height);
@@ -38,7 +38,8 @@ Vec3 camera_get_sideways(Camera camera);
 void camera_move_forwards(Camera *camera, double dt, float direction);
 void camera_move_vertically(Camera *camera, double dt, float direction);
 void camera_rotate_lookat(Camera *camera, double side_amt, double up_amt);
-void camera_rotate_around_lookat(Camera *camera, double side_amt, double up_amt);
+void camera_rotate_around_lookat(Camera *camera, double side_amt,
+                                 double up_amt);
 void camera_strafe(Camera *camera, double dt, float direction);
 
 void camera_update_view_matrix(Camera *camera);

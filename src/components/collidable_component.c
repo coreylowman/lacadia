@@ -6,68 +6,74 @@
 static void on_update(Component *self, double dt);
 static void on_render(Component *self, Renderer *renderer);
 
-CollidableComponent collidable_component_init(GameObject *container, Obb bounding_box, OnCollideCallback on_collide) {
-    CollidableComponent self;
+CollidableComponent collidable_component_init(GameObject *container,
+                                              Obb bounding_box,
+                                              OnCollideCallback on_collide) {
+  CollidableComponent self;
 
-    self.base_component = component_init(container, on_update, on_render, NULL);
-    self.bounding_box = bounding_box;
-    self.is_colliding = collidable_component_is_colliding;
-    self.on_collide = on_collide;
+  self.base_component = component_init(container, on_update, on_render, NULL);
+  self.bounding_box = bounding_box;
+  self.is_colliding = collidable_component_is_colliding;
+  self.on_collide = on_collide;
 
-    return self;
+  return self;
 }
 
-int collidable_component_is_colliding(CollidableComponent self, CollidableComponent other){
-    return obb_intersects(self.bounding_box, other.bounding_box);
+int collidable_component_is_colliding(CollidableComponent self,
+                                      CollidableComponent other) {
+  return obb_intersects(self.bounding_box, other.bounding_box);
 }
 
 void collidable_component_set_scale(CollidableComponent *self, float scale) {
-    self->bounding_box.radius.x *= scale;
-    self->bounding_box.radius.y *= scale;
-    self->bounding_box.radius.z *= scale;
+  self->bounding_box.radius.x *= scale;
+  self->bounding_box.radius.y *= scale;
+  self->bounding_box.radius.z *= scale;
 }
 
-static void on_update(Component *component, double dt){
-	CollidableComponent *self = (CollidableComponent *)component;
+static void on_update(Component *component, double dt) {
+  CollidableComponent *self = (CollidableComponent *)component;
 
-    GameObject *container = self->base_component.container;
+  GameObject *container = self->base_component.container;
 
-    float rotation = game_object_get_y_rotation(container);
-    self->bounding_box.center = container->position;
-    self->bounding_box.center.y += self->bounding_box.radius.y;
-    obb_rotate_y(&self->bounding_box, rotation);
+  float rotation = game_object_get_y_rotation(container);
+  self->bounding_box.center = container->position;
+  self->bounding_box.center.y += self->bounding_box.radius.y;
+  obb_rotate_y(&self->bounding_box, rotation);
 }
 
-static void on_render(Component *component, Renderer *renderer){
-	CollidableComponent *self = (CollidableComponent *)component;
-    int i, ti;
-    Vec3 r = VEC3_ZERO;
-    Vec3 rs[3];
-    for (i = 0; i < 3; i++) rs[i] = vec3_scale(self->bounding_box.axis[i], 2 * self->bounding_box.radius.data[i]);
-    for(i = 0;i < 3;i++) r = vec3_add(r, rs[i]);
-    r = vec3_scale(r, 0.5);
-    Vec3 max = vec3_add(self->bounding_box.center, r);
-    Vec3 min = vec3_sub(self->bounding_box.center, r);
+static void on_render(Component *component, Renderer *renderer) {
+  CollidableComponent *self = (CollidableComponent *)component;
+  int i, ti;
+  Vec3 r = VEC3_ZERO;
+  Vec3 rs[3];
+  for (i = 0; i < 3; i++)
+    rs[i] = vec3_scale(self->bounding_box.axis[i],
+                       2 * self->bounding_box.radius.data[i]);
+  for (i = 0; i < 3; i++)
+    r = vec3_add(r, rs[i]);
+  r = vec3_scale(r, 0.5);
+  Vec3 max = vec3_add(self->bounding_box.center, r);
+  Vec3 min = vec3_sub(self->bounding_box.center, r);
 
-    Line l;
+  Line l;
 
-    for (i = 0; i < 3; i++){
-        ti = (i + 1) % 3;
+  for (i = 0; i < 3; i++) {
+    ti = (i + 1) % 3;
 
-        l.start = min;
-        l.end = vec3_add(min, rs[i]);
-        renderer_render_line(renderer, l);
+    l.start = min;
+    l.end = vec3_add(min, rs[i]);
+    renderer_render_line(renderer, l);
 
-        l.start = max;
-        l.end = vec3_sub(max, rs[i]);
-        renderer_render_line(renderer, l);
+    l.start = max;
+    l.end = vec3_sub(max, rs[i]);
+    renderer_render_line(renderer, l);
 
-        l.start = vec3_add(min, rs[i]);
-        l.end = vec3_sub(max, rs[ti]);
-        renderer_render_line(renderer, l);
+    l.start = vec3_add(min, rs[i]);
+    l.end = vec3_sub(max, rs[ti]);
+    renderer_render_line(renderer, l);
 
-        l.start = vec3_add(min, rs[ti]);
-        l.end = vec3_sub(max, rs[i]);
-        renderer_render_line(renderer, l);
-    }
+    l.start = vec3_add(min, rs[ti]);
+    l.end = vec3_sub(max, rs[i]);
+    renderer_render_line(renderer, l);
+  }
 }

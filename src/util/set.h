@@ -4,23 +4,24 @@
 #include <stdlib.h>
 
 typedef struct {
-    int *data;
-    int length;
-    int capacity;
+  int *data;
+  int length;
+  int capacity;
 } SetStack;
 
-//more efficient removal than array list due to Setstack of available indices...
-//more overhead though
+// more efficient removal than array list due to Setstack of available
+// indices...
+// more overhead though
 typedef struct {
-    void **data;
-    int length;
-    int capacity;
-    int num_elements;
- 
-    void (*elem_free)(void *p);
- 
-    //a list of indices that are available to use
-    SetStack *available_indices;
+  void **data;
+  int length;
+  int capacity;
+  int num_elements;
+
+  void (*elem_free)(void *p);
+
+  // a list of indices that are available to use
+  SetStack *available_indices;
 } Set;
 
 Set *set_new(void (*elem_free)(void *p));

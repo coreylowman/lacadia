@@ -10,19 +10,21 @@
 #include "abilities/ability.h"
 
 typedef struct Enemy {
-    GameObject base_object;
+  GameObject base_object;
 
-    //who it is following! (most likely the player :P)
-    GameObject *target;
+  // who it is following! (most likely the player :P)
+  GameObject *target;
 
-    AffectableComponent affectable;
-    CollidableComponent collidable;
-    RenderableComponent renderable;
+  AffectableComponent affectable;
+  CollidableComponent collidable;
+  RenderableComponent renderable;
 
-    Ability attack;
+  Ability attack;
 } Enemy;
 
-Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
+Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update,
+                 GameObjectRenderCallback on_render,
+                 GameObjectFreeCallback on_free);
 void enemy_free(GameObject *self);
 
 void enemy_update(GameObject *self, double dt);

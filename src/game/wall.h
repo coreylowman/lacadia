@@ -11,19 +11,20 @@
 #define MAX_WALL_LENGTH 32
 
 typedef struct Wall {
-    GameObject base_object;
+  GameObject base_object;
 
-    CollidableComponent collidable;
+  CollidableComponent collidable;
 
-    int num_renderables;
-    RenderableComponent renderables[MAX_WALL_LENGTH];
+  int num_renderables;
+  RenderableComponent renderables[MAX_WALL_LENGTH];
 
-    Vec3 normal;
+  Vec3 normal;
 } Wall;
 
 Vec3 wall_dimensions(GameWorld *world);
 
-Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length);
+Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
+               int length);
 void wall_free(GameObject *self);
 
 void wall_render(GameObject *self, Renderer *renderer);

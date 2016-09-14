@@ -18,53 +18,53 @@
 #define MAX_CHAR_VERTS (6 * MAX_CHARS)
 
 typedef struct CharacterStats {
-    unsigned int textureID;
-    int size[2];
-    int bearing[2];
-    unsigned int advance;
+  unsigned int textureID;
+  int size[2];
+  int bearing[2];
+  unsigned int advance;
 } CharacterStats;
 
 typedef struct TextCharacterVertex {
-    float x, y, u, v;
-    Vec3 color;
+  float x, y, u, v;
+  Vec3 color;
 } TextCharacterVertex;
 
 typedef struct Renderer {
-    //models and stuff aka assets
-    Shader model_shader;
-    int num_models;
-    char *model_names[MAX_ASSETS];
-    ObjectModel *models[MAX_ASSETS];
-    ArrayList_m4 *model_model_matrices[MAX_ASSETS]; //ArrayList<Mat4>[MAX_ASSETS]
-    unsigned int model_vbo[2], model_vao;
+  // models and stuff aka assets
+  Shader model_shader;
+  int num_models;
+  char *model_names[MAX_ASSETS];
+  ObjectModel *models[MAX_ASSETS];
+  ArrayList_m4 *model_model_matrices[MAX_ASSETS]; // ArrayList<Mat4>[MAX_ASSETS]
+  unsigned int model_vbo[2], model_vao;
 
-    //ui rects and stuff
-    Shader ui_shader;
-    int num_ui_rects;
-    UIRect rects[MAX_UI_RECTS];
-    Vec3 rect_colors[4 * MAX_UI_RECTS];
-    unsigned int ui_vbo[2], ui_vao;
+  // ui rects and stuff
+  Shader ui_shader;
+  int num_ui_rects;
+  UIRect rects[MAX_UI_RECTS];
+  Vec3 rect_colors[4 * MAX_UI_RECTS];
+  unsigned int ui_vbo[2], ui_vao;
 
-    //lines and stuff
-    Shader line_shader;
-    int num_lines;
-    Line lines[MAX_LINES];
-    unsigned int line_vbo, line_vao;
+  // lines and stuff
+  Shader line_shader;
+  int num_lines;
+  Line lines[MAX_LINES];
+  unsigned int line_vbo, line_vao;
 
-    // text
-    Shader text_shader;
-    CharacterStats char_stats[128];
-    int num_character_vertices[128];
-    TextCharacterVertex characters[128][MAX_CHAR_VERTS];
-    unsigned int text_vbo, text_vao;
+  // text
+  Shader text_shader;
+  CharacterStats char_stats[128];
+  int num_character_vertices[128];
+  TextCharacterVertex characters[128][MAX_CHAR_VERTS];
+  unsigned int text_vbo, text_vao;
 
-    //terrains and stuff
-    Shader terrain_shader;
-    int num_terrains;
-    Terrain terrains[MAX_TERRAINS];
-    unsigned int terrain_vbo, terrain_vao;
-    unsigned char *textures[3];
-    unsigned int texture_ids[3];
+  // terrains and stuff
+  Shader terrain_shader;
+  int num_terrains;
+  Terrain terrains[MAX_TERRAINS];
+  unsigned int terrain_vbo, terrain_vao;
+  unsigned char *textures[3];
+  unsigned int texture_ids[3];
 } Renderer;
 
 Renderer *renderer_new();
@@ -80,6 +80,7 @@ void renderer_render_rect(Renderer *self, Rect2 rect, Vec3 color);
 void renderer_render_line(Renderer *self, Line line);
 void renderer_render_terrain(Renderer *self, Terrain terrain);
 void renderer_render_sphere(Renderer *self, Vec3 position);
-void renderer_render_text(Renderer *self, const char *buffer, int len, Vec3 xyscale, Vec3 color);
+void renderer_render_text(Renderer *self, const char *buffer, int len,
+                          Vec3 xyscale, Vec3 color);
 
 #endif

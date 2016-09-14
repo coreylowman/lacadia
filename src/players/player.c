@@ -7,126 +7,145 @@
 
 extern int width, height;
 
-Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free){
-    Player *self = malloc(sizeof(*self));
-    self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER, on_update, on_render, on_free);
-    return self;
+Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
+                   GameObjectRenderCallback on_render,
+                   GameObjectFreeCallback on_free) {
+  Player *self = malloc(sizeof(*self));
+  self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER,
+                                       on_update, on_render, on_free);
+  return self;
 }
 
-void player_free(GameObject *obj){
-    Player *self = (Player *)obj;
-    component_free((Component *)&self->affectable);
-    component_free((Component *)&self->renderable);
-    component_free((Component *)&self->collidable);
-    free(self);
+void player_free(GameObject *obj) {
+  Player *self = (Player *)obj;
+  component_free((Component *)&self->affectable);
+  component_free((Component *)&self->renderable);
+  component_free((Component *)&self->collidable);
+  free(self);
 }
 
-void player_update(GameObject *obj, double dt){
-    Player *self = (Player *)obj;
-    self->passive(self, dt);
+void player_update(GameObject *obj, double dt) {
+  Player *self = (Player *)obj;
+  self->passive(self, dt);
 
-    component_update((Component *)&self->affectable, dt);
-    component_update((Component *)&self->renderable, dt);
-    component_update((Component *)&self->collidable, dt);
+  component_update((Component *)&self->affectable, dt);
+  component_update((Component *)&self->renderable, dt);
+  component_update((Component *)&self->collidable, dt);
 
-    int i;
-    for (i = 0; i < 4; i++){
-        ability_update(&self->abilities[i], dt);
-    }
+  int i;
+  for (i = 0; i < 4; i++) {
+    ability_update(&self->abilities[i], dt);
+  }
 
-    Inputs inputs = self->base_object.world->inputs;
+  Inputs inputs = self->base_object.world->inputs;
 
-    if (inputs.tab_pressed) { //move vertically
-        printf("switched stance!");
-        self->on_switch_stance(self);
-    }
+  if (inputs.tab_pressed) { // move vertically
+    printf("switched stance!");
+    self->on_switch_stance(self);
+  }
 
-    if (inputs.left_mouse_down) player_use_ability(self, 0);
-    if (inputs.right_mouse_down) player_use_ability(self, 1);
-    if (inputs.e_pressed) player_use_ability(self, 2);
-    if (inputs.q_pressed) player_use_ability(self, 3);
-    
-    double width_2 = (double)(width)* 0.5;
-    double height_2 = (double)(height)* 0.5;
-    double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
-    double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
-    Vec3 mouse_screen = (Vec3) { .data = { mousex, mousey, 1 } };
-    Vec3 mouse_world = game_world_screen_coords_to_world_coords(self->base_object.world, mouse_screen);
-    self->base_object.direction = vec3_sub(mouse_world, self->base_object.position);
-    vec3_normalize(&self->base_object.direction);
+  if (inputs.left_mouse_down)
+    player_use_ability(self, 0);
+  if (inputs.right_mouse_down)
+    player_use_ability(self, 1);
+  if (inputs.e_pressed)
+    player_use_ability(self, 2);
+  if (inputs.q_pressed)
+    player_use_ability(self, 3);
 
-    if (inputs.w_down) player_move_forwards(self, dt, 1.0);
-    if (inputs.s_down) player_move_forwards(self, dt, -1.0);
-    if (inputs.d_down) player_strafe(self, dt, 1.0);
-    if (inputs.a_down) player_strafe(self, dt, -1.0);
+  double width_2 = (double)(width)*0.5;
+  double height_2 = (double)(height)*0.5;
+  double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
+  double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
+  Vec3 mouse_screen = (Vec3){.data = {mousex, mousey, 1}};
+  Vec3 mouse_world = game_world_screen_coords_to_world_coords(
+      self->base_object.world, mouse_screen);
+  self->base_object.direction =
+      vec3_sub(mouse_world, self->base_object.position);
+  vec3_normalize(&self->base_object.direction);
+
+  if (inputs.w_down)
+    player_move_forwards(self, dt, 1.0);
+  if (inputs.s_down)
+    player_move_forwards(self, dt, -1.0);
+  if (inputs.d_down)
+    player_strafe(self, dt, 1.0);
+  if (inputs.a_down)
+    player_strafe(self, dt, -1.0);
 }
 
 void player_render(GameObject *obj, Renderer *renderer) {
-    Player *self = (Player *)obj;
-    component_render((Component *)&self->affectable, renderer);
-    component_render((Component *)&self->renderable, renderer);
-    component_render((Component *)&self->collidable, renderer);
+  Player *self = (Player *)obj;
+  component_render((Component *)&self->affectable, renderer);
+  component_render((Component *)&self->renderable, renderer);
+  component_render((Component *)&self->collidable, renderer);
 
-    // render the abilities cooldowns
-    float spacing = 0.05;
-    float width = 0.1;
-    float max_height = width * self->base_object.world->camera.aspect_ratio;
+  // render the abilities cooldowns
+  float spacing = 0.05;
+  float width = 0.1;
+  float max_height = width * self->base_object.world->camera.aspect_ratio;
+  int i;
+  Rect2 ability_square;
+  ability_square.x = -2 * width - 1.5 * spacing;
+  ability_square.y = -0.95;
+  ability_square.width = width;
+  ability_square.height = max_height;
+  for (i = 0; i < 4; i++) {
+    ability_square.height =
+        max_height *
+        (1 - self->abilities[i].cooldown / self->abilities[i].max_cooldown);
+    renderer_render_rect(renderer, ability_square, COLOR_RED);
+    ability_square.x += width + spacing;
+  }
+}
+
+void player_use_ability(Player *self, int i) {
+  if (ability_is_ready(self->abilities[i])) {
+    ability_use(&self->abilities[i], self->base_object.world,
+                (GameObject *)self);
+  }
+}
+
+void player_affect(Player *self, Effect *e, double dt) {
+  affectable_component_affect(&self->affectable, e);
+}
+
+void player_move_forwards(Player *self, double dt, float direction) {
+  float speed = self->affectable.speed;
+  game_object_move_by(&self->base_object,
+                      vec3_scale(VEC3_UNIT_Z, -dt * speed * direction));
+}
+
+void player_turn(Player *self, double side_amt) {
+  int i;
+  Vec3 sideways;
+
+  sideways = vec3_cross(self->base_object.direction, VEC3_UNIT_Y);
+  vec3_normalize(&sideways);
+
+  for (i = 0; i < 3; i++)
+    self->base_object.direction.data[i] += side_amt * sideways.data[i];
+
+  vec3_normalize(&self->base_object.direction);
+}
+
+void player_strafe(Player *self, double dt, float direction) {
+  float speed = self->affectable.speed;
+  game_object_move_by(&self->base_object,
+                      vec3_scale(VEC3_UNIT_X, dt * speed * direction));
+}
+
+void player_on_collide(GameObject *self, GameObject *other) {
+  Player *player = (Player *)self;
+  if (other->type == GAME_OBJECT_TYPE_WALL) {
+    Wall *wall = (Wall *)other;
+
+    Vec3 wall_normal =
+        wall_get_normal(wall, player->collidable.bounding_box.center);
     int i;
-    Rect2 ability_square;
-    ability_square.x = -2 * width - 1.5 * spacing;
-    ability_square.y = -0.95;
-    ability_square.width = width;
-    ability_square.height = max_height;
-    for (i = 0;i < 4;i++) {
-        ability_square.height = max_height * (1 - self->abilities[i].cooldown / self->abilities[i].max_cooldown);
-        renderer_render_rect(renderer, ability_square, COLOR_RED);
-        ability_square.x += width + spacing;
+    for (i = 0; i < 3; i++) {
+      player->base_object.position.data[i] +=
+          self->world->dt * player->affectable.speed * wall_normal.data[i];
     }
+  }
 }
-
-void player_use_ability(Player *self, int i){
-    if (ability_is_ready(self->abilities[i])){
-        ability_use(&self->abilities[i], self->base_object.world, (GameObject *)self);
-    }
-}
-
-void player_affect(Player *self, Effect *e, double dt){
-    affectable_component_affect(&self->affectable, e);
-}
-
-void player_move_forwards(Player *self, double dt, float direction){
-    float speed = self->affectable.speed;
-    game_object_move_by(&self->base_object, vec3_scale(VEC3_UNIT_Z, -dt * speed * direction));
-}
-
-void player_turn(Player *self, double side_amt){
-    int i;
-    Vec3 sideways;
-
-	sideways = vec3_cross(self->base_object.direction, VEC3_UNIT_Y);
-    vec3_normalize(&sideways);
-
-    for (i = 0; i < 3; i++)
-		self->base_object.direction.data[i] += side_amt * sideways.data[i];
-
-	vec3_normalize(&self->base_object.direction);
-}
-
-void player_strafe(Player *self, double dt, float direction){
-    float speed = self->affectable.speed;
-	game_object_move_by(&self->base_object, vec3_scale(VEC3_UNIT_X, dt * speed * direction));
-}
-
-void player_on_collide(GameObject *self, GameObject *other){
-    Player *player = (Player *)self;
-    if (other->type == GAME_OBJECT_TYPE_WALL){
-        Wall *wall = (Wall *)other;
-
-        Vec3 wall_normal = wall_get_normal(wall, player->collidable.bounding_box.center);
-        int i;
-        for (i = 0; i < 3; i++){
-			player->base_object.position.data[i] += self->world->dt * player->affectable.speed * wall_normal.data[i];
-        }
-    }
-}
-

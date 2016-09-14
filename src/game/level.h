@@ -9,9 +9,9 @@
 #define MAX_NUM_WALLS 64
 
 typedef struct Level {
-    GameWorld *world;
+  GameWorld *world;
 
-    Terrain terrain;
+  Terrain terrain;
 } Level;
 
 Level *level_new(GameWorld *world);

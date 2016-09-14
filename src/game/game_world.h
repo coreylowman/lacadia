@@ -21,25 +21,25 @@ typedef struct GameObject GameObject;
 typedef enum GameObjectType GameObjectType;
 
 typedef struct GameWorld {
-    Level *level;
+  Level *level;
 
-    double dt;
+  double dt;
 
-    Set *game_objects; //Set<GameObject *>
-    
-    Set *collidables; //Set<CollidableComponent *>
-    //the ith element is the index in spells/enemies of the ith collidable
-    Set *indices; //Set<int *>
+  Set *game_objects; // Set<GameObject *>
 
-    Renderer *renderer;
+  Set *collidables; // Set<CollidableComponent *>
+  // the ith element is the index in spells/enemies of the ith collidable
+  Set *indices; // Set<int *>
 
-    //matrix for converting world to screen
-    //this is just projection * view
-    Mat4 world_to_screen;
-    Mat4 screen_to_world;
+  Renderer *renderer;
 
-    Camera camera;
-    Inputs inputs;
+  // matrix for converting world to screen
+  // this is just projection * view
+  Mat4 world_to_screen;
+  Mat4 screen_to_world;
+
+  Camera camera;
+  Inputs inputs;
 } GameWorld;
 
 GameWorld *game_world_new();
@@ -59,10 +59,16 @@ void game_world_render(GameWorld *self);
 int game_world_get_model_id(GameWorld *self, const char *name);
 Obb game_world_get_model_obb(GameWorld *self, int asset_id);
 
-Vec3 game_world_world_coords_to_screen_coords(GameWorld *self, Vec3 world_coords);
-Vec3 game_world_screen_coords_to_world_coords(GameWorld *self, Vec3 screen_coords);
+Vec3 game_world_world_coords_to_screen_coords(GameWorld *self,
+                                              Vec3 world_coords);
+Vec3 game_world_screen_coords_to_world_coords(GameWorld *self,
+                                              Vec3 screen_coords);
 
-void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user, float radius, void (*fn)(GameWorld *world, GameObject *obj, GameObject *target));
-int game_world_is_colliding_with_wall(GameWorld *self, CollidableComponent collidable);
+void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user,
+                      float radius,
+                      void (*fn)(GameWorld *world, GameObject *obj,
+                                 GameObject *target));
+int game_world_is_colliding_with_wall(GameWorld *self,
+                                      CollidableComponent collidable);
 
 #endif
