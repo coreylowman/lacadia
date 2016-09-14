@@ -28,7 +28,7 @@ void collidable_component_set_scale(CollidableComponent *self, float scale) {
 }
 
 static void on_update(Component *component, double dt){
-	CollidableComponent *self = component;
+	CollidableComponent *self = (CollidableComponent *)component;
 
     GameObject *container = self->base_component.container;
 
@@ -39,7 +39,7 @@ static void on_update(Component *component, double dt){
 }
 
 static void on_render(Component *component, Renderer *renderer){
-	CollidableComponent *self = component;
+	CollidableComponent *self = (CollidableComponent *)component;
     int i, ti;
     Vec3 r = VEC3_ZERO;
     Vec3 rs[3];

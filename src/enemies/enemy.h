@@ -23,9 +23,9 @@ typedef struct Enemy {
 } Enemy;
 
 Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
-void enemy_free(Enemy *self);
+void enemy_free(GameObject *self);
 
-void enemy_update(Enemy *self, double dt);
-void enemy_render(Enemy *self, Renderer *renderer);
+void enemy_update(GameObject *self, double dt);
+void enemy_render(GameObject *self, Renderer *renderer);
 
 #endif

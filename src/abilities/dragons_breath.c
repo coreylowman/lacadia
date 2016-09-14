@@ -9,12 +9,12 @@
 #include "util/random.h"
 
 static void dragons_breath_apply(GameWorld *world, GameObject *user, GameObject *target) {
-    Enemy *enemy = target;
+    Enemy *enemy = (Enemy *)target;
     Vec3 to_enemy = vec3_sub(enemy->base_object.position, user->position);
     float degrees_between = vec3_degrees_between(user->direction, to_enemy);
     if (degrees_between <= 45) {
         affectable_component_damage(&enemy->affectable, 2);
-        affectable_component_affect(&enemy->affectable, soulburn_new(world, &enemy->base_object, user, 3, 0.5, 1.5));
+        affectable_component_affect(&enemy->affectable, (Effect *)soulburn_new(world, &enemy->base_object, user, 3, 0.5, 1.5));
     }
 }
 
@@ -39,7 +39,7 @@ void dragons_breath_use(GameWorld *world, GameObject *user){
     ParticleSystem *ps = particle_system_new(world, user->position, "assets/burn_particle", 64, 0.0, 0.75);
     particle_system_set_particle_init(ps, particle_init);
     particle_system_set_scale_over_duration(ps, 0);
-    game_world_add_object(world, ps);
+    game_world_add_object(world, (GameObject *)ps);
 }
 
 Ability dragons_breath_ability = {

@@ -41,7 +41,7 @@ Soulburn *soulburn_new(GameWorld *world, GameObject *target, GameObject *user, f
 }
 
 static void soulburn_on_apply(Effect *self, AffectableComponent *affectable){
-    Soulburn *soulburn = affectable->effects[EFFECT_TYPE_SOULBURN];
+    Soulburn *soulburn = (Soulburn *)affectable->effects[EFFECT_TYPE_SOULBURN];
     
     if (soulburn != NULL){
         // refresh the duration of the existing soulburn
@@ -58,7 +58,7 @@ static void soulburn_on_apply(Effect *self, AffectableComponent *affectable){
 }
 
 static void soulburn_on_update(Effect *effect, double dt){
-    Soulburn *self = effect;
+    Soulburn *self = (Soulburn *)effect;
     AffectableComponent *affectable = self->base_effect.container;
 
     float amt = affectable_component_damage(affectable, dt * self->dps);
@@ -67,16 +67,16 @@ static void soulburn_on_update(Effect *effect, double dt){
     AffectableComponent *user_affectable = &((Player *)self->user)->affectable;
     float heal_amt = affectable_component_heal(user_affectable, self->leech_pct * amt);
 
-    particle_system_update(self->particle_system, dt);
+    particle_system_update((GameObject *)self->particle_system, dt);
 }
 
 static void soulburn_on_render(Effect *effect, Renderer *renderer){
-    Soulburn *self = effect;
-    particle_system_render(self->particle_system, renderer);
+    Soulburn *self = (Soulburn *)effect;
+    particle_system_render((GameObject *)self->particle_system, renderer);
 }
 
 static void soulburn_on_free(Effect *effect){
-    Soulburn *self = effect;
-    particle_system_free(self->particle_system);
+    Soulburn *self = (Soulburn *)effect;
+    particle_system_free((GameObject *)self->particle_system);
     free(self);
 }

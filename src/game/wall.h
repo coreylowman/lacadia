@@ -24,9 +24,9 @@ typedef struct Wall {
 Vec3 wall_dimensions(GameWorld *world);
 
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length);
-void wall_free(Wall *self);
+void wall_free(GameObject *self);
 
-void wall_render(Wall *self, Renderer *renderer);
+void wall_render(GameObject *self, Renderer *renderer);
 
 void wall_on_collide(GameObject *self, GameObject *other);
 

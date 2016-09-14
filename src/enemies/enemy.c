@@ -8,26 +8,29 @@ Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjec
     return self;
 }
 
-void enemy_free(Enemy *self){
+void enemy_free(GameObject *obj){
+    Enemy *self = (Enemy *)obj;
     self->target = NULL;
-    component_free(&self->affectable);
-    component_free(&self->renderable);
-    component_free(&self->collidable);
+    component_free((Component *)&self->affectable);
+    component_free((Component *)&self->renderable);
+    component_free((Component *)&self->collidable);
     free(self);
 }
 
-void enemy_update(Enemy *self, double dt){
-    component_update(&self->affectable, dt);
-    component_update(&self->renderable, dt);
-    component_update(&self->collidable, dt);
+void enemy_update(GameObject *obj, double dt){
+    Enemy *self = (Enemy *)obj;
+    component_update((Component *)&self->affectable, dt);
+    component_update((Component *)&self->renderable, dt);
+    component_update((Component *)&self->collidable, dt);
 
     if(self->affectable.health <= 0.0){
         self->base_object.destroy = 1;
     }
 }
 
-void enemy_render(Enemy *self, Renderer *renderer) {
-    component_render(&self->affectable, renderer);
-    component_render(&self->renderable, renderer);
-    component_render(&self->collidable, renderer);
+void enemy_render(GameObject *obj, Renderer *renderer) {
+    Enemy *self = (Enemy *)obj;
+    component_render((Component *)&self->affectable, renderer);
+    component_render((Component *)&self->renderable, renderer);
+    component_render((Component *)&self->collidable, renderer);
 }

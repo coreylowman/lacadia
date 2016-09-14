@@ -40,7 +40,7 @@ Frost *frost_new(GameWorld *world, GameObject *target, float slow_pct_per_degree
 }
 
 void frost_increase_degree(Effect *effect){
-    Frost *self = effect;
+    Frost *self = (Frost *)effect;
 
     effect->duration = effect->max_duration;
     self->particle_system->duration = effect->duration;
@@ -60,7 +60,7 @@ static void fizzle_particle_init(Particle *p, Vec3 position, float duration){
 }
 
 static void frost_on_apply(Effect *self, AffectableComponent *affectable){
-	Frost *frost = affectable->effects[EFFECT_TYPE_FROST];
+	Frost *frost = (Frost *)affectable->effects[EFFECT_TYPE_FROST];
     if (frost != NULL){
         // if frost is already on the target, try to increase the degree of the
         // exisiting one
@@ -68,15 +68,15 @@ static void frost_on_apply(Effect *self, AffectableComponent *affectable){
             // remove current frost from affectable
             affectable_component_remove(affectable, EFFECT_TYPE_FROST);
 
-			affectable_component_affect(affectable, permafrost_new(affectable->base_component.container->world, affectable->base_component.container, 4, .5, 2.0));
+			affectable_component_affect(affectable, (Effect *)permafrost_new(affectable->base_component.container->world, affectable->base_component.container, 4, .5, 2.0));
             
             // show burst of particles indicating permafrost has hit
-            Enemy *enemy = affectable->base_component.container;
+            Enemy *enemy = (Enemy *)affectable->base_component.container;
             ParticleSystem *ps = particle_system_new(enemy->base_object.world, enemy->collidable.bounding_box.center, "assets/frost_particle", 64, 0.0, 0.75);
             particle_system_set_particle_init(ps, fizzle_particle_init);
-            game_world_add_object(enemy->base_object.world, ps);
+            game_world_add_object(enemy->base_object.world, (GameObject *)ps);
         }else{
-            frost_increase_degree(frost);
+            frost_increase_degree((Effect *)frost);
         }
 
         // free the effect we were trying to add, since we just modified the frost
@@ -86,19 +86,19 @@ static void frost_on_apply(Effect *self, AffectableComponent *affectable){
     } else {
         // there is no frost already on the target... add it
         affectable->effects[EFFECT_TYPE_FROST] = self;
-        frost_increase_degree(self);
+        frost_increase_degree((Effect *)self);
     }
 }
 
 static void frost_on_update(Effect *effect, double dt) {
-    Frost *self = effect;
+    Frost *self = (Frost *)effect;
 
-    particle_system_update(self->particle_system, dt);
+    particle_system_update((GameObject *)self->particle_system, dt);
 }
 
 static void frost_on_render(Effect *effect, Renderer *renderer){
-    Frost *self = effect;
-    particle_system_render(self->particle_system, renderer);
+    Frost *self = (Frost *)effect;
+    particle_system_render((GameObject *)self->particle_system, renderer);
 }
 
 static void frost_on_end(Effect *self){
@@ -107,7 +107,7 @@ static void frost_on_end(Effect *self){
 }
 
 static void frost_on_free(Effect *effect){
-    Frost *self = effect;
-    particle_system_free(self->particle_system);
+    Frost *self = (Frost *)effect;
+    particle_system_free((GameObject *)self->particle_system);
     free(self);
 }

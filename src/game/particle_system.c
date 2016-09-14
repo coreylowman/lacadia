@@ -36,7 +36,8 @@ ParticleSystem *particle_system_new(GameWorld *world, Vec3 position,const char *
     return self;
 }
 
-void particle_system_free(ParticleSystem *self){
+void particle_system_free(GameObject *obj){
+    ParticleSystem *self = (ParticleSystem *) obj;
     free(self);
 }
 
@@ -65,7 +66,8 @@ void particle_system_set_particle_init(ParticleSystem *self, void (*particle_ini
             self->particle_duration);
 }
 
-void particle_system_update(ParticleSystem *self, double dt){
+void particle_system_update(GameObject *obj, double dt){
+    ParticleSystem *self = (ParticleSystem *)obj;
     int i;
     Vec3 vel;
     self->duration -= dt;
@@ -85,7 +87,8 @@ void particle_system_update(ParticleSystem *self, double dt){
     }
 }
 
-void particle_system_render(ParticleSystem *self, Renderer *renderer){
+void particle_system_render(GameObject *obj, Renderer *renderer){
+    ParticleSystem *self = (ParticleSystem *)obj;
     Mat4 model_matrix;
     int i;
     for(i = 0;i < self->num_particles;i++){
@@ -96,7 +99,7 @@ void particle_system_render(ParticleSystem *self, Renderer *renderer){
             mat4_scale(&model_matrix, self->particles[i].duration / self->particle_duration);
         }
         renderable_component_set_model_matrix(&self->renderable, model_matrix);
-        component_render(&self->renderable, renderer);
+        component_render((Component *)&self->renderable, renderer);
     }
 }
 

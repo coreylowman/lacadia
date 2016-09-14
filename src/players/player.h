@@ -30,10 +30,10 @@ typedef struct Player {
 } Player;
 
 Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
-void player_free(Player *self);
+void player_free(GameObject *self);
 
-void player_update(Player *self, double dt);
-void player_render(Player *self, Renderer *renderer);
+void player_update(GameObject *self, double dt);
+void player_render(GameObject *self, Renderer *renderer);
 
 void player_use_ability(Player *self, int ability_index);
 

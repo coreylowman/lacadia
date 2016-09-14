@@ -17,7 +17,7 @@ GameObject *bug_spawner_new(GameWorld *world, Vec3 position, double time_to_spaw
     self->time_to_spawn = time_to_spawn;
     self->time_till_next = time_to_spawn;
 
-    return self;
+    return (GameObject *)self;
 }
 
 static void scale_bug(Enemy *bug, float scale) {
@@ -27,24 +27,24 @@ static void scale_bug(Enemy *bug, float scale) {
 }
 
 static void on_update(GameObject *obj, double dt) {
-    BugSpawner *self = obj;
+    BugSpawner *self = (BugSpawner *)obj;
 
     self->time_till_next -= dt;
     if (self->time_till_next <= 0.0) {
         Enemy *bug = bug_new(obj->world, self->base_object.position);
 		scale_bug(bug, random_in_rangef(0.6, 1.4));
 
-        game_world_add_object(obj->world, bug);
+        game_world_add_object(obj->world, (GameObject *)bug);
 
         self->time_till_next = self->time_to_spawn;
     }
 }
 
 static void on_render(GameObject *obj, Renderer *renderer) {
-    BugSpawner *self = obj;
+    BugSpawner *self = (BugSpawner *)obj;
 }
 
 static void on_free(GameObject *obj) {
-    BugSpawner *self = obj;
+    BugSpawner *self = (BugSpawner *)obj;
     free(self);
 }

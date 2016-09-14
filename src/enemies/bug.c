@@ -7,8 +7,11 @@
 
 extern Ability melee_hit_ability;
 
+static void on_update(GameObject *obj, double dt);
+static void bug_on_collide(GameObject *self, GameObject *object);
+
 Enemy *bug_new(GameWorld *world, Vec3 position){
-    Enemy *self = enemy_new(world, bug_on_update, enemy_render, enemy_free);
+    Enemy *self = enemy_new(world, on_update, enemy_render, enemy_free);
 
 	self->base_object.position = position;
 	self->base_object.direction = (Vec3) { .data = { 0, 0, -1 } };
@@ -25,12 +28,14 @@ Enemy *bug_new(GameWorld *world, Vec3 position){
     return self;
 }
 
-void bug_on_update(Enemy *self, double dt){
-    enemy_update(self, dt);
+static void on_update(GameObject *obj, double dt){
+    Enemy *self = (Enemy *)obj;
+
+    enemy_update(obj, dt);
 
     ability_update(&self->attack, dt);
 
-    Player *player = self->target;
+    Player *player = (Player *)self->target;
     Vec3 pos = self->base_object.position;
     Vec3 target_pos = player->base_object.position;
     self->base_object.direction = vec3_sub(target_pos, pos);
@@ -38,7 +43,7 @@ void bug_on_update(Enemy *self, double dt){
     vec3_normalize(&self->base_object.direction);
     if(ability_is_ready(self->attack)){
         if(dist < 3){
-            ability_use(&self->attack, self->base_object.world, self);
+            ability_use(&self->attack, self->base_object.world, obj);
         }else{
             game_object_move(&self->base_object, self->affectable.speed * dt);
         }
@@ -46,10 +51,10 @@ void bug_on_update(Enemy *self, double dt){
     vec3_normalize(&self->base_object.direction);
 }
 
-void bug_on_collide(GameObject *self, GameObject *object){
-	Enemy *bug = self;
+static void bug_on_collide(GameObject *self, GameObject *object){
+	Enemy *bug = (Enemy *)self;
     if(object->type == GAME_OBJECT_TYPE_PLAYER){
-        Player *player = bug->target;
+        Player *player = (Player *)bug->target;
         
     }
 }

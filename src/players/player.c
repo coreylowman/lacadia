@@ -13,19 +13,21 @@ Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObj
     return self;
 }
 
-void player_free(Player *self){
-    component_free(&self->affectable);
-    component_free(&self->renderable);
-    component_free(&self->collidable);
+void player_free(GameObject *obj){
+    Player *self = (Player *)obj;
+    component_free((Component *)&self->affectable);
+    component_free((Component *)&self->renderable);
+    component_free((Component *)&self->collidable);
     free(self);
 }
 
-void player_update(Player *self, double dt){
+void player_update(GameObject *obj, double dt){
+    Player *self = (Player *)obj;
     self->passive(self, dt);
 
-    component_update(&self->affectable, dt);
-    component_update(&self->renderable, dt);
-    component_update(&self->collidable, dt);
+    component_update((Component *)&self->affectable, dt);
+    component_update((Component *)&self->renderable, dt);
+    component_update((Component *)&self->collidable, dt);
 
     int i;
     for (i = 0; i < 4; i++){
@@ -59,10 +61,11 @@ void player_update(Player *self, double dt){
     if (inputs.a_down) player_strafe(self, dt, -1.0);
 }
 
-void player_render(Player *self, Renderer *renderer) {
-    component_render(&self->affectable, renderer);
-    component_render(&self->renderable, renderer);
-    component_render(&self->collidable, renderer);
+void player_render(GameObject *obj, Renderer *renderer) {
+    Player *self = (Player *)obj;
+    component_render((Component *)&self->affectable, renderer);
+    component_render((Component *)&self->renderable, renderer);
+    component_render((Component *)&self->collidable, renderer);
 
     // render the abilities cooldowns
     float spacing = 0.05;
@@ -83,7 +86,7 @@ void player_render(Player *self, Renderer *renderer) {
 
 void player_use_ability(Player *self, int i){
     if (ability_is_ready(self->abilities[i])){
-        ability_use(&self->abilities[i], self->base_object.world, self);
+        ability_use(&self->abilities[i], self->base_object.world, (GameObject *)self);
     }
 }
 
@@ -115,9 +118,9 @@ void player_strafe(Player *self, double dt, float direction){
 }
 
 void player_on_collide(GameObject *self, GameObject *other){
-    Player *player = self;
+    Player *player = (Player *)self;
     if (other->type == GAME_OBJECT_TYPE_WALL){
-        Wall *wall = other;
+        Wall *wall = (Wall *)other;
 
         Vec3 wall_normal = wall_get_normal(wall, player->collidable.bounding_box.center);
         int i;

@@ -58,11 +58,11 @@ static void ice_passive(Player *self, double dt) {
 }
 
 static void fire_passive_tick(GameWorld *world, GameObject *user, GameObject *target){
-    Enemy *enemy = target;
+    Enemy *enemy = (Enemy *)target;
     affectable_component_damage(&enemy->affectable, world->dt * 0.25f);
 }
 
 static void fire_passive(Player *self, double dt) {
     float radius = 5.0f;
-    game_world_apply(self->base_object.world, GAME_OBJECT_TYPE_ENEMY, self, radius, fire_passive_tick);
+    game_world_apply(self->base_object.world, GAME_OBJECT_TYPE_ENEMY, (GameObject *)self, radius, fire_passive_tick);
 }

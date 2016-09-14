@@ -9,9 +9,9 @@
 #include "util/random.h"
 
 static void frost_nova_apply(GameWorld *world, GameObject *user, GameObject *target) {
-    Enemy *enemy = target;
-    affectable_component_affect(&enemy->affectable, frost_new(world, target, 0.1, 4));
-    affectable_component_affect(&enemy->affectable, frost_new(world, target, 0.1, 4));
+    Enemy *enemy = (Enemy *)target;
+    affectable_component_affect(&enemy->affectable, (Effect *)frost_new(world, target, 0.1, 4));
+    affectable_component_affect(&enemy->affectable, (Effect *)frost_new(world, target, 0.1, 4));
 }
 
 static void particle_init(Particle *p, Vec3 position, float duration){
@@ -28,7 +28,7 @@ void frost_nova_use(GameWorld *world, GameObject *user){
 
     ParticleSystem *ps = particle_system_new(world, user->position, "assets/frost_particle", 64, 0.0, 0.5);
     particle_system_set_particle_init(ps, particle_init);
-    game_world_add_object(world, ps);
+    game_world_add_object(world, (GameObject *)ps);
 }
 
 Ability frost_nova_ability = {

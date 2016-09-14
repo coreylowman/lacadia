@@ -20,7 +20,7 @@ Level *level_new(GameWorld *world){
     
     int i;
     for(i = 0;i < num_walls;i++){
-        game_world_add_object(world, walls[i]);
+        game_world_add_object(world, (GameObject *)walls[i]);
     }
 
 	self->terrain = terrain_new();

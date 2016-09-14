@@ -26,12 +26,12 @@ void renderable_component_set_scale(RenderableComponent *self, float scale) {
 }
 
 void renderable_component_render(Component *component, Renderer *renderer){
-	RenderableComponent *self = component;
+	RenderableComponent *self = (RenderableComponent *)component;
 	renderer_render_model(renderer, self->model_id, self->model_matrix);
 }
 
 void renderable_component_update(Component *component, double dt){
-	RenderableComponent *self = component;
+	RenderableComponent *self = (RenderableComponent *)component;
 	// this is assuming position is moved to game_object
 	GameObject *container = self->base_component.container;
 	float rotation = game_object_get_y_rotation(container);

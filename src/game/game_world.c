@@ -25,9 +25,13 @@ extern int width, height;
 
 Vec3 light_position;
 
+static void free_obj(void *ptr) {
+    game_object_free((GameObject *)ptr);
+}
+
 GameWorld *game_world_new(){
     GameWorld *self = malloc(sizeof(*self));
-	self->game_objects = set_new(game_object_free);
+	self->game_objects = set_new(free_obj);
     self->collidables = set_new(NULL); //these collidables are pointers to other objects collidables... this set doesn't have ownership
     self->indices = set_new(free);
 
@@ -85,7 +89,7 @@ void game_world_update(GameWorld *self, double dt){
     //}
 
     if(self->inputs.m_pressed){
-        game_world_add_object(self, bug_new(self, VEC3_ZERO));
+        game_world_add_object(self, (GameObject *)bug_new(self, VEC3_ZERO));
     }
 
     if (self->inputs.r_pressed){

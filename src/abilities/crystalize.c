@@ -19,14 +19,14 @@ static void particle_init(Particle *p, Vec3 position, float duration){
 }
 
 static void crystalize_apply(GameWorld *world, GameObject *user, GameObject *target) {
-    Enemy *enemy = target;
+    Enemy *enemy = (Enemy *)target;
     float damage = 2.0f;
     float dmg_per_degree = 1.0f;
 
     AffectableComponent *affectable = &enemy->affectable;
 
     if (affectable->effects[EFFECT_TYPE_FROST] != NULL) {
-        Frost *frost = affectable->effects[EFFECT_TYPE_FROST];
+        Frost *frost = (Frost *)affectable->effects[EFFECT_TYPE_FROST];
         damage += frost->degree * dmg_per_degree;
     }
 
@@ -40,7 +40,7 @@ static void crystalize_apply(GameWorld *world, GameObject *user, GameObject *tar
     particle_system_set_particle_init(ps, particle_init);
 	particle_system_set_follow_target(ps, &enemy->base_object);
     //particle_system_set_scale_over_duration(ps, 1);
-    game_world_add_object(world, ps);
+    game_world_add_object(world, (GameObject *)ps);
 }
 
 void crystalize_use(GameWorld *world, GameObject *user){

@@ -9,18 +9,21 @@ Collectable *collectable_new(GameWorld *world, GameObjectUpdateCallback on_updat
     return self;
 }
 
-void collectable_free(Collectable *self){
-    component_free(&self->collidable);
-    component_free(&self->renderable);
+void collectable_free(GameObject *obj){
+    Collectable *self = (Collectable *)self;
+    component_free((Component *)&self->collidable);
+    component_free((Component *)&self->renderable);
     free(self);
 }
 
-void collectable_update(Collectable *self, double dt){
-    component_update(&self->collidable, dt);
-    component_update(&self->renderable, dt);
+void collectable_update(GameObject *obj, double dt){
+    Collectable *self = (Collectable *)self;
+    component_update((Component *)&self->collidable, dt);
+    component_update((Component *)&self->renderable, dt);
 }
 
-void collectable_render(Collectable *self, Renderer *renderer) {
-    component_render(&self->renderable, renderer);
-    component_render(&self->collidable, renderer);
+void collectable_render(GameObject *obj, Renderer *renderer) {
+    Collectable *self = (Collectable *)self;
+    component_render((Component *)&self->renderable, renderer);
+    component_render((Component *)&self->collidable, renderer);
 }

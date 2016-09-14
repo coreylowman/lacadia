@@ -37,7 +37,7 @@ Burn *burn_new(GameWorld *world, GameObject *target, float dmg, float duration){
 }
 
 void burn_increase_degree(Effect *effect){
-    Burn *self = effect;
+    Burn *self = (Burn *)effect;
 
     effect->duration = effect->max_duration;
     self->particle_system->duration = effect->duration;
@@ -49,8 +49,8 @@ void burn_increase_degree(Effect *effect){
 }
 
 static void burn_on_apply(Effect *self, AffectableComponent *affectable){
-    Burn *burn = affectable->effects[EFFECT_TYPE_BURN];
-    
+    Burn *burn = (Burn *)affectable->effects[EFFECT_TYPE_BURN];
+
     if (burn != NULL){
         // refresh the duration of the existing burn
         burn->particle_system->duration = burn->base_effect.max_duration;
@@ -66,22 +66,22 @@ static void burn_on_apply(Effect *self, AffectableComponent *affectable){
 }
 
 static void burn_on_update(Effect *effect, double dt){
-    Burn *self = effect;
+    Burn *self = (Burn *)effect;
     AffectableComponent *affectable = self->base_effect.container;
 
     float amt = affectable_component_damage(affectable, dt * self->degree * self->dps);
     effect->amount_affected += amt;
 
-    particle_system_update(self->particle_system, dt);
+    particle_system_update((GameObject *)self->particle_system, dt);
 }
 
 static void burn_on_render(Effect *effect, Renderer *renderer){
-    Burn *self = effect;
-    particle_system_render(self->particle_system, renderer);
+    Burn *self = (Burn *)effect;
+    particle_system_render((GameObject *)self->particle_system, renderer);
 }
 
 static void burn_on_free(Effect *effect){
-    Burn *self = effect;
-    particle_system_free(self->particle_system);
+    Burn *self = (Burn *)effect;
+    particle_system_free((GameObject *)self->particle_system);
     free(self);
 }

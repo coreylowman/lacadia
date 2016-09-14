@@ -43,7 +43,7 @@ Permafrost *permafrost_new(GameWorld *world, GameObject *target, float dmg, floa
 }
 
 static void permafrost_on_apply(Effect *self, AffectableComponent *affectable){
-    Permafrost *permafrost = affectable->effects[EFFECT_TYPE_PERMAFROST];
+    Permafrost *permafrost = (Permafrost *)affectable->effects[EFFECT_TYPE_PERMAFROST];
     if (permafrost != NULL){
         // if permafrost is already on the target, damage and reset cd on slow
         permafrost->base_effect.duration = permafrost->base_effect.max_duration;
@@ -52,7 +52,7 @@ static void permafrost_on_apply(Effect *self, AffectableComponent *affectable){
         // already on the target
         effect_free(self);
     } else {
-        permafrost = self;
+        permafrost = (Permafrost *)self;
 
         // there is no permafrost already on the target... add it
         affectable->effects[EFFECT_TYPE_PERMAFROST] = self;
@@ -65,14 +65,14 @@ static void permafrost_on_apply(Effect *self, AffectableComponent *affectable){
 }
 
 static void permafrost_on_update(Effect *effect, double dt) {
-    Permafrost *self = effect;
+    Permafrost *self = (Permafrost *)effect;
 
-    particle_system_update(self->particle_system, dt);
+    particle_system_update((GameObject *)self->particle_system, dt);
 }
 
 static void permafrost_on_render(Effect *effect, Renderer *renderer){
-    Permafrost *self = effect;
-    particle_system_render(self->particle_system, renderer);
+    Permafrost *self = (Permafrost *)effect;
+    particle_system_render((GameObject *)self->particle_system, renderer);
 }
 
 static void permafrost_on_end(Effect *self){
@@ -81,7 +81,7 @@ static void permafrost_on_end(Effect *self){
 }
 
 static void permafrost_on_free(Effect *effect){
-    Permafrost *self = effect;
-    particle_system_free(self->particle_system);
+    Permafrost *self = (Permafrost *)effect;
+    particle_system_free((GameObject *)self->particle_system);
     free(self);
 }

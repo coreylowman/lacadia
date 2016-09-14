@@ -47,7 +47,7 @@ void affectable_component_remove(struct AffectableComponent *self, EffectType ty
 }
 
 void affectable_component_update(Component *component, double dt){
-	AffectableComponent *self = component;
+	AffectableComponent *self = (AffectableComponent *)component;
     int i;
     for(i = 0;i < EFFECT_TYPE_MAX;i++){
         if(self->effects[i] == NULL) continue;
@@ -64,7 +64,7 @@ void affectable_component_update(Component *component, double dt){
 }
 
 void affectable_component_render(Component *component, Renderer *renderer){
-	AffectableComponent *self = component;
+	AffectableComponent *self = (AffectableComponent *)component;
     int i;
     for(i = 0;i < EFFECT_TYPE_MAX;i++){
         if(self->effects[i] == NULL) continue;

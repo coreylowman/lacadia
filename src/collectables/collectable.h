@@ -15,9 +15,9 @@ typedef struct Collectable {
 } Collectable;
 
 Collectable *collectable_new(GameWorld *world, GameObjectUpdateCallback on_update, GameObjectRenderCallback on_render, GameObjectFreeCallback on_free);
-void collectable_free(Collectable *self);
+void collectable_free(GameObject *self);
 
-void collectable_update(Collectable *self, double dt);
-void collectable_render(Collectable *self, Renderer *renderer);
+void collectable_update(GameObject *self, double dt);
+void collectable_render(GameObject *self, Renderer *renderer);
 
 #endif

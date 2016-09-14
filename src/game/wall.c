@@ -39,21 +39,23 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction, int length)
     return self;
 }
 
-void wall_free(Wall *self){
+void wall_free(GameObject *obj){
+    Wall *self = (Wall *)obj;
 	int i;
 	for (i = 0; i < self->num_renderables; i++) {
-		component_free(&self->renderables[i]);
+		component_free((Component *)&self->renderables[i]);
 	}
-	component_free(&self->collidable);
+	component_free((Component *)&self->collidable);
     free(self);
 }
 
-void wall_render(Wall *self, Renderer *renderer){
+void wall_render(GameObject *obj, Renderer *renderer){
+    Wall *self = (Wall *)obj;
     int i;
     for(i = 0;i < self->num_renderables;i++){
-        component_render(&self->renderables[i], renderer);
+        component_render((Component *)&self->renderables[i], renderer);
     }
-    component_render(&self->collidable, renderer);
+    component_render((Component *)&self->collidable, renderer);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other){

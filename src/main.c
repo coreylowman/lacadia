@@ -135,9 +135,9 @@ int main(int argc, char *argv[]){
     glClearColor(0.52734375, 0.8046875, 0.91796875, 1.0);
 
     world = game_world_new();
-    game_world_add_object(world, mage_new(world));
-    game_world_add_object(world, bug_spawner_new(world, VEC3_ZERO, 5.0));
-    game_world_add_object(world, coin_new(world, (Vec3) { .x = 5, .y = 2, .z = 0 }));
+    game_world_add_object(world, (GameObject *)mage_new(world));
+    game_world_add_object(world, (GameObject *)bug_spawner_new(world, VEC3_ZERO, 5.0));
+    game_world_add_object(world, (GameObject *)coin_new(world, (Vec3) { .x = 5, .y = 2, .z = 0 }));
     
     total_time = glfwGetTime();
     last_update_seconds = total_time;
