@@ -13,11 +13,6 @@
 typedef struct Wall {
   GameObject base_object;
 
-  CollidableComponent collidable;
-
-  int num_renderables;
-  RenderableComponent renderables[MAX_WALL_LENGTH];
-
   Vec3 normal;
 } Wall;
 

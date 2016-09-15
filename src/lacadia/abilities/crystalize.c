@@ -24,7 +24,7 @@ static void crystalize_apply(GameWorld *world, GameObject *user,
   float damage = 2.0f;
   float dmg_per_degree = 1.0f;
 
-  AffectableComponent *affectable = &enemy->affectable;
+  AffectableComponent *affectable = enemy->affectable;
 
   if (affectable->effects[EFFECT_TYPE_FROST] != NULL) {
     Frost *frost = (Frost *)affectable->effects[EFFECT_TYPE_FROST];
@@ -35,7 +35,7 @@ static void crystalize_apply(GameWorld *world, GameObject *user,
     damage += 5 * dmg_per_degree;
   }
 
-  affectable_component_damage(&enemy->affectable, damage);
+  affectable_component_damage(enemy->affectable, damage);
 
   ParticleSystem *ps =
       particle_system_new(world, enemy->base_object.position,

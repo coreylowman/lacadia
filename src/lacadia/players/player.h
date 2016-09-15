@@ -18,9 +18,9 @@ typedef struct Player {
   // abilities
   Ability abilities[4];
 
-  RenderableComponent renderable;
-  AffectableComponent affectable;
-  CollidableComponent collidable;
+  RenderableComponent *renderable;
+  AffectableComponent *affectable;
+  CollidableComponent *collidable;
 
   // generic object methods
   int stance;

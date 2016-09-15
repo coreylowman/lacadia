@@ -11,9 +11,9 @@
 static void frost_nova_apply(GameWorld *world, GameObject *user,
                              GameObject *target) {
   Enemy *enemy = (Enemy *)target;
-  affectable_component_affect(&enemy->affectable,
+  affectable_component_affect(enemy->affectable,
                               (Effect *)frost_new(world, target, 0.1, 4));
-  affectable_component_affect(&enemy->affectable,
+  affectable_component_affect(enemy->affectable,
                               (Effect *)frost_new(world, target, 0.1, 4));
 }
 

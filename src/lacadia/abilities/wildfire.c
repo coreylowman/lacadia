@@ -28,13 +28,15 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user,
   self->base_object.direction = user->direction;
   self->speed = 50.0;
 
-  self->renderable = renderable_component_init(
-      &self->base_object, "assets/burn_particle", world->renderer);
-  self->collidable = collidable_component_init(
+  game_object_alloc_components(&self->base_object, 2);
+  self->renderable = renderable_component_new(&self->base_object, "assets/burn_particle", world->renderer);
+  self->collidable = collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable.model_id),
+      game_world_get_model_obb(world, self->renderable->model_id),
       wildfire_on_collide);
-  self->collidable.is_colliding = spell_is_colliding_with_target;
+  self->collidable->is_colliding = spell_is_colliding_with_target;
+  self->base_object.components[0] = (Component *)self->renderable;
+  self->base_object.components[1] = (Component *)self->collidable;
 
   self->target = target;
 
@@ -53,13 +55,15 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user,
   self->base_object.direction = user->direction;
   self->speed = 50.0;
 
-  self->renderable = renderable_component_init(
-      &self->base_object, "assets/burn_particle", world->renderer);
-  self->collidable = collidable_component_init(
+  game_object_alloc_components(&self->base_object, 2);
+  self->renderable = renderable_component_new(&self->base_object, "assets/burn_particle", world->renderer);
+  self->collidable = collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable.model_id),
+      game_world_get_model_obb(world, self->renderable->model_id),
       wildfire_spread_on_collide);
-  self->collidable.is_colliding = spell_is_colliding_with_target;
+  self->collidable->is_colliding = spell_is_colliding_with_target;
+  self->base_object.components[0] = (Component *)self->renderable;
+  self->base_object.components[1] = (Component *)self->collidable;
 
   self->target = target;
 
@@ -83,12 +87,12 @@ static void wildfire_update(GameObject *obj, double dt) {
 static void wildfire_on_collide(GameObject *self, GameObject *other) {
   Enemy *enemy = (Enemy *)other;
 
-  if (enemy->affectable.effects[EFFECT_TYPE_BURN] != NULL) {
+  if (enemy->affectable->effects[EFFECT_TYPE_BURN] != NULL) {
     // was fired at enemies who are already affected by burn
-    burn_increase_degree(enemy->affectable.effects[EFFECT_TYPE_BURN]);
+    burn_increase_degree(enemy->affectable->effects[EFFECT_TYPE_BURN]);
   } else {
     affectable_component_affect(
-        &enemy->affectable,
+        enemy->affectable,
         (Effect *)burn_new(self->world, &enemy->base_object, 1, 4));
   }
 
@@ -104,9 +108,9 @@ static void wildfire_spread_on_collide(GameObject *self, GameObject *other) {
   // same target. so in the time it took this one to collide, another one
   // could've already applied
   // if it doesn't have a burn, then apply one!
-  if (enemy->affectable.effects[EFFECT_TYPE_BURN] == NULL) {
+  if (enemy->affectable->effects[EFFECT_TYPE_BURN] == NULL) {
     affectable_component_affect(
-        &enemy->affectable,
+        enemy->affectable,
         (Effect *)burn_new(self->world, &enemy->base_object, 1, 4));
   }
   self->destroy = 1;
@@ -115,7 +119,7 @@ static void wildfire_spread_on_collide(GameObject *self, GameObject *other) {
 static void wildfire_spread(GameWorld *world, GameObject *origin,
                             GameObject *target) {
   Enemy *enemy = (Enemy *)target;
-  if (enemy->affectable.effects[EFFECT_TYPE_BURN] == NULL) {
+  if (enemy->affectable->effects[EFFECT_TYPE_BURN] == NULL) {
     // if it doesn't have a burn on it, then shoot a wildfire spread at it
     game_world_add_object(world, (GameObject *)wildfire_spread_new(
                                      world, origin, (GameObject *)enemy));
@@ -125,7 +129,7 @@ static void wildfire_spread(GameWorld *world, GameObject *origin,
 static void wildfire_apply(GameWorld *world, GameObject *user,
                            GameObject *target) {
   Enemy *enemy = (Enemy *)target;
-  if (enemy->affectable.effects[EFFECT_TYPE_BURN] != NULL) {
+  if (enemy->affectable->effects[EFFECT_TYPE_BURN] != NULL) {
     // if it already has a burn on it shoot a wildfire at it
     game_world_add_object(
         world, (GameObject *)wildfire_new(world, user, (GameObject *)enemy));

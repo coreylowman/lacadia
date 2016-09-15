@@ -12,6 +12,8 @@ typedef void (*ComponentFreeCallback)(void *component);
 typedef struct Component {
   GameObject *container;
 
+  int allocated;
+
   ComponentUpdateCallback on_update;
   ComponentRenderCallback on_render;
   ComponentFreeCallback on_free;

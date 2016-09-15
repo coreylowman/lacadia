@@ -8,6 +8,7 @@ Component component_init(GameObject *container,
   Component self;
 
   self.container = container;
+  self.allocated = 0;
   self.on_update = on_update;
   self.on_render = on_render;
   self.on_free = on_free;
@@ -30,5 +31,9 @@ void component_render(Component *self, Renderer *renderer) {
 void component_free(Component *self) {
   if (self->on_free != NULL) {
     self->on_free(self);
+  }
+
+  if(self->allocated) {
+    free(self);
   }
 }

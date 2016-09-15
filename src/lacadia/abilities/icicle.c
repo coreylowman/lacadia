@@ -25,13 +25,15 @@ static Spell *icicle_new(GameWorld *world, GameObject *user) {
   self->speed = 30.0;
   strcpy(self->caster_tag, user->tag);
 
-  self->renderable = renderable_component_init(
-      &self->base_object, "assets/icicle", world->renderer);
-  self->collidable = collidable_component_init(
+  game_object_alloc_components(&self->base_object, 2);
+  self->renderable = renderable_component_new(&self->base_object, "assets/icicle", world->renderer);
+  self->collidable = collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable.model_id),
+      game_world_get_model_obb(world, self->renderable->model_id),
       icicle_on_collide);
-  self->collidable.is_colliding = spell_is_colliding;
+  self->collidable->is_colliding = spell_is_colliding;
+  self->base_object.components[0] = (Component *)self->renderable;
+  self->base_object.components[1] = (Component *)self->collidable;
 
   self->target = NULL;
 
@@ -47,15 +49,15 @@ static void fizzle_particle_init(Particle *p, Vec3 position, float duration) {
 static void icicle_on_collide(GameObject *self, GameObject *other) {
   if (strcmp(other->tag, "enemy") == 0) {
     Enemy *enemy = (Enemy *)other;
-    affectable_component_damage(&enemy->affectable, 1);
+    affectable_component_damage(enemy->affectable, 1);
     affectable_component_affect(
-        &enemy->affectable,
+        enemy->affectable,
         (Effect *)frost_new(self->world, &enemy->base_object, 0.1, 4));
     self->destroy = 1;
   } else if (strcmp(other->tag, "wall") == 0) {
     Spell *icicle = (Spell *)self;
     ParticleSystem *ps =
-        particle_system_new(self->world, icicle->collidable.bounding_box.center,
+        particle_system_new(self->world, icicle->collidable->bounding_box.center,
                             "assets/frost_particle", 32, 0.0, 0.75);
     particle_system_set_particle_init(ps, fizzle_particle_init);
     // this gives ownership to game_world... we don't have to worry about

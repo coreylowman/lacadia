@@ -44,6 +44,8 @@ GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectFreeCallback on_free);
 float game_object_get_y_rotation(GameObject *self);
 
+void game_object_alloc_components(GameObject *self, int num_components);
+
 void game_object_rotate_by(GameObject *self, float radians);
 
 void game_object_move_by(GameObject *self, Vec3 velocity);

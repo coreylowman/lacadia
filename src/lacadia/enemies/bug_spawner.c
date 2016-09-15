@@ -23,9 +23,9 @@ GameObject *bug_spawner_new(GameWorld *world, Vec3 position,
 }
 
 static void scale_bug(Enemy *bug, float scale) {
-  renderable_component_set_scale(&bug->renderable, scale);
-  collidable_component_set_scale(&bug->collidable, scale);
-  affectable_component_scale_max(&bug->affectable, scale);
+  affectable_component_scale_max(bug->affectable, scale);
+  renderable_component_set_scale(bug->renderable, scale);
+  collidable_component_set_scale(bug->collidable, scale);
 }
 
 static void on_update(GameObject *obj, double dt) {

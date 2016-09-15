@@ -11,8 +11,8 @@ typedef struct Spell {
   GameObject base_object;
   float speed;
 
-  CollidableComponent collidable;
-  RenderableComponent renderable;
+  CollidableComponent *collidable;
+  RenderableComponent *renderable;
 
   char caster_tag[32];
 

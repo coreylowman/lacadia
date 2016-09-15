@@ -15,9 +15,10 @@ typedef struct Enemy {
   // who it is following! (most likely the player :P)
   GameObject *target;
 
-  AffectableComponent affectable;
-  CollidableComponent collidable;
-  RenderableComponent renderable;
+  // these are contained in base_object, but pointers for ease of reference
+  AffectableComponent *affectable;
+  CollidableComponent *collidable;
+  RenderableComponent *renderable;
 
   Ability attack;
 } Enemy;

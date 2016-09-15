@@ -3,6 +3,17 @@
 void renderable_component_render(Component *self, Renderer *renderer);
 void renderable_component_update(Component *self, double dt);
 
+RenderableComponent *renderable_component_new(GameObject *container, const char *model_name,
+                                              Renderer *renderer) {
+  RenderableComponent *self = malloc(sizeof(*self));
+
+  *self = renderable_component_init(container, model_name, renderer);
+  
+  self->base_component.allocated = 1;
+
+  return self;
+}
+
 RenderableComponent renderable_component_init(GameObject *container,
                                               const char *model_name,
                                               Renderer *renderer) {

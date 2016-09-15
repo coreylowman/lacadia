@@ -9,12 +9,12 @@ static void combust_apply(GameWorld *world, GameObject *user,
                           GameObject *target) {
   Enemy *enemy = (Enemy *)target;
   // update burns with the remainder of the duration
-  Effect *effect = enemy->affectable.effects[EFFECT_TYPE_BURN];
+  Effect *effect = enemy->affectable->effects[EFFECT_TYPE_BURN];
   if (effect != NULL) {
     effect_advance(effect, effect->duration);
   }
 
-  effect = enemy->affectable.effects[EFFECT_TYPE_SOULBURN];
+  effect = enemy->affectable->effects[EFFECT_TYPE_SOULBURN];
   if (effect != NULL) {
     effect_advance(effect, effect->duration);
   }

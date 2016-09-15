@@ -17,6 +17,11 @@ typedef struct AffectableComponent {
 } AffectableComponent;
 
 // initializes the stats in affectable object
+AffectableComponent *affectable_component_new(GameObject *container,
+                                              float max_health, float max_speed,
+                                              float max_regen, float max_power,
+                                              float max_lifesteal);
+
 AffectableComponent affectable_component_init(GameObject *container,
                                               float max_health, float max_speed,
                                               float max_regen, float max_power,

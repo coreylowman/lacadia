@@ -18,19 +18,12 @@ Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
 
 void player_free(GameObject *obj) {
   Player *self = (Player *)obj;
-  component_free((Component *)&self->affectable);
-  component_free((Component *)&self->renderable);
-  component_free((Component *)&self->collidable);
   free(self);
 }
 
 void player_update(GameObject *obj, double dt) {
   Player *self = (Player *)obj;
   self->passive(self, dt);
-
-  component_update((Component *)&self->affectable, dt);
-  component_update((Component *)&self->renderable, dt);
-  component_update((Component *)&self->collidable, dt);
 
   int i;
   for (i = 0; i < 4; i++) {
@@ -76,9 +69,6 @@ void player_update(GameObject *obj, double dt) {
 
 void player_render(GameObject *obj, Renderer *renderer) {
   Player *self = (Player *)obj;
-  component_render((Component *)&self->affectable, renderer);
-  component_render((Component *)&self->renderable, renderer);
-  component_render((Component *)&self->collidable, renderer);
 
   // render the abilities cooldowns
   float spacing = 0.05;
@@ -107,11 +97,11 @@ void player_use_ability(Player *self, int i) {
 }
 
 void player_affect(Player *self, Effect *e, double dt) {
-  affectable_component_affect(&self->affectable, e);
+  affectable_component_affect(self->affectable, e);
 }
 
 void player_move_forwards(Player *self, double dt, float direction) {
-  float speed = self->affectable.speed;
+  float speed = self->affectable->speed;
   game_object_move_by(&self->base_object,
                       vec3_scale(VEC3_UNIT_Z, -dt * speed * direction));
 }
@@ -130,7 +120,7 @@ void player_turn(Player *self, double side_amt) {
 }
 
 void player_strafe(Player *self, double dt, float direction) {
-  float speed = self->affectable.speed;
+  float speed = self->affectable->speed;
   game_object_move_by(&self->base_object,
                       vec3_scale(VEC3_UNIT_X, dt * speed * direction));
 }
@@ -141,11 +131,11 @@ void player_on_collide(GameObject *self, GameObject *other) {
     Wall *wall = (Wall *)other;
 
     Vec3 wall_normal =
-        wall_get_normal(wall, player->collidable.bounding_box.center);
+        wall_get_normal(wall, player->collidable->bounding_box.center);
     int i;
     for (i = 0; i < 3; i++) {
       player->base_object.position.data[i] +=
-          self->world->dt * player->affectable.speed * wall_normal.data[i];
+          self->world->dt * player->affectable->speed * wall_normal.data[i];
     }
   }
 }

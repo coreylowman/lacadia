@@ -15,11 +15,13 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
   float width =
       grow_direction.x ? dims.x : (grow_direction.y ? dims.y : dims.z);
 
+  game_object_alloc_components(&self->base_object, length + 1);
+
   int model_id = game_world_get_model_id(world, "assets/wall");
   int i;
   Vec3 pos;
   Mat4 model_matrix;
-  self->num_renderables = length;
+  RenderableComponent *renderable;
   for (i = 0; i < length; i++) {
     pos = vec3_add(position, vec3_scale(grow_direction, width * (float)i));
     mat4_ident(&model_matrix);
@@ -27,9 +29,10 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
                   3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
     mat4_translate(&model_matrix, pos);
 
-    self->renderables[i] = renderable_component_init(
+    renderable = renderable_component_new(
         &self->base_object, "assets/wall", world->renderer);
-    renderable_component_set_model_matrix(&self->renderables[i], model_matrix);
+    renderable_component_set_model_matrix(renderable, model_matrix);
+    self->base_object.components[i] = (Component *)renderable;
   }
 
   Obb bounding_box = game_world_get_model_obb(world, model_id);
@@ -37,7 +40,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
   bounding_box.center.y += dims.y * 0.5;
   bounding_box.radius.data[which] *= length;
   bounding_box.center.data[which] += width * (length - 1) * 0.5;
-  self->collidable = collidable_component_init(&self->base_object, bounding_box,
+  self->base_object.components[length - 1] = (Component *)collidable_component_new(&self->base_object, bounding_box,
                                                wall_on_collide);
 
   self->normal = which == 0 ? VEC3_UNIT_Z : VEC3_UNIT_X;
@@ -47,21 +50,11 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
 
 void wall_free(GameObject *obj) {
   Wall *self = (Wall *)obj;
-  int i;
-  for (i = 0; i < self->num_renderables; i++) {
-    component_free((Component *)&self->renderables[i]);
-  }
-  component_free((Component *)&self->collidable);
   free(self);
 }
 
 void wall_render(GameObject *obj, Renderer *renderer) {
   Wall *self = (Wall *)obj;
-  int i;
-  for (i = 0; i < self->num_renderables; i++) {
-    component_render((Component *)&self->renderables[i], renderer);
-  }
-  component_render((Component *)&self->collidable, renderer);
 }
 
 void wall_on_collide(GameObject *self, GameObject *other) {
@@ -75,10 +68,12 @@ Vec3 wall_dimensions(GameWorld *world) {
 }
 
 Vec3 wall_get_normal(Wall *self, Vec3 position) {
+  CollidableComponent *collidable = (CollidableComponent *)self->base_object.components[self->base_object.num_components - 1];
+
   int i;
   for (i = 0; i < 3; i++) {
     if (self->normal.data[i] == 1.0) {
-      if (position.data[i] < self->collidable.bounding_box.center.data[i]) {
+      if (position.data[i] < collidable->bounding_box.center.data[i]) {
         return vec3_scale(self->normal, -1.0);
       } else {
         return self->normal;

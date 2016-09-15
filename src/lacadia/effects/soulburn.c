@@ -69,7 +69,7 @@ static void soulburn_on_update(Effect *effect, double dt) {
   float amt = affectable_component_damage(affectable, dt * self->dps);
   effect->amount_affected += amt;
 
-  AffectableComponent *user_affectable = &((Player *)self->user)->affectable;
+  AffectableComponent *user_affectable = ((Player *)self->user)->affectable;
   float heal_amt =
       affectable_component_heal(user_affectable, self->leech_pct * amt);
 

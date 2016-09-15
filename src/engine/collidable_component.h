@@ -22,6 +22,9 @@ struct CollidableComponent {
 
 typedef struct CollidableComponent CollidableComponent;
 
+CollidableComponent *collidable_component_new(GameObject *container,
+                                              Obb bounding_box,
+                                              OnCollideCallback on_collide);
 CollidableComponent collidable_component_init(GameObject *container,
                                               Obb bounding_box,
                                               OnCollideCallback on_collide);

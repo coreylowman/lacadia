@@ -14,22 +14,16 @@ Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update,
 
 void spell_free(GameObject *obj) {
   Spell *self = (Spell *)obj;
-  component_free((Component *)&self->collidable);
-  component_free((Component *)&self->renderable);
   free(self);
 }
 
 void spell_update(GameObject *obj, double dt) {
   Spell *self = (Spell *)obj;
-  component_update((Component *)&self->collidable, dt);
-  component_update((Component *)&self->renderable, dt);
   game_object_move((GameObject *)&self->base_object, self->speed * dt);
 }
 
 void spell_render(GameObject *obj, Renderer *renderer) {
   Spell *self = (Spell *)obj;
-  component_render((Component *)&self->renderable, renderer);
-  component_render((Component *)&self->collidable, renderer);
 }
 
 int spell_is_colliding(CollidableComponent self, CollidableComponent other) {

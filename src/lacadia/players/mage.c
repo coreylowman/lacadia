@@ -23,14 +23,17 @@ Player *mage_new(GameWorld *world) {
   self->base_object.position = VEC3_ZERO;
   self->base_object.direction = (Vec3){.data = {0, 0, -1}};
 
-  self->affectable =
-      affectable_component_init(&self->base_object, 20, 5.0, 0.1, 0, 0);
-  self->renderable = renderable_component_init(&self->base_object,
-                                               "assets/mage", world->renderer);
-  self->collidable = collidable_component_init(
+  game_object_alloc_components(&self->base_object, 3);
+  self->affectable = affectable_component_new(&self->base_object, 20, 5.0, 0.1, 0, 0);
+  self->renderable = renderable_component_new(&self->base_object, "assets/mage", world->renderer);
+  self->collidable = collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable.model_id),
+      game_world_get_model_obb(world, self->renderable->model_id),
       player_on_collide);
+  self->base_object.components[0] = (Component *)self->affectable;
+  self->base_object.components[1] = (Component *)self->renderable;
+  self->base_object.components[2] = (Component *)self->collidable;
+
 
   self->stance = 0;
   self->on_switch_stance = on_switch_stance;
@@ -63,7 +66,7 @@ static void ice_passive(Player *self, double dt) {}
 static void fire_passive_tick(GameWorld *world, GameObject *user,
                               GameObject *target) {
   Enemy *enemy = (Enemy *)target;
-  affectable_component_damage(&enemy->affectable, world->dt * 0.25f);
+  affectable_component_damage(enemy->affectable, world->dt * 0.25f);
 }
 
 static void fire_passive(Player *self, double dt) {

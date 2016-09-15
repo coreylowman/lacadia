@@ -28,6 +28,11 @@ GameObject game_object_init(GameWorld *world, const char *tag,
   return self;
 }
 
+void game_object_alloc_components(GameObject *self, int num_components) {
+  self->num_components = num_components;
+  self->components = malloc(num_components * sizeof(*self->components));
+}
+
 float game_object_get_y_rotation(GameObject *self) {
   float rotation = atan(self->direction.x / self->direction.z);
   if (self->direction.z <= 0.0)
@@ -51,18 +56,34 @@ void game_object_move(GameObject *self, double scalar) {
 }
 
 void game_object_update(GameObject *self, double dt) {
+  int i;
+  for(i = 0;i < self->num_components;i++) {
+    component_update(self->components[i]);
+  }
+
   if (self->on_update != NULL) {
     self->on_update(self, dt);
   }
 }
 
 void game_object_render(GameObject *self, Renderer *renderer) {
+  int i;
+  for(i = 0;i < self->num_components;i++) {
+    component_render(self->components[i]);
+  }
+
   if (self->on_render != NULL) {
     self->on_render(self, renderer);
   }
 }
 
 void game_object_free(GameObject *self) {
+  int i;
+  for(i = 0;i < self->num_components;i++) {
+    component_free(self->components[i]);
+    self->components[i] = NULL;
+  }
+
   if (self->on_free != NULL) {
     self->on_free(self);
   }

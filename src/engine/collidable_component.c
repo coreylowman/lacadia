@@ -6,6 +6,18 @@
 static void on_update(Component *self, double dt);
 static void on_render(Component *self, Renderer *renderer);
 
+CollidableComponent *collidable_component_new(GameObject *container,
+                                              Obb bounding_box,
+                                              OnCollideCallback on_collide) {
+  CollidableComponent *self = malloc(sizeof(*self));
+
+  *self = collidable_component_init(container, bounding_box, on_collide);
+
+  self->base_component.allocated = 1;
+
+  return self;
+}
+
 CollidableComponent collidable_component_init(GameObject *container,
                                               Obb bounding_box,
                                               OnCollideCallback on_collide) {
