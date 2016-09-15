@@ -1,10 +1,10 @@
 #ifndef PARTICLE_SYSTEM_H
 #define PARTICLE_SYSTEM_H
 
-#include "util/vec3.h"
-#include "components/renderable_component.h"
+#include "engine/util/vec3.h"
+#include "engine/renderable_component.h"
 #include "game_world.h"
-#include "util/renderer.h"
+#include "engine/util/renderer.h"
 
 #define MAX_PARTICLES 256
 

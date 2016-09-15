@@ -3,10 +3,10 @@
 
 #include "game_world.h"
 #include "game_object.h"
-#include "components/renderable_component.h"
-#include "components/collidable_component.h"
-#include "util/vec3.h"
-#include "util/renderer.h"
+#include "engine/renderable_component.h"
+#include "engine/collidable_component.h"
+#include "engine/util/vec3.h"
+#include "engine/util/renderer.h"
 
 #define MAX_WALL_LENGTH 32
 

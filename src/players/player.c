@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include "player.h"
-#include "game/wall.h"
-#include "game/colors.h"
+#include "engine/wall.h"
+#include "engine/colors.h"
 
 extern int width, height;
 

@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include "frost.h"
-#include "util/random.h"
-#include "util/renderer.h"
+#include "engine/util/random.h"
+#include "engine/util/renderer.h"
 #include "enemies/enemy.h"
-#include "components/affectable_component.h"
+#include "engine/affectable_component.h"
 #include "permafrost.h"
 
 static void frost_on_apply(Effect *self, AffectableComponent *affectable);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "collectable.h"
-#include "util/obb.h"
+#include "engine/util/obb.h"
 
 Collectable *collectable_new(GameWorld *world,
                              GameObjectUpdateCallback on_update,

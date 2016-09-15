@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "spell.h"
-#include "util/obb.h"
+#include "engine/util/obb.h"
 
 Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update,
                  GameObjectRenderCallback on_render,

@@ -1,8 +1,8 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
-#include "util/vec3.h"
-#include "util/renderer.h"
+#include "engine/util/vec3.h"
+#include "engine/util/renderer.h"
 
 typedef struct GameObject GameObject;
 

@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "affectable_component.h"
-#include "game/game_world.h"
-#include "util/obb.h"
-#include "game/colors.h"
+#include "engine/game_world.h"
+#include "engine/util/obb.h"
+#include "engine/colors.h"
 
 void affectable_component_update(Component *self, double dt);
 void affectable_component_render(Component *self, Renderer *renderer);

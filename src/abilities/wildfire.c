@@ -1,11 +1,11 @@
-#include "components/affectable_component.h"
+#include "engine/affectable_component.h"
 #include "effects/effect.h"
 #include "effects/burn.h"
 #include "enemies/enemy.h"
 #include "players/player.h"
 #include "ability.h"
 #include "spell.h"
-#include "util/vec3.h"
+#include "engine/util/vec3.h"
 
 static Spell *wildfire_new(GameWorld *world, GameObject *user,
                            GameObject *target);

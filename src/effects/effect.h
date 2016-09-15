@@ -1,7 +1,7 @@
 #ifndef EFFECT_H
 #define EFFECT_H
 
-#include "util/renderer.h"
+#include "engine/util/renderer.h"
 
 typedef struct AffectableComponent AffectableComponent;
 

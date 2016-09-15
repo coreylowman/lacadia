@@ -1,9 +1,9 @@
 #ifndef FROST_H
 #define FROST_H
 
-#include "game/game_world.h"
+#include "engine/game_world.h"
 #include "effect.h"
-#include "game/particle_system.h"
+#include "engine/particle_system.h"
 
 typedef struct Frost {
   Effect base_effect;

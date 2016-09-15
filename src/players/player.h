@@ -1,16 +1,16 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "game/game_world.h"
-#include "game/game_object.h"
-#include "components/renderable_component.h"
-#include "components/collidable_component.h"
-#include "components/affectable_component.h"
+#include "engine/game_world.h"
+#include "engine/game_object.h"
+#include "engine/renderable_component.h"
+#include "engine/collidable_component.h"
+#include "engine/affectable_component.h"
 #include "abilities/ability.h"
 #include "effects/effect.h"
-#include "util/array_list.h"
-#include "util/inputs.h"
-#include "util/renderer.h"
+#include "engine/util/array_list.h"
+#include "engine/util/inputs.h"
+#include "engine/util/renderer.h"
 
 typedef struct Player {
   GameObject base_object;

@@ -1,9 +1,9 @@
 #ifndef PERMAFROST_H
 #define PERMAFROST_H
 
-#include "game/game_world.h"
+#include "engine/game_world.h"
 #include "effect.h"
-#include "game/particle_system.h"
+#include "engine/particle_system.h"
 
 typedef struct Permafrost {
   Effect base_effect;

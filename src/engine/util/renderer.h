@@ -1,14 +1,14 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "util/shader.h"
-#include "util/object_model.h"
-#include "util/array_list.h"
-#include "util/rect.h"
-#include "util/mat4.h"
-#include "util/line.h"
-#include "util/obb.h"
-#include "util/terrain.h"
+#include "engine/util/shader.h"
+#include "engine/util/object_model.h"
+#include "engine/util/array_list.h"
+#include "engine/util/rect.h"
+#include "engine/util/mat4.h"
+#include "engine/util/line.h"
+#include "engine/util/obb.h"
+#include "engine/util/terrain.h"
 
 #define MAX_ASSETS 32
 #define MAX_UI_RECTS 128

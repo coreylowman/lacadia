@@ -1,7 +1,7 @@
 #include <stdlib.h>
-#include "util/mat4.h"
+#include "engine/util/mat4.h"
 #include "particle_system.h"
-#include "util/random.h"
+#include "engine/util/random.h"
 
 static Vec3 rand_scale_vec3(float scale) {
   return vec3_scale(random_unit_vec3(), scale);

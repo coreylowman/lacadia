@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include "permafrost.h"
-#include "util/random.h"
-#include "util/renderer.h"
+#include "engine/util/random.h"
+#include "engine/util/renderer.h"
 #include "enemies/enemy.h"
-#include "components/affectable_component.h"
+#include "engine/affectable_component.h"
 
 static void permafrost_on_apply(Effect *self, AffectableComponent *affectable);
 static void permafrost_on_update(Effect *self, double dt);

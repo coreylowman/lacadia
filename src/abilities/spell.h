@@ -1,11 +1,11 @@
 #ifndef SPELL_H
 #define SPELL_H
 
-#include "game/game_world.h"
-#include "game/game_object.h"
-#include "components/collidable_component.h"
-#include "components/renderable_component.h"
-#include "util/renderer.h"
+#include "engine/game_world.h"
+#include "engine/game_object.h"
+#include "engine/collidable_component.h"
+#include "engine/renderable_component.h"
+#include "engine/util/renderer.h"
 
 typedef struct Spell {
   GameObject base_object;

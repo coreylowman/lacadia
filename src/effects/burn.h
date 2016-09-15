@@ -1,9 +1,9 @@
 #ifndef BURN_H
 #define BURN_H
 
-#include "game/game_world.h"
+#include "engine/game_world.h"
 #include "effect.h"
-#include "game/particle_system.h"
+#include "engine/particle_system.h"
 
 typedef struct Burn {
   Effect base_effect;

@@ -1,8 +1,8 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "game/game_object.h"
-#include "util/renderer.h"
+#include "engine/game_object.h"
+#include "engine/util/renderer.h"
 
 typedef void (*ComponentUpdateCallback)(struct Component *self, double dt);
 typedef void (*ComponentRenderCallback)(struct Component *self,

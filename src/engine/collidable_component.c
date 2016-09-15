@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <GL/glew.h>
 #include "collidable_component.h"
-#include "util/line.h"
+#include "engine/util/line.h"
 
 static void on_update(Component *self, double dt);
 static void on_render(Component *self, Renderer *renderer);

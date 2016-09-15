@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "enemies/enemy.h"
-#include "components/affectable_component.h"
+#include "engine/affectable_component.h"
 #include "effects/effect.h"
 #include "ability.h"
 #include "players/player.h"

@@ -1,7 +1,7 @@
 #ifndef GAME_LEVEL_H
 #define GAME_LEVEL_H
 
-#include "util/array_list.h"
+#include "engine/util/array_list.h"
 #include "wall.h"
 
 typedef struct {

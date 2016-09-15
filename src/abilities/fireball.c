@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include "players/player.h"
 #include "enemies/enemy.h"
-#include "util/set.h"
-#include "game/particle_system.h"
+#include "engine/util/set.h"
+#include "engine/particle_system.h"
 #include "effects/burn.h"
 #include "spell.h"
-#include "util/random.h"
-#include "components/renderable_component.h"
-#include "components/collidable_component.h"
+#include "engine/util/random.h"
+#include "engine/renderable_component.h"
+#include "engine/collidable_component.h"
 
 static Spell *fireball_new(GameWorld *world, GameObject *user);
 static void fireball_on_collide(GameObject *self, GameObject *other);

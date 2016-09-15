@@ -1,9 +1,9 @@
 #ifndef BUG_SPAWNER_H
 #define BUG_SPAWNER_H
 
-#include "util/vec3.h"
-#include "game/game_object.h"
-#include "game/game_world.h"
+#include "engine/util/vec3.h"
+#include "engine/game_object.h"
+#include "engine/game_world.h"
 
 typedef struct BugSpawner {
   GameObject base_object;

@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include "players/player.h"
 #include "enemies/enemy.h"
-#include "util/set.h"
-#include "game/particle_system.h"
+#include "engine/util/set.h"
+#include "engine/particle_system.h"
 #include "spell.h"
-#include "util/random.h"
+#include "engine/util/random.h"
 #include "effects/frost.h"
 
 static Spell *icicle_new(GameWorld *world, GameObject *user);

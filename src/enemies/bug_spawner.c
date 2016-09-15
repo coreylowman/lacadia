@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "util/random.h"
-#include "util/mat4.h"
+#include "engine/util/random.h"
+#include "engine/util/mat4.h"
 #include "bug.h"
 #include "bug_spawner.h"
 

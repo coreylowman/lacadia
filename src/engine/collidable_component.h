@@ -2,8 +2,8 @@
 #define COLLIDABLE_COMPONENT_H
 
 #include "component.h"
-#include "util/obb.h"
-#include "game/game_object.h"
+#include "engine/util/obb.h"
+#include "engine/game_object.h"
 
 struct CollidableComponent;
 

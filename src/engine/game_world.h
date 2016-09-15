@@ -1,16 +1,16 @@
 #ifndef GAME_WORLD_H
 #define GAME_WORLD_H
 
-#include "util/array_list.h"
-#include "util/set.h"
-#include "util/object_model.h"
-#include "util/shader.h"
-#include "util/obb.h"
-#include "util/rect.h"
-#include "util/mat4.h"
-#include "util/renderer.h"
-#include "util/camera.h"
-#include "util/inputs.h"
+#include "engine/util/array_list.h"
+#include "engine/util/set.h"
+#include "engine/util/object_model.h"
+#include "engine/util/shader.h"
+#include "engine/util/obb.h"
+#include "engine/util/rect.h"
+#include "engine/util/mat4.h"
+#include "engine/util/renderer.h"
+#include "engine/util/camera.h"
+#include "engine/util/inputs.h"
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;

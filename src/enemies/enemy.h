@@ -1,12 +1,12 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "util/renderer.h"
-#include "game/game_world.h"
-#include "game/game_object.h"
-#include "components/renderable_component.h"
-#include "components/affectable_component.h"
-#include "components/collidable_component.h"
+#include "engine/util/renderer.h"
+#include "engine/game_world.h"
+#include "engine/game_object.h"
+#include "engine/renderable_component.h"
+#include "engine/affectable_component.h"
+#include "engine/collidable_component.h"
 #include "abilities/ability.h"
 
 typedef struct Enemy {

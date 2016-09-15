@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include "players/player.h"
 #include "enemies/enemy.h"
-#include "util/set.h"
-#include "game/particle_system.h"
+#include "engine/util/set.h"
+#include "engine/particle_system.h"
 #include "effects/effect.h"
 #include "effects/frost.h"
-#include "components/affectable_component.h"
+#include "engine/affectable_component.h"
 #include "spell.h"
-#include "util/random.h"
+#include "engine/util/random.h"
 
 // todo make this look better... have it go faster or something
 static void particle_init(Particle *p, Vec3 position, float duration) {

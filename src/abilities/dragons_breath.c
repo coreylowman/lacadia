@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include "players/player.h"
 #include "enemies/enemy.h"
-#include "util/set.h"
-#include "game/particle_system.h"
+#include "engine/util/set.h"
+#include "engine/particle_system.h"
 #include "effects/soulburn.h"
 #include "spell.h"
-#include "util/random.h"
+#include "engine/util/random.h"
 
 static void dragons_breath_apply(GameWorld *world, GameObject *user,
                                  GameObject *target) {

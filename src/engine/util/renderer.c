@@ -5,7 +5,7 @@
 #include FT_FREETYPE_H
 #include "lodepng.h"
 #include "renderer.h"
-#include "util/string_helpers.h"
+#include "engine/util/string_helpers.h"
 
 Vec3 light_position = {.data = {200, 100, 0}};
 
@@ -260,7 +260,8 @@ static void init_text(Renderer *self) {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
   printf("Loading characters...");
-  for (GLubyte c = 0; c < 128; c++) {
+  GLubyte c;
+  for (c = 0; c < 128; c++) {
     if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
       printf("Error: Freetype failed to load char %c\n", c);
       continue;
@@ -285,9 +286,10 @@ static void init_text(Renderer *self) {
                            .bearing[0] = face->glyph->bitmap_left,
                            .bearing[1] = face->glyph->bitmap_top,
                            .advance = face->glyph->advance.x};
-    printf("Loaded '%c' with size (%d, %d) bearing (%d, %d), advance (%d)\n", c,
-           stat.size[0], stat.size[1], stat.bearing[0], stat.bearing[1],
-           stat.advance);
+    // printf("Loaded '%c' with size (%d, %d) bearing (%d, %d), advance (%d)\n",
+    // c,
+    //        stat.size[0], stat.size[1], stat.bearing[0], stat.bearing[1],
+    //        stat.advance);
 
     self->char_stats[c] = stat;
     self->num_character_vertices[c] = 0;
@@ -463,7 +465,7 @@ void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix) {
   //	v = m->vertices[i];
   //
   //	mat4_mul_vec3(&a, mm, vec3_from_3f(v.position[0], v.position[1],
-  //v.position[2]));
+  // v.position[2]));
   //	n = vec3_from_3f(v.normal[0], v.normal[1], v.normal[2]);
   //	b = vec3_add(a, n);
   //	l.start = a;

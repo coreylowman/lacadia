@@ -5,7 +5,7 @@
 #include "terrain.h"
 #include "simplex_noise.h"
 #include "random.h"
-#include "util/array_list.h"
+#include "engine/util/array_list.h"
 
 #define TERRAIN_SIZE 128
 #define OCTAVES 3

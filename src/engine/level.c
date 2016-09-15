@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "level.h"
-#include "util/vec3.h"
-#include "util/mat4.h"
-#include "util/terrain.h"
+#include "engine/util/vec3.h"
+#include "engine/util/mat4.h"
+#include "engine/util/terrain.h"
 
 Level *level_new(GameWorld *world) {
   Level *self = malloc(sizeof(*self));

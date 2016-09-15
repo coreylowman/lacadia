@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "wall.h"
-#include "util/mat4.h"
-#include "util/random.h"
-#include "util/renderer.h"
+#include "engine/util/mat4.h"
+#include "engine/util/random.h"
+#include "engine/util/renderer.h"
 
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
                int length) {

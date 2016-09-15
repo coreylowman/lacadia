@@ -11,17 +11,17 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "util/inputs.h"
-#include "util/camera.h"
-#include "util/shader.h"
-#include "util/random.h"
-#include "game/game_world.h"
+#include "engine/util/inputs.h"
+#include "engine/util/camera.h"
+#include "engine/util/shader.h"
+#include "engine/util/random.h"
+#include "engine/game_world.h"
 #include "players/player.h"
 #include "players/mage.h"
 #include "enemies/enemy.h"
 #include "enemies/bug.h"
 #include "enemies/bug_spawner.h"
-#include "game/level.h"
+#include "engine/level.h"
 #include "collectables/coin.h"
 
 static GLFWwindow *window;

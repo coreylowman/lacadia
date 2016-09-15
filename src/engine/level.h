@@ -3,8 +3,8 @@
 
 #include "game_world.h"
 #include "wall.h"
-#include "util/terrain.h"
-#include "util/renderer.h"
+#include "engine/util/terrain.h"
+#include "engine/util/renderer.h"
 
 #define MAX_NUM_WALLS 64
 

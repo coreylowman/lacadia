@@ -1,8 +1,8 @@
 #ifndef ABILITY_H
 #define ABILITY_H
 
-#include "game/game_world.h"
-#include "game/game_object.h"
+#include "engine/game_world.h"
+#include "engine/game_object.h"
 
 // keeps track of the cooldown and what spell to cast once it is used
 // each spell also has a corresponding ability

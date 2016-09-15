@@ -3,7 +3,7 @@
 #include <math.h>
 #include "bug.h"
 #include "players/player.h"
-#include "components/collidable_component.h"
+#include "engine/collidable_component.h"
 
 extern Ability melee_hit_ability;
 
