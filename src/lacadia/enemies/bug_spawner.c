@@ -12,7 +12,7 @@ GameObject *bug_spawner_new(GameWorld *world, Vec3 position,
                             double time_to_spawn) {
   BugSpawner *self = malloc(sizeof(*self));
 
-  self->base_object = game_object_init(world, GAME_OBJECT_TYPE_SPAWNER,
+  self->base_object = game_object_init(world, "spawner",
                                        on_update, on_render, on_free);
   self->base_object.position = position;
 

@@ -6,7 +6,7 @@ Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update,
                  GameObjectRenderCallback on_render,
                  GameObjectFreeCallback on_free) {
   Enemy *self = malloc(sizeof(*self));
-  self->base_object = game_object_init(world, GAME_OBJECT_TYPE_ENEMY, on_update,
+  self->base_object = game_object_init(world, "enemy", on_update,
                                        on_render, on_free);
   return self;
 }

@@ -9,13 +9,6 @@ typedef void (*ComponentRenderCallback)(struct Component *self,
                                         Renderer *renderer);
 typedef void (*ComponentFreeCallback)(void *component);
 
-typedef enum ComponentType {
-  COMPONENT_TYPE_COLLIDABLE,
-  COMPONENT_TYPE_RENDERABLE,
-  COMPONENT_TYPE_AFFECTABLE,
-  COMPONENT_TYPE_MAX,
-} ComponentType;
-
 typedef struct Component {
   GameObject *container;
 

@@ -7,7 +7,7 @@
 Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
                int length) {
   Wall *self = malloc(sizeof(*self));
-  self->base_object = game_object_init(world, GAME_OBJECT_TYPE_WALL, NULL,
+  self->base_object = game_object_init(world, "wall", NULL,
                                        wall_render, wall_free);
 
   Vec3 dims = wall_dimensions(world);

@@ -12,22 +12,10 @@ typedef void (*GameObjectFreeCallback)(GameObject *self);
 
 typedef struct GameWorld GameWorld;
 typedef struct Component Component;
-
-typedef enum GameObjectType {
-  GAME_OBJECT_TYPE_PLAYER,
-  GAME_OBJECT_TYPE_ENEMY,
-  GAME_OBJECT_TYPE_SPELL,
-  GAME_OBJECT_TYPE_WALL,
-  GAME_OBJECT_TYPE_PARTICLE_SYSTEM,
-  GAME_OBJECT_TYPE_SPAWNER,
-  GAME_OBJECT_TYPE_COLLECTABLE,
-  GAME_OBJECT_TYPE_MAX,
-} GameObjectType;
+typedef struct CollidableComponent CollidableComponent;
 
 struct GameObject {
-  // type so we can pass around GameObject * but know what it needs to be
-  // cast as
-  GameObjectType type;
+  char tag[32];
 
   // a reference to the gameworld it is currently in
   GameWorld *world;
@@ -35,6 +23,9 @@ struct GameObject {
   // all game objects have a position and direction that they are facing
   Vec3 position;
   Vec3 direction;
+
+  int num_components;
+  Component **components;
 
   // callbacks to update and render passed into the init function.
   GameObjectUpdateCallback on_update;
@@ -47,7 +38,7 @@ struct GameObject {
 
 typedef struct GameObject GameObject;
 
-GameObject game_object_init(GameWorld *world, GameObjectType type,
+GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectUpdateCallback on_update,
                             GameObjectRenderCallback on_render,
                             GameObjectFreeCallback on_free);

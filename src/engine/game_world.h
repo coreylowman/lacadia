@@ -45,9 +45,10 @@ typedef struct GameWorld {
 GameWorld *game_world_new();
 void game_world_free(GameWorld *self);
 
-GameObject *game_world_get_player(GameWorld *self);
+GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag);
 
 void game_world_add_object(GameWorld *self, GameObject *object);
+void game_world_add_collidable(GameWorld *self, CollidableComponent *object);
 
 void game_world_update(GameWorld *self, double dt);
 
@@ -64,11 +65,9 @@ Vec3 game_world_world_coords_to_screen_coords(GameWorld *self,
 Vec3 game_world_screen_coords_to_world_coords(GameWorld *self,
                                               Vec3 screen_coords);
 
-void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user,
+void game_world_apply(GameWorld *self, const char *tag, GameObject *user,
                       float radius,
                       void (*fn)(GameWorld *world, GameObject *obj,
                                  GameObject *target));
-int game_world_is_colliding_with_wall(GameWorld *self,
-                                      CollidableComponent collidable);
 
 #endif

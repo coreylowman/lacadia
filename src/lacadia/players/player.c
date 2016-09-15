@@ -11,7 +11,7 @@ Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
                    GameObjectRenderCallback on_render,
                    GameObjectFreeCallback on_free) {
   Player *self = malloc(sizeof(*self));
-  self->base_object = game_object_init(world, GAME_OBJECT_TYPE_PLAYER,
+  self->base_object = game_object_init(world, "player",
                                        on_update, on_render, on_free);
   return self;
 }
@@ -137,7 +137,7 @@ void player_strafe(Player *self, double dt, float direction) {
 
 void player_on_collide(GameObject *self, GameObject *other) {
   Player *player = (Player *)self;
-  if (other->type == GAME_OBJECT_TYPE_WALL) {
+  if (strcmp(other->tag, "wall") == 0) {
     Wall *wall = (Wall *)other;
 
     Vec3 wall_normal =

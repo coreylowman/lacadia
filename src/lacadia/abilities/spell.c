@@ -7,7 +7,7 @@ Spell *spell_new(GameWorld *world, GameObjectUpdateCallback on_update,
                  GameObjectRenderCallback on_render,
                  GameObjectFreeCallback on_free) {
   Spell *self = malloc(sizeof(*self));
-  self->base_object = game_object_init(world, GAME_OBJECT_TYPE_SPELL, on_update,
+  self->base_object = game_object_init(world, "spell", on_update,
                                        on_render, on_free);
   return self;
 }
@@ -34,7 +34,7 @@ void spell_render(GameObject *obj, Renderer *renderer) {
 
 int spell_is_colliding(CollidableComponent self, CollidableComponent other) {
   Spell *spell = (Spell *)self.base_component.container;
-  if (spell->caster_type != other.base_component.container->type) {
+  if (strcmp(spell->caster_tag, other.base_component.container->tag) != 0) {
     return obb_intersects(self.bounding_box, other.bounding_box);
   }
   return 0;

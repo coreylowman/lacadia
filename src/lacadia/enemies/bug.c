@@ -16,7 +16,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position) {
   self->base_object.position = position;
   self->base_object.direction = (Vec3){.data = {0, 0, -1}};
 
-  self->target = game_world_get_player(world);
+  self->target = game_world_get_first_tagged(world, "player");
 
   self->affectable =
       affectable_component_init(&self->base_object, 25, 6.5, 0, 1, 0);
@@ -57,9 +57,4 @@ static void on_update(GameObject *obj, double dt) {
   vec3_normalize(&self->base_object.direction);
 }
 
-static void bug_on_collide(GameObject *self, GameObject *object) {
-  Enemy *bug = (Enemy *)self;
-  if (object->type == GAME_OBJECT_TYPE_PLAYER) {
-    Player *player = (Player *)bug->target;
-  }
-}
+static void bug_on_collide(GameObject *self, GameObject *object) {}

@@ -3,18 +3,21 @@
 #include <math.h>
 #include "game_object.h"
 
-GameObject game_object_init(GameWorld *world, GameObjectType type,
+GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectUpdateCallback on_update,
                             GameObjectRenderCallback on_render,
                             GameObjectFreeCallback on_free) {
   GameObject self;
 
-  self.type = type;
+  strcpy(self.tag, tag);
 
   self.world = world;
 
   self.position = VEC3_ZERO;
   self.direction = VEC3_UNIT_X;
+
+  self.num_components = 0;
+  self.components = NULL;
 
   self.on_update = on_update;
   self.on_render = on_render;

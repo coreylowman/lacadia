@@ -49,7 +49,7 @@ static void crystalize_apply(GameWorld *world, GameObject *user,
 void crystalize_use(GameWorld *world, GameObject *user) {
   float radius = 10.0f;
 
-  game_world_apply(world, GAME_OBJECT_TYPE_ENEMY, user, radius,
+  game_world_apply(world, "enemy", user, radius,
                    crystalize_apply);
 }
 

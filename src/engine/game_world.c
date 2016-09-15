@@ -51,12 +51,12 @@ void game_world_free(GameWorld *self) {
   free(self);
 }
 
-GameObject *game_world_get_player(GameWorld *self) {
+GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag) {
   int i;
   GameObject *obj;
   for (i = 0; i < self->game_objects->length; i++) {
     obj = self->game_objects->data[i];
-    if (obj != NULL && obj->type == GAME_OBJECT_TYPE_PLAYER) {
+    if (obj != NULL && strcmp(obj->tag, tag) == 0) {
       return obj;
     }
   }
@@ -153,35 +153,15 @@ void game_world_update(GameWorld *self, double dt) {
 }
 
 void game_world_add_object(GameWorld *self, GameObject *object) {
-  CollidableComponent *collidable = NULL;
-  switch (object->type) {
-  // case GAME_OBJECT_TYPE_PLAYER:
-  //   collidable = &((Player *)object)->collidable;
-  //   camera_set_follow(&self->camera, &object->position,
-  //                     0.75 * collidable->bounding_box.radius.y);
-  //   break;
-  // case GAME_OBJECT_TYPE_ENEMY:
-  //   collidable = &((Enemy *)object)->collidable;
-  //   break;
-  // case GAME_OBJECT_TYPE_SPELL:
-  //   collidable = &((Spell *)object)->collidable;
-  //   break;
-  // case GAME_OBJECT_TYPE_WALL:
-  //   collidable = &((Wall *)object)->collidable;
-  // case GAME_OBJECT_TYPE_COLLECTABLE:
-  //   collidable = &((Collectable *)object)->collidable;
-  //   break;
-  default:
-    break;
-  }
-  if (collidable != NULL) {
-    int *index = malloc(sizeof(*index));
-    *index = set_add(self->game_objects, object);
-    set_add(self->collidables, collidable);
-    set_add(self->indices, index);
-  } else {
-    set_add(self->game_objects, object);
-  }
+  set_add(self->game_objects, object);
+}
+
+void game_world_add_collidable(GameWorld *self, CollidableComponent *collidable) {
+  GameObject *object = collidable->base_component.container;
+  int *index = malloc(sizeof(*index));
+  *index = set_add(self->game_objects, object);
+  set_add(self->collidables, collidable);
+  set_add(self->indices, index);
 }
 
 void game_world_render(GameWorld *self) {
@@ -216,7 +196,7 @@ Obb game_world_get_model_obb(GameWorld *self, int model_id) {
 }
 
 // todo change to take a GameObjectType parameter instead of just enemies?
-void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user,
+void game_world_apply(GameWorld *self, const char *tag, GameObject *user,
                       float radius,
                       void (*fn)(GameWorld *world, GameObject *obj,
                                  GameObject *target)) {
@@ -228,7 +208,7 @@ void game_world_apply(GameWorld *self, GameObjectType type, GameObject *user,
       continue;
     collidable = self->collidables->data[i];
     object = collidable->base_component.container;
-    if (object->type == type &&
+    if (strcmp(object->tag, tag) == 0 &&
         vec3_within_dist(collidable->bounding_box.center, user->position,
                          radius)) {
       fn(self, user, object);
@@ -259,21 +239,4 @@ Vec3 game_world_screen_coords_to_world_coords(GameWorld *self,
   double t = -position.y / direction.y;
 
   return vec3_add(position, vec3_scale(direction, t));
-}
-
-int game_world_is_colliding_with_wall(GameWorld *self,
-                                      CollidableComponent collidable) {
-  int i;
-  CollidableComponent *other;
-  for (i = 0; i < self->collidables->length; i++) {
-    if (self->collidables->data[i] == NULL)
-      continue;
-    other = self->collidables->data[i];
-    if (other->base_component.container->type != GAME_OBJECT_TYPE_WALL)
-      continue;
-    if (collidable.is_colliding(collidable, *other) &&
-        other->is_colliding(*other, collidable))
-      return 1;
-  }
-  return 0;
 }

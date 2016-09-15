@@ -14,7 +14,8 @@ typedef struct Spell {
   CollidableComponent collidable;
   RenderableComponent renderable;
 
-  GameObjectType caster_type;
+  char caster_tag[32];
+
   GameObject *target;
 } Spell;
 

@@ -68,6 +68,6 @@ static void fire_passive_tick(GameWorld *world, GameObject *user,
 
 static void fire_passive(Player *self, double dt) {
   float radius = 5.0f;
-  game_world_apply(self->base_object.world, GAME_OBJECT_TYPE_ENEMY,
+  game_world_apply(self->base_object.world, "enemy",
                    (GameObject *)self, radius, fire_passive_tick);
 }

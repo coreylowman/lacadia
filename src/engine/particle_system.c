@@ -18,7 +18,7 @@ ParticleSystem *particle_system_new(GameWorld *world, Vec3 position,
                                     float duration, float particle_duration) {
   ParticleSystem *self = malloc(sizeof(*self));
   self->base_object = game_object_init(
-      world, GAME_OBJECT_TYPE_PARTICLE_SYSTEM, particle_system_update,
+      world, "particle_system", particle_system_update,
       particle_system_render, particle_system_free);
   self->base_object.position = position;
 
