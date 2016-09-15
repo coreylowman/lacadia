@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "game_object.h"
+#include "component.h"
 
 GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectUpdateCallback on_update,
@@ -58,7 +59,7 @@ void game_object_move(GameObject *self, double scalar) {
 void game_object_update(GameObject *self, double dt) {
   int i;
   for (i = 0; i < self->num_components; i++) {
-    component_update(self->components[i]);
+    component_update(self->components[i], dt);
   }
 
   if (self->on_update != NULL) {
@@ -69,7 +70,7 @@ void game_object_update(GameObject *self, double dt) {
 void game_object_render(GameObject *self, Renderer *renderer) {
   int i;
   for (i = 0; i < self->num_components; i++) {
-    component_render(self->components[i]);
+    component_render(self->components[i], renderer);
   }
 
   if (self->on_render != NULL) {
