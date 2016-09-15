@@ -19,8 +19,10 @@ Enemy *bug_new(GameWorld *world, Vec3 position) {
   self->target = game_world_get_first_tagged(world, "player");
 
   game_object_alloc_components(&self->base_object, 3);
-  self->affectable = affectable_component_new(&self->base_object, 25, 6.5, 0, 1, 0);
-  self->renderable = renderable_component_new(&self->base_object, "assets/bug", world->renderer);
+  self->affectable =
+      affectable_component_new(&self->base_object, 25, 6.5, 0, 1, 0);
+  self->renderable = renderable_component_new(&self->base_object, "assets/bug",
+                                              world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
       game_world_get_model_obb(world, self->renderable->model_id),

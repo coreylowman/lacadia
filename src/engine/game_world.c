@@ -156,7 +156,8 @@ void game_world_add_object(GameWorld *self, GameObject *object) {
   set_add(self->game_objects, object);
 }
 
-void game_world_add_collidable(GameWorld *self, CollidableComponent *collidable) {
+void game_world_add_collidable(GameWorld *self,
+                               CollidableComponent *collidable) {
   GameObject *object = collidable->base_component.container;
   int *index = malloc(sizeof(*index));
   *index = set_add(self->game_objects, object);

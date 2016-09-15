@@ -29,7 +29,8 @@ static Spell *wildfire_new(GameWorld *world, GameObject *user,
   self->speed = 50.0;
 
   game_object_alloc_components(&self->base_object, 2);
-  self->renderable = renderable_component_new(&self->base_object, "assets/burn_particle", world->renderer);
+  self->renderable = renderable_component_new(
+      &self->base_object, "assets/burn_particle", world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
       game_world_get_model_obb(world, self->renderable->model_id),
@@ -56,7 +57,8 @@ static Spell *wildfire_spread_new(GameWorld *world, GameObject *user,
   self->speed = 50.0;
 
   game_object_alloc_components(&self->base_object, 2);
-  self->renderable = renderable_component_new(&self->base_object, "assets/burn_particle", world->renderer);
+  self->renderable = renderable_component_new(
+      &self->base_object, "assets/burn_particle", world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
       game_world_get_model_obb(world, self->renderable->model_id),

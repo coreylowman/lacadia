@@ -37,8 +37,7 @@ void dragons_breath_use(GameWorld *world, GameObject *user) {
   direction = user->direction;
   direction.y = 0;
   vec3_normalize(&direction);
-  game_world_apply(world, "enemy", user, radius,
-                   dragons_breath_apply);
+  game_world_apply(world, "enemy", user, radius, dragons_breath_apply);
 
   ParticleSystem *ps = particle_system_new(
       world, user->position, "assets/burn_particle", 64, 0.0, 0.75);

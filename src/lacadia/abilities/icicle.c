@@ -26,7 +26,8 @@ static Spell *icicle_new(GameWorld *world, GameObject *user) {
   strcpy(self->caster_tag, user->tag);
 
   game_object_alloc_components(&self->base_object, 2);
-  self->renderable = renderable_component_new(&self->base_object, "assets/icicle", world->renderer);
+  self->renderable = renderable_component_new(&self->base_object,
+                                              "assets/icicle", world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
       game_world_get_model_obb(world, self->renderable->model_id),
@@ -56,9 +57,9 @@ static void icicle_on_collide(GameObject *self, GameObject *other) {
     self->destroy = 1;
   } else if (strcmp(other->tag, "wall") == 0) {
     Spell *icicle = (Spell *)self;
-    ParticleSystem *ps =
-        particle_system_new(self->world, icicle->collidable->bounding_box.center,
-                            "assets/frost_particle", 32, 0.0, 0.75);
+    ParticleSystem *ps = particle_system_new(
+        self->world, icicle->collidable->bounding_box.center,
+        "assets/frost_particle", 32, 0.0, 0.75);
     particle_system_set_particle_init(ps, fizzle_particle_init);
     // this gives ownership to game_world... we don't have to worry about
     // freeing

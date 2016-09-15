@@ -15,12 +15,12 @@ AffectableComponent *affectable_component_new(GameObject *container,
                                               float max_lifesteal) {
   AffectableComponent *self = malloc(sizeof(*self));
 
-  *self = affectable_component_init(container, max_health, max_speed, max_regen, max_power, max_lifesteal);
+  *self = affectable_component_init(container, max_health, max_speed, max_regen,
+                                    max_power, max_lifesteal);
   self->base_component.allocated = 1;
 
   return self;
 }
-
 
 AffectableComponent affectable_component_init(GameObject *container,
                                               float max_health, float max_speed,

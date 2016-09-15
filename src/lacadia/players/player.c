@@ -11,8 +11,8 @@ Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
                    GameObjectRenderCallback on_render,
                    GameObjectFreeCallback on_free) {
   Player *self = malloc(sizeof(*self));
-  self->base_object = game_object_init(world, "player",
-                                       on_update, on_render, on_free);
+  self->base_object =
+      game_object_init(world, "player", on_update, on_render, on_free);
   return self;
 }
 

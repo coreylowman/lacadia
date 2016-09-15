@@ -28,7 +28,8 @@ static Spell *fireball_new(GameWorld *world, GameObject *user) {
   strcpy(self->caster_tag, user->tag);
 
   game_object_alloc_components(&self->base_object, 2);
-  self->renderable = renderable_component_new(&self->base_object, "assets/fireball", world->renderer);
+  self->renderable = renderable_component_new(
+      &self->base_object, "assets/fireball", world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
       game_world_get_model_obb(world, self->renderable->model_id),

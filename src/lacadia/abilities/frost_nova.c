@@ -27,8 +27,7 @@ static void particle_init(Particle *p, Vec3 position, float duration) {
 void frost_nova_use(GameWorld *world, GameObject *user) {
   float radius = 10.0f;
 
-  game_world_apply(world, "enemy", user, radius,
-                   frost_nova_apply);
+  game_world_apply(world, "enemy", user, radius, frost_nova_apply);
 
   ParticleSystem *ps = particle_system_new(
       world, user->position, "assets/frost_particle", 64, 0.0, 0.5);

@@ -57,7 +57,7 @@ void game_object_move(GameObject *self, double scalar) {
 
 void game_object_update(GameObject *self, double dt) {
   int i;
-  for(i = 0;i < self->num_components;i++) {
+  for (i = 0; i < self->num_components; i++) {
     component_update(self->components[i]);
   }
 
@@ -68,7 +68,7 @@ void game_object_update(GameObject *self, double dt) {
 
 void game_object_render(GameObject *self, Renderer *renderer) {
   int i;
-  for(i = 0;i < self->num_components;i++) {
+  for (i = 0; i < self->num_components; i++) {
     component_render(self->components[i]);
   }
 
@@ -79,7 +79,7 @@ void game_object_render(GameObject *self, Renderer *renderer) {
 
 void game_object_free(GameObject *self) {
   int i;
-  for(i = 0;i < self->num_components;i++) {
+  for (i = 0; i < self->num_components; i++) {
     component_free(self->components[i]);
     self->components[i] = NULL;
   }

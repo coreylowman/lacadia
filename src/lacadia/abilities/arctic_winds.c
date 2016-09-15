@@ -38,8 +38,7 @@ void arctic_winds_use(GameWorld *world, GameObject *user) {
   direction = user->direction;
   direction.y = 0;
   vec3_normalize(&direction);
-  game_world_apply(world, "enemy", user, radius,
-                   arctic_winds_apply);
+  game_world_apply(world, "enemy", user, radius, arctic_winds_apply);
 
   ParticleSystem *ps = particle_system_new(
       world, user->position, "assets/frost_particle", 64, 0.0, 0.75);

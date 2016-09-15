@@ -8,8 +8,8 @@ Collectable *collectable_new(GameWorld *world,
                              GameObjectRenderCallback on_render,
                              GameObjectFreeCallback on_free) {
   Collectable *self = malloc(sizeof(*self));
-  self->base_object = game_object_init(world, "collectable",
-                                       on_update, on_render, on_free);
+  self->base_object =
+      game_object_init(world, "collectable", on_update, on_render, on_free);
   return self;
 }
 

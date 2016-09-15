@@ -24,8 +24,10 @@ Player *mage_new(GameWorld *world) {
   self->base_object.direction = (Vec3){.data = {0, 0, -1}};
 
   game_object_alloc_components(&self->base_object, 3);
-  self->affectable = affectable_component_new(&self->base_object, 20, 5.0, 0.1, 0, 0);
-  self->renderable = renderable_component_new(&self->base_object, "assets/mage", world->renderer);
+  self->affectable =
+      affectable_component_new(&self->base_object, 20, 5.0, 0.1, 0, 0);
+  self->renderable = renderable_component_new(&self->base_object, "assets/mage",
+                                              world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
       game_world_get_model_obb(world, self->renderable->model_id),
@@ -33,7 +35,6 @@ Player *mage_new(GameWorld *world) {
   self->base_object.components[0] = (Component *)self->affectable;
   self->base_object.components[1] = (Component *)self->renderable;
   self->base_object.components[2] = (Component *)self->collidable;
-
 
   self->stance = 0;
   self->on_switch_stance = on_switch_stance;
@@ -71,6 +72,6 @@ static void fire_passive_tick(GameWorld *world, GameObject *user,
 
 static void fire_passive(Player *self, double dt) {
   float radius = 5.0f;
-  game_world_apply(self->base_object.world, "enemy",
-                   (GameObject *)self, radius, fire_passive_tick);
+  game_world_apply(self->base_object.world, "enemy", (GameObject *)self, radius,
+                   fire_passive_tick);
 }

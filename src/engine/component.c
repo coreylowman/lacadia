@@ -33,7 +33,7 @@ void component_free(Component *self) {
     self->on_free(self);
   }
 
-  if(self->allocated) {
+  if (self->allocated) {
     free(self);
   }
 }
