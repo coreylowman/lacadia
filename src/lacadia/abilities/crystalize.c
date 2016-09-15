@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "players/player.h"
-#include "enemies/enemy.h"
+#include "lacadia/players/player.h"
+#include "lacadia/enemies/enemy.h"
 #include "engine/util/set.h"
 #include "engine/particle_system.h"
-#include "effects/effect.h"
-#include "effects/frost.h"
-#include "engine/affectable_component.h"
+#include "lacadia/effects/effect.h"
+#include "lacadia/effects/frost.h"
+#include "lacadia/effects/affectable_component.h"
 #include "spell.h"
 #include "engine/util/random.h"
 

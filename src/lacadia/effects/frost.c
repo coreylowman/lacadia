@@ -2,8 +2,8 @@
 #include "frost.h"
 #include "engine/util/random.h"
 #include "engine/util/renderer.h"
-#include "enemies/enemy.h"
-#include "engine/affectable_component.h"
+#include "lacadia/enemies/enemy.h"
+#include "lacadia/effects/affectable_component.h"
 #include "permafrost.h"
 
 static void frost_on_apply(Effect *self, AffectableComponent *affectable);

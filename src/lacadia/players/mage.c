@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "mage.h"
-#include "abilities/spell.h"
-#include "abilities/ability.h"
-#include "enemies/enemy.h"
+#include "lacadia/abilities/spell.h"
+#include "lacadia/abilities/ability.h"
+#include "lacadia/enemies/enemy.h"
 
 extern Ability fireball_ability;
 extern Ability wildfire_ability;

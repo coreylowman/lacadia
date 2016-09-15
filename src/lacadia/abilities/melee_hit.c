@@ -1,5 +1,5 @@
-#include "players/player.h"
-#include "enemies/enemy.h"
+#include "lacadia/players/player.h"
+#include "lacadia/enemies/enemy.h"
 #include "ability.h"
 
 void melee_hit_use(GameWorld *world, GameObject *user) {

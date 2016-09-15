@@ -4,21 +4,16 @@
 #include <GL/glew.h>
 
 #include "level.h"
-#include "players/player.h"
-#include "enemies/enemy.h"
 #include "engine/util/array_list.h"
 #include "engine/util/obb.h"
 #include "engine/util/string_helpers.h"
 #include "game_object.h"
-#include "abilities/spell.h"
 #include "game_world.h"
 #include "engine/collidable_component.h"
 #include "engine/particle_system.h"
-#include "collectables/collectable.h"
 #include "wall.h"
 #include "engine/util/camera.h"
 #include "engine/util/inputs.h"
-#include "enemies/bug.h"
 #include "colors.h"
 
 extern int width, height;
@@ -88,9 +83,9 @@ void game_world_update(GameWorld *self, double dt) {
   //        unfollow();
   //}
 
-  if (self->inputs.m_pressed) {
-    game_world_add_object(self, (GameObject *)bug_new(self, VEC3_ZERO));
-  }
+  // if (self->inputs.m_pressed) {
+  //   game_world_add_object(self, (GameObject *)bug_new(self, VEC3_ZERO));
+  // }
 
   if (self->inputs.r_pressed) {
     terrain_regen(&self->level->terrain);
@@ -160,22 +155,22 @@ void game_world_update(GameWorld *self, double dt) {
 void game_world_add_object(GameWorld *self, GameObject *object) {
   CollidableComponent *collidable = NULL;
   switch (object->type) {
-  case GAME_OBJECT_TYPE_PLAYER:
-    collidable = &((Player *)object)->collidable;
-    camera_set_follow(&self->camera, &object->position,
-                      0.75 * collidable->bounding_box.radius.y);
-    break;
-  case GAME_OBJECT_TYPE_ENEMY:
-    collidable = &((Enemy *)object)->collidable;
-    break;
-  case GAME_OBJECT_TYPE_SPELL:
-    collidable = &((Spell *)object)->collidable;
-    break;
-  case GAME_OBJECT_TYPE_WALL:
-    collidable = &((Wall *)object)->collidable;
-  case GAME_OBJECT_TYPE_COLLECTABLE:
-    collidable = &((Collectable *)object)->collidable;
-    break;
+  // case GAME_OBJECT_TYPE_PLAYER:
+  //   collidable = &((Player *)object)->collidable;
+  //   camera_set_follow(&self->camera, &object->position,
+  //                     0.75 * collidable->bounding_box.radius.y);
+  //   break;
+  // case GAME_OBJECT_TYPE_ENEMY:
+  //   collidable = &((Enemy *)object)->collidable;
+  //   break;
+  // case GAME_OBJECT_TYPE_SPELL:
+  //   collidable = &((Spell *)object)->collidable;
+  //   break;
+  // case GAME_OBJECT_TYPE_WALL:
+  //   collidable = &((Wall *)object)->collidable;
+  // case GAME_OBJECT_TYPE_COLLECTABLE:
+  //   collidable = &((Collectable *)object)->collidable;
+  //   break;
   default:
     break;
   }

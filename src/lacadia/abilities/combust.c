@@ -1,9 +1,9 @@
 #include <stdlib.h>
-#include "enemies/enemy.h"
-#include "engine/affectable_component.h"
-#include "effects/effect.h"
+#include "lacadia/enemies/enemy.h"
+#include "lacadia/effects/affectable_component.h"
+#include "lacadia/effects/effect.h"
 #include "ability.h"
-#include "players/player.h"
+#include "lacadia/players/player.h"
 
 static void combust_apply(GameWorld *world, GameObject *user,
                           GameObject *target) {

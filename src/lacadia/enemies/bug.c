@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "bug.h"
-#include "players/player.h"
+#include "lacadia/players/player.h"
 #include "engine/collidable_component.h"
 
 extern Ability melee_hit_ability;

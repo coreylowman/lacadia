@@ -2,7 +2,7 @@
 #include "burn.h"
 #include "engine/util/random.h"
 #include "engine/util/renderer.h"
-#include "engine/affectable_component.h"
+#include "affectable_component.h"
 
 static void burn_on_apply(Effect *self, AffectableComponent *affectable);
 static void burn_on_update(Effect *self, double dt);

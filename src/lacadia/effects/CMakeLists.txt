@@ -1,4 +1,6 @@
 list(APPEND EFFECTS_SOURCES
+    affectable_component.c
+    affectable_component.h
     effect.h
     effect.c
     burn.h

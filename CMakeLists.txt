@@ -41,65 +41,14 @@ list(APPEND LACADIA_INCLUDE_DIRS
     ${GLFW_INCLUDE_DIRS}
 )
 
+
 add_subdirectory(external/lodepng)
 add_subdirectory(external/freetype-2.6.5)
-add_subdirectory(src/engine)
-add_subdirectory(src/players)
-add_subdirectory(src/collectables)
-add_subdirectory(src/enemies)
-add_subdirectory(src/effects)
-add_subdirectory(src/abilities)
 
-list(APPEND LACADIA_SOURCES
-    src/main.c
-
+set(EXTERNAL_OBJECT_LIBRARIES
     $<TARGET_OBJECTS:freetype>
     $<TARGET_OBJECTS:lodepng>
-    $<TARGET_OBJECTS:util>
-    $<TARGET_OBJECTS:engine>
-    $<TARGET_OBJECTS:players>
-    $<TARGET_OBJECTS:collectables>
-    $<TARGET_OBJECTS:enemies>
-    $<TARGET_OBJECTS:effects>
-    $<TARGET_OBJECTS:abilities>
 )
 
-add_executable(lacadia ${LACADIA_SOURCES})
-target_include_directories(lacadia
-    PUBLIC ${LACADIA_INCLUDE_DIRS}
-)
-target_link_libraries(lacadia
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
-    ${GLFW_LIBRARIES}
-)
-if(UNIX)
-target_link_libraries(lacadia
-    m
-    Xxf86vm
-    pthread
-    dl
-    X11
-    Xi
-    Xinerama
-    Xrandr
-    Xcursor
-)
-endif(UNIX)
-
-add_custom_command(TARGET lacadia
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:lacadia>/shaders
-)
-
-add_custom_command(TARGET lacadia
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/assets $<TARGET_FILE_DIR:lacadia>/assets
-)
-
-if(WIN32)
-add_custom_command(TARGET lacadia
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${LACADIA_SOURCE_DIR}/external/glew/bin/Release/Win32/glew32.dll $<TARGET_FILE_DIR:lacadia>
-)
-endif(WIN32)
+add_subdirectory(src/engine)
+add_subdirectory(src/lacadia)

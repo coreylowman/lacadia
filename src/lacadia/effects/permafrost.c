@@ -2,8 +2,8 @@
 #include "permafrost.h"
 #include "engine/util/random.h"
 #include "engine/util/renderer.h"
-#include "enemies/enemy.h"
-#include "engine/affectable_component.h"
+#include "lacadia/enemies/enemy.h"
+#include "lacadia/effects/affectable_component.h"
 
 static void permafrost_on_apply(Effect *self, AffectableComponent *affectable);
 static void permafrost_on_update(Effect *self, double dt);

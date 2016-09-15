@@ -1,8 +1,8 @@
 #ifndef AFFECTABLE_COMPONENT_H
 #define AFFECTABLE_COMPONENT_H
 
-#include "component.h"
-#include "effects/effect.h"
+#include "engine/component.h"
+#include "effect.h"
 
 typedef struct AffectableComponent {
   Component base_component;

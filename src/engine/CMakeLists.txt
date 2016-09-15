@@ -12,8 +12,6 @@ list(APPEND ENGINE_SOURCES
     particle_system.h
     wall.c
     wall.h
-    affectable_component.c
-    affectable_component.h
     collidable_component.c
     collidable_component.h
     component.c
@@ -25,4 +23,9 @@ list(APPEND ENGINE_SOURCES
 add_library(engine OBJECT ${ENGINE_SOURCES})
 target_include_directories(engine
     PUBLIC ${LACADIA_INCLUDE_DIRS}
+)
+
+set(ENGINE_OBJECT_LIBRARIES
+    $<TARGET_OBJECTS:util>
+    $<TARGET_OBJECTS:engine>
 )
