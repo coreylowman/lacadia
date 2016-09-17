@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include "enemy.h"
 
-Enemy *enemy_new(GameWorld *world, GameObjectUpdateCallback on_update,
+Enemy *enemy_new(GameWorld *world, const char *asset_name,
+                 GameObjectUpdateCallback on_update,
                  GameObjectRenderCallback on_render,
                  GameObjectFreeCallback on_free) {
   Enemy *self = malloc(sizeof(*self));

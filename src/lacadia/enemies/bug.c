@@ -4,14 +4,16 @@
 #include "bug.h"
 #include "lacadia/players/player.h"
 #include "engine/collidable_component.h"
+#include "engine/game_object.h"
 
 extern Ability melee_hit_ability;
 
 static void on_update(GameObject *obj, double dt);
-static void bug_on_collide(GameObject *self, GameObject *object);
+static void on_collide(GameObject *self, GameObject *object);
 
 Enemy *bug_new(GameWorld *world, Vec3 position) {
-  Enemy *self = enemy_new(world, on_update, enemy_render, enemy_free);
+  Enemy *self =
+      enemy_new(world, "./assets/bug", on_update, enemy_render, enemy_free);
 
   self->base_object.position = position;
   self->base_object.direction = (Vec3){.data = {0, 0, -1}};
@@ -25,8 +27,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position) {
                                               world->renderer);
   self->collidable = collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id),
-      bug_on_collide);
+      game_world_get_model_obb(world, self->renderable->model_id), on_collide);
   self->base_object.components[0] = (Component *)self->affectable;
   self->base_object.components[1] = (Component *)self->renderable;
   self->base_object.components[2] = (Component *)self->collidable;
@@ -61,4 +62,4 @@ static void on_update(GameObject *obj, double dt) {
   vec3_normalize(&self->base_object.direction);
 }
 
-static void bug_on_collide(GameObject *self, GameObject *object) {}
+static void on_collide(GameObject *self, GameObject *object) {}

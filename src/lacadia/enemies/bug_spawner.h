@@ -12,7 +12,7 @@ typedef struct BugSpawner {
   double time_to_spawn;
 } BugSpawner;
 
-GameObject *bug_spawner_new(GameWorld *world, Vec3 position,
+BugSpawner *bug_spawner_new(GameWorld *world, Vec3 position,
                             double time_to_spawn);
 
 #endif

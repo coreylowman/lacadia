@@ -5,21 +5,20 @@
 #include "bug_spawner.h"
 
 static void on_update(GameObject *self, double dt);
-static void on_render(GameObject *self, Renderer *renderer);
 static void on_free(GameObject *self);
 
-GameObject *bug_spawner_new(GameWorld *world, Vec3 position,
+BugSpawner *bug_spawner_new(GameWorld *world, Vec3 position,
                             double time_to_spawn) {
   BugSpawner *self = malloc(sizeof(*self));
 
   self->base_object =
-      game_object_init(world, "spawner", on_update, on_render, on_free);
+      game_object_init(world, "spawner", on_update, NULL, on_free);
   self->base_object.position = position;
 
   self->time_to_spawn = time_to_spawn;
   self->time_till_next = time_to_spawn;
 
-  return (GameObject *)self;
+  return self;
 }
 
 static void scale_bug(Enemy *bug, float scale) {
@@ -40,10 +39,6 @@ static void on_update(GameObject *obj, double dt) {
 
     self->time_till_next = self->time_to_spawn;
   }
-}
-
-static void on_render(GameObject *obj, Renderer *renderer) {
-  BugSpawner *self = (BugSpawner *)obj;
 }
 
 static void on_free(GameObject *obj) {
