@@ -1,17 +1,17 @@
 add_subdirectory(abilities)
-add_subdirectory(collectables)
 add_subdirectory(effects)
 add_subdirectory(enemies)
 add_subdirectory(players)
 
 list(APPEND LACADIA_SOURCES
+    coin.c
+    coin.h
     main.c
 
     ${EXTERNAL_OBJECT_LIBRARIES}
     $<TARGET_OBJECTS:util>
     $<TARGET_OBJECTS:engine>
     $<TARGET_OBJECTS:players>
-    $<TARGET_OBJECTS:collectables>
     $<TARGET_OBJECTS:enemies>
     $<TARGET_OBJECTS:effects>
     $<TARGET_OBJECTS:abilities>

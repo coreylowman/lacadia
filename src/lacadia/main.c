@@ -22,7 +22,7 @@
 #include "enemies/bug.h"
 #include "enemies/bug_spawner.h"
 #include "engine/level.h"
-#include "collectables/coin.h"
+#include "coin.h"
 
 static GLFWwindow *window;
 int width = 1280, height = 960;
@@ -139,8 +139,7 @@ int main(int argc, char *argv[]) {
   game_world_add_object(world, (GameObject *)mage_new(world));
   game_world_add_object(world,
                         (GameObject *)bug_spawner_new(world, VEC3_ZERO, 5.0));
-  game_world_add_object(
-      world, (GameObject *)coin_new(world, (Vec3){.x = 5, .y = 2, .z = 0}));
+  game_world_add_object(world, coin_new(world, (Vec3){.x = 5, .y = 2, .z = 0}));
 
   total_time = glfwGetTime();
   last_update_seconds = total_time;
