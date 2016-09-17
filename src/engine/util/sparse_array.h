@@ -1,6 +1,18 @@
 #ifndef SPARSE_ARRAY_H
 #define SPARSE_ARRAY_H
 
+#define SPARSE_ARRAY_FOREACH(type, name, arr, block)                           \
+  {                                                                            \
+    type name;                                                                 \
+    int i;                                                                     \
+    for (i = 0; i < arr->length; i++) {                                        \
+      if (arr->data[i] == NULL)                                                \
+        continue;                                                              \
+      name = arr->data[i];                                                     \
+      block                                                                    \
+    }                                                                          \
+  }
+
 typedef struct {
   int *data;
   int length;

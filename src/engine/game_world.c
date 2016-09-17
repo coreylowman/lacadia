@@ -100,13 +100,8 @@ void game_world_update(GameWorld *self, double dt) {
 
   self->dt = dt;
 
-  GameObject *obj;
-  for (i = 0; i < self->game_objects->length; i++) {
-    if (self->game_objects->data[i] == NULL)
-      continue;
-    obj = self->game_objects->data[i];
-    game_object_update(obj, dt);
-  }
+  SPARSE_ARRAY_FOREACH(GameObject *, obj, self->game_objects,
+                       { game_object_update(obj, dt); })
 
   // TODO improve this whole thing with the collidables, indices set and how
   // things are removed
@@ -174,14 +169,8 @@ void game_world_render(GameWorld *self) {
   renderer_render_sphere(self->renderer, light_position);
 
   // gather updates to the various things
-  int i;
-  GameObject *obj;
-  for (i = 0; i < self->game_objects->length; i++) {
-    if (self->game_objects->data[i] == NULL)
-      continue;
-    obj = self->game_objects->data[i];
-    game_object_render(obj, self->renderer);
-  }
+  SPARSE_ARRAY_FOREACH(GameObject *, obj, self->game_objects,
+                       { game_object_render(obj, self->renderer); })
   level_render(self->level, self->renderer);
 
   // actually draw stuff
@@ -202,20 +191,15 @@ void game_world_apply(GameWorld *self, const char *tag, GameObject *user,
                       float radius,
                       void (*fn)(GameWorld *world, GameObject *obj,
                                  GameObject *target)) {
-  CollidableComponent *collidable;
   GameObject *object;
-  int i;
-  for (i = 0; i < self->collidables->length; i++) {
-    if (self->collidables->data[i] == NULL)
-      continue;
-    collidable = self->collidables->data[i];
+  SPARSE_ARRAY_FOREACH(CollidableComponent *, collidable, self->collidables, {
     object = collidable->base_component.container;
     if (strcmp(object->tag, tag) == 0 &&
         vec3_within_dist(collidable->bounding_box.center, user->position,
                          radius)) {
       fn(self, user, object);
     }
-  }
+  })
 }
 
 Vec3 game_world_world_coords_to_screen_coords(GameWorld *self,
