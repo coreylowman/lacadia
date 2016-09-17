@@ -8,12 +8,28 @@
 
 extern int width, height;
 
-Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
-                   GameObjectRenderCallback on_render,
-                   GameObjectFreeCallback on_free) {
+Player *player_new(GameWorld *world, const char *asset_name) {
   Player *self = malloc(sizeof(*self));
-  self->base_object =
-      game_object_init(world, "player", on_update, on_render, on_free);
+  self->base_object = game_object_init(world, "player", player_update,
+                                       player_render, player_free);
+
+  self->base_object.position = VEC3_ZERO;
+  self->base_object.direction = (Vec3){.data = {0, 0, -1}};
+
+  game_object_alloc_components(&self->base_object, 3);
+  self->base_object.components[0] = (Component *)affectable_component_new(
+      &self->base_object, 20, 5.0, 0.1, 0, 0);
+  self->base_object.components[1] = (Component *)renderable_component_new(
+      &self->base_object, asset_name, world->renderer);
+  self->base_object.components[2] = (Component *)collidable_component_new(
+      &self->base_object,
+      game_world_get_model_obb(world, self->renderable->model_id),
+      player_on_collide);
+
+  self->affectable = (AffectableComponent *)self->base_object.components[0];
+  self->renderable = (RenderableComponent *)self->base_object.components[1];
+  self->collidable = (CollidableComponent *)self->base_object.components[2];
+
   return self;
 }
 

@@ -84,6 +84,7 @@ void game_object_free(GameObject *self) {
     component_free(self->components[i]);
     self->components[i] = NULL;
   }
+  free(self->components);
 
   if (self->on_free != NULL) {
     self->on_free(self);

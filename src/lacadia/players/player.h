@@ -15,23 +15,20 @@
 typedef struct Player {
   GameObject base_object;
 
-  // abilities
-  Ability abilities[4];
-
+  // convenience pointers to components
   RenderableComponent *renderable;
   AffectableComponent *affectable;
   CollidableComponent *collidable;
 
-  // generic object methods
+  Ability abilities[4];
+
   int stance;
   void (*on_switch_stance)(struct Player *self);
-  void (*on_collide)(GameObject *self, GameObject *other);
+
   void (*passive)(struct Player *self, double dt);
 } Player;
 
-Player *player_new(GameWorld *world, GameObjectUpdateCallback on_update,
-                   GameObjectRenderCallback on_render,
-                   GameObjectFreeCallback on_free);
+Player *player_new(GameWorld *world, const char *asset_name);
 void player_free(GameObject *self);
 
 void player_update(GameObject *self, double dt);

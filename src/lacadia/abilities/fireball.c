@@ -12,31 +12,19 @@
 #include "engine/collidable_component.h"
 
 static Spell *fireball_new(GameWorld *world, GameObject *user);
-static void fireball_on_collide(GameObject *self, GameObject *other);
+static void on_collide(GameObject *self, GameObject *other);
 
 void fireball_use(GameWorld *world, GameObject *user) {
   game_world_add_object(world, (GameObject *)fireball_new(world, user));
 }
 
 static Spell *fireball_new(GameWorld *world, GameObject *user) {
-  Spell *self = spell_new(world, spell_update, spell_render, spell_free);
+  Spell *self = spell_new(world, user, "./assets/fireball", on_collide);
 
   self->base_object.position = vec3_add(user->position, user->direction);
   self->base_object.position.y += 5;
   self->base_object.direction = user->direction;
   self->speed = 30.0;
-  strcpy(self->caster_tag, user->tag);
-
-  game_object_alloc_components(&self->base_object, 2);
-  self->renderable = renderable_component_new(
-      &self->base_object, "assets/fireball", world->renderer);
-  self->collidable = collidable_component_new(
-      &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id),
-      fireball_on_collide);
-  self->collidable->is_colliding = spell_is_colliding;
-  self->base_object.components[0] = (Component *)self->renderable;
-  self->base_object.components[1] = (Component *)self->collidable;
 
   self->target = NULL;
 
@@ -49,7 +37,7 @@ static void fizzle_particle_init(Particle *p, Vec3 position, float duration) {
   p->duration = random_in_rangef(0, duration);
 }
 
-static void fireball_on_collide(GameObject *self, GameObject *other) {
+static void on_collide(GameObject *self, GameObject *other) {
   if (strcmp(other->tag, "enemy") == 0) {
     Enemy *enemy = (Enemy *)other;
     affectable_component_damage(enemy->affectable, 1);

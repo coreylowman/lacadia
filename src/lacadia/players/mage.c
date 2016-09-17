@@ -5,36 +5,21 @@
 #include "lacadia/enemies/enemy.h"
 
 extern Ability fireball_ability;
-extern Ability wildfire_ability;
-extern Ability combust_ability;
-extern Ability dragons_breath_ability;
+// extern Ability wildfire_ability;
+// extern Ability combust_ability;
+// extern Ability dragons_breath_ability;
 
 extern Ability icicle_ability;
-extern Ability frost_nova_ability;
-extern Ability arctic_winds_ability;
-extern Ability crystalize_ability;
+// extern Ability frost_nova_ability;
+// extern Ability arctic_winds_ability;
+// extern Ability crystalize_ability;
 
 static void ice_passive(Player *self, double dt);
 static void fire_passive(Player *self, double dt);
 static void on_switch_stance(Player *self);
 
 Player *mage_new(GameWorld *world) {
-  Player *self = player_new(world, player_update, player_render, player_free);
-  self->base_object.position = VEC3_ZERO;
-  self->base_object.direction = (Vec3){.data = {0, 0, -1}};
-
-  game_object_alloc_components(&self->base_object, 3);
-  self->affectable =
-      affectable_component_new(&self->base_object, 20, 5.0, 0.1, 0, 0);
-  self->renderable = renderable_component_new(&self->base_object, "assets/mage",
-                                              world->renderer);
-  self->collidable = collidable_component_new(
-      &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id),
-      player_on_collide);
-  self->base_object.components[0] = (Component *)self->affectable;
-  self->base_object.components[1] = (Component *)self->renderable;
-  self->base_object.components[2] = (Component *)self->collidable;
+  Player *self = player_new(world, "./assets/mage");
 
   self->stance = 0;
   self->on_switch_stance = on_switch_stance;
@@ -50,15 +35,15 @@ void on_switch_stance(Player *self) {
   if (self->stance) {
     self->passive = ice_passive;
     self->abilities[0] = icicle_ability;
-    self->abilities[1] = frost_nova_ability;
-    self->abilities[2] = arctic_winds_ability;
-    self->abilities[3] = crystalize_ability;
+    // self->abilities[1] = frost_nova_ability;
+    // self->abilities[2] = arctic_winds_ability;
+    // self->abilities[3] = crystalize_ability;
   } else {
     self->passive = fire_passive;
     self->abilities[0] = fireball_ability;
-    self->abilities[1] = wildfire_ability;
-    self->abilities[2] = combust_ability;
-    self->abilities[3] = dragons_breath_ability;
+    // self->abilities[1] = wildfire_ability;
+    // self->abilities[2] = combust_ability;
+    // self->abilities[3] = dragons_breath_ability;
   }
 }
 
