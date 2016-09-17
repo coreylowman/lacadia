@@ -3,7 +3,6 @@
 #include <string.h>
 #include "lacadia/players/player.h"
 #include "lacadia/enemies/enemy.h"
-#include "engine/util/set.h"
 #include "engine/particle_system.h"
 #include "lacadia/effects/burn.h"
 #include "spell.h"

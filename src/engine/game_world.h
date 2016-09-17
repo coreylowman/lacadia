@@ -2,7 +2,7 @@
 #define GAME_WORLD_H
 
 #include "engine/util/array_list.h"
-#include "engine/util/set.h"
+#include "engine/util/sparse_array.h"
 #include "engine/util/object_model.h"
 #include "engine/util/shader.h"
 #include "engine/util/obb.h"
@@ -25,11 +25,11 @@ typedef struct GameWorld {
 
   double dt;
 
-  Set *game_objects; // Set<GameObject *>
+  SparseArray *game_objects; // SparseArray<GameObject *>
 
-  Set *collidables; // Set<CollidableComponent *>
+  SparseArray *collidables; // SparseArray<CollidableComponent *>
   // the ith element is the index in spells/enemies of the ith collidable
-  Set *indices; // Set<int *>
+  SparseArray *indices; // SparseArray<int *>
 
   Renderer *renderer;
 

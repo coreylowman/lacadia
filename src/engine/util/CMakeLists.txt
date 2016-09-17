@@ -11,8 +11,8 @@ list(APPEND UTIL_SOURCES
     object_model.h
     rect.c
     rect.h
-    set.c
-    set.h
+    sparse_array.c
+    sparse_array.h
     shader.c
     shader.h
     string_helpers.c

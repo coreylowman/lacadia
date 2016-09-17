@@ -24,11 +24,12 @@ static void free_obj(void *ptr) { game_object_free((GameObject *)ptr); }
 
 GameWorld *game_world_new() {
   GameWorld *self = malloc(sizeof(*self));
-  self->game_objects = set_new(free_obj);
-  self->collidables = set_new(NULL); // these collidables are pointers to other
-                                     // objects collidables... this set doesn't
-                                     // have ownership
-  self->indices = set_new(free);
+  self->game_objects = sparse_array_new(free_obj);
+  self->collidables =
+      sparse_array_new(NULL); // these collidables are pointers to other
+                              // objects collidables... this set doesn't
+                              // have ownership
+  self->indices = sparse_array_new(free);
 
   self->renderer = renderer_new();
 
@@ -40,9 +41,9 @@ GameWorld *game_world_new() {
 }
 
 void game_world_free(GameWorld *self) {
-  set_free(self->game_objects);
-  set_free(self->collidables);
-  set_free(self->indices);
+  sparse_array_free(self->game_objects);
+  sparse_array_free(self->collidables);
+  sparse_array_free(self->indices);
 
   renderer_free(self->renderer);
 
@@ -67,9 +68,9 @@ GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag) {
 static void destroy_collidable(GameWorld *self, int i) {
   int index = *(int *)self->indices->data[i];
   CollidableComponent *c = self->collidables->data[i];
-  set_remove_at(self->game_objects, index);
-  set_remove_at(self->collidables, i);
-  set_remove_at(self->indices, i);
+  sparse_array_remove_at(self->game_objects, index);
+  sparse_array_remove_at(self->collidables, i);
+  sparse_array_remove_at(self->indices, i);
 }
 
 void game_world_update(GameWorld *self, double dt) {
@@ -153,16 +154,16 @@ void game_world_update(GameWorld *self, double dt) {
 }
 
 void game_world_add_object(GameWorld *self, GameObject *object) {
-  set_add(self->game_objects, object);
+  sparse_array_add(self->game_objects, object);
 }
 
 void game_world_add_collidable(GameWorld *self,
                                CollidableComponent *collidable) {
   GameObject *object = collidable->base_component.container;
   int *index = malloc(sizeof(*index));
-  *index = set_add(self->game_objects, object);
-  set_add(self->collidables, collidable);
-  set_add(self->indices, index);
+  *index = sparse_array_add(self->game_objects, object);
+  sparse_array_add(self->collidables, collidable);
+  sparse_array_add(self->indices, index);
 }
 
 void game_world_render(GameWorld *self) {
