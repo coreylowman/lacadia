@@ -20,17 +20,15 @@ Enemy *bug_new(GameWorld *world, Vec3 position) {
 
   self->target = game_world_get_first_tagged(world, "player");
 
-  game_object_alloc_components(&self->base_object, 3);
-  self->affectable =
-      affectable_component_new(&self->base_object, 25, 6.5, 0, 1, 0);
-  self->renderable = renderable_component_init(&self->base_object, "./assets/bug",
-                                               world->renderer);
-  self->collidable = collidable_component_init(
+  self->affectable = game_object_add_component(&self->base_object,
+    (Component *)affectable_component_new(&self->base_object, 25, 6.5, 0, 1, 0));
+  self->renderable = game_object_add_component(&self->base_object,
+    (Component *)renderable_component_new(&self->base_object, "./assets/bug",
+                                              world->renderer));
+  self->collidable = game_object_add_collidable(&self->base_object,
+    (Component *)collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id), on_collide);
-  self->base_object.components[0] = (Component *)self->affectable;
-  self->base_object.components[1] = (Component *)self->renderable;
-  self->base_object.components[2] = (Component *)self->collidable;
+      game_world_get_model_obb(world, self->renderable->model_id), on_collide));
 
   self->attack = melee_hit_ability;
   self->attack.max_cooldown = 1.0;

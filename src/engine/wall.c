@@ -15,8 +15,6 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
   float width =
       grow_direction.x ? dims.x : (grow_direction.y ? dims.y : dims.z);
 
-  game_object_alloc_components(&self->base_object, length + 1);
-
   int model_id = game_world_get_model_id(world, "./assets/wall");
   int i;
   Vec3 pos;
@@ -33,7 +31,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
                                           world->renderer);
     renderable->base_component.on_update = NULL;
     renderable_component_set_model_matrix(renderable, model_matrix);
-    self->base_object.components[i] = (Component *)renderable;
+    game_object_add_component(&self->base_object, (Component *)renderable);
   }
 
   Obb bounding_box = game_world_get_model_obb(world, model_id);
@@ -41,9 +39,9 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
   bounding_box.center.y += dims.y * 0.5;
   bounding_box.radius.data[which] *= length;
   bounding_box.center.data[which] += width * (length - 1) * 0.5;
-  self->base_object.components[length] =
-      (Component *)collidable_component_new(&self->base_object, bounding_box,
-                                            wall_on_collide);
+  game_object_add_collidable(&self->base_object,
+    (Component *)collidable_component_new(&self->base_object, bounding_box,
+                                            wall_on_collide));
   self->base_object.components[length]->on_update = NULL;
 
   self->normal = which == 0 ? VEC3_UNIT_Z : VEC3_UNIT_X;

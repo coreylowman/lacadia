@@ -17,8 +17,9 @@ GameObject game_object_init(GameWorld *world, const char *tag,
   self.position = VEC3_ZERO;
   self.direction = VEC3_UNIT_X;
 
+  self.collidable_index = -1;
+
   self.num_components = 0;
-  self.components = NULL;
 
   self.on_update = on_update;
   self.on_render = on_render;
@@ -29,9 +30,19 @@ GameObject game_object_init(GameWorld *world, const char *tag,
   return self;
 }
 
-void game_object_alloc_components(GameObject *self, int num_components) {
-  self->num_components = num_components;
-  self->components = malloc(num_components * sizeof(*self->components));
+Component *game_object_add_component(GameObject *self, Component *component) {
+  if(self->num_components < MAX_COMPONENTS) {
+    self->components[self->num_components++] = component;
+    return component;
+  } else {
+    printf("Error: too many components.");
+    return NULL;
+  }
+}
+
+Component *game_object_add_collidable(GameObject *self, CollidableComponent *collidable) {
+  self->collidable_index = self->num_components;
+  return game_object_add_component(self, (Component *)collidable);
 }
 
 float game_object_get_y_rotation(GameObject *self) {
@@ -84,7 +95,6 @@ void game_object_free(GameObject *self) {
     component_free(self->components[i]);
     self->components[i] = NULL;
   }
-  free(self->components);
 
   if (self->on_free != NULL) {
     self->on_free(self);

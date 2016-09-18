@@ -25,11 +25,6 @@ static void free_obj(void *ptr) { game_object_free((GameObject *)ptr); }
 GameWorld *game_world_new() {
   GameWorld *self = malloc(sizeof(*self));
   self->game_objects = sparse_array_new(free_obj);
-  self->collidables =
-      sparse_array_new(NULL); // these collidables are pointers to other
-                              // objects collidables... this set doesn't
-                              // have ownership
-  self->indices = sparse_array_new(free);
 
   self->renderer = renderer_new();
 
@@ -42,8 +37,6 @@ GameWorld *game_world_new() {
 
 void game_world_free(GameWorld *self) {
   sparse_array_free(self->game_objects);
-  sparse_array_free(self->collidables);
-  sparse_array_free(self->indices);
 
   renderer_free(self->renderer);
 
@@ -65,17 +58,7 @@ GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag) {
   return NULL;
 }
 
-static void destroy_collidable(GameWorld *self, int i) {
-  int index = *(int *)self->indices->data[i];
-  CollidableComponent *c = self->collidables->data[i];
-  sparse_array_remove_at(self->game_objects, index);
-  sparse_array_remove_at(self->collidables, i);
-  sparse_array_remove_at(self->indices, i);
-}
-
 void game_world_update(GameWorld *self, double dt) {
-  int i, j;
-  CollidableComponent *c1, *c2;
 
   // if (self->inputs.l_pressed){
   //    if (!camera_is_following(self->camera))
@@ -99,45 +82,41 @@ void game_world_update(GameWorld *self, double dt) {
 
   self->dt = dt;
 
-  SPARSE_ARRAY_FOREACH(GameObject *, obj, self->game_objects,
-                       { game_object_update(obj, dt); })
+  int i;
+  GameObject *obj;
+  for (i = 0; i < self->game_objects->length; i++) {
+	  if (self->game_objects->data[i] == NULL) continue;
+	  obj = self->game_objects->data[i];
 
-  // TODO improve this whole thing with the collidables, indices set and how
-  // things are removed
-  // this handles collisions as well as removing things from their sets and
-  // collidables
-  for (i = 0; i < self->collidables->length - 1; i++) {
-    if (self->collidables->data[i] == NULL)
-      continue;
-    c1 = self->collidables->data[i];
+	  game_object_update(obj, dt);
+	  if (obj->destroy) {
+		  sparse_array_remove_at(self->game_objects, i);
+	  }
+  }
 
-    if (c1->base_component.container->destroy) {
-      destroy_collidable(self, i);
-      continue;
-    }
+  int j;
+  CollidableComponent *c1, *c2;
+  GameObject *obj1, *obj2;
+  for(i = 0;i < self->game_objects->length - 1;i++) {
+    obj1 = self->game_objects->data[i];
+    if(obj1 == NULL || obj1->collidable_index == -1) continue;
+    c1 = (CollidableComponent *)obj1->components[obj1->collidable_index];
 
-    for (j = i + 1; j < self->collidables->length; j++) {
-      if (self->collidables->data[j] == NULL)
-        continue;
-      c2 = self->collidables->data[j];
-
-      if (c2->base_component.container->destroy) {
-        destroy_collidable(self, j);
-        continue;
-      }
+    for(j = i + 1;j < self->game_objects->length;j++) {
+      obj2 = self->game_objects->data[j];
+      if(obj2 == NULL || obj2->collidable_index == -1) continue;
+      c2 = (CollidableComponent *)obj2->components[obj2->collidable_index];
 
       if (c1->is_colliding(*c1, *c2) && c2->is_colliding(*c2, *c1)) {
-        c1->on_collide(c1->base_component.container,
-                       c2->base_component.container);
-        c2->on_collide(c2->base_component.container,
-                       c1->base_component.container);
+        c1->on_collide(obj1, obj2);
+        c2->on_collide(obj2, obj1);
 
-        if (c1->base_component.container->destroy) {
-          destroy_collidable(self, i);
+        if (obj1->destroy) {
+          sparse_array_remove_at(self->game_objects, i);
           break;
         }
-        if (c2->base_component.container->destroy) {
-          destroy_collidable(self, j);
+        if (obj2->destroy) {
+          sparse_array_remove_at(self->game_objects, j);
           continue;
         }
       }
@@ -149,15 +128,6 @@ void game_world_update(GameWorld *self, double dt) {
 
 void game_world_add_object(GameWorld *self, GameObject *object) {
   sparse_array_add(self->game_objects, object);
-}
-
-void game_world_add_collidable(GameWorld *self,
-                               CollidableComponent *collidable) {
-  GameObject *object = collidable->base_component.container;
-  int *index = malloc(sizeof(*index));
-  *index = sparse_array_add(self->game_objects, object);
-  sparse_array_add(self->collidables, collidable);
-  sparse_array_add(self->indices, index);
 }
 
 void game_world_render(GameWorld *self) {
@@ -190,13 +160,10 @@ void game_world_apply(GameWorld *self, const char *tag, GameObject *user,
                       float radius,
                       void (*fn)(GameWorld *world, GameObject *obj,
                                  GameObject *target)) {
-  GameObject *object;
-  SPARSE_ARRAY_FOREACH(CollidableComponent *, collidable, self->collidables, {
-    object = collidable->base_component.container;
-    if (strcmp(object->tag, tag) == 0 &&
-        vec3_within_dist(collidable->bounding_box.center, user->position,
-                         radius)) {
-      fn(self, user, object);
+  SPARSE_ARRAY_FOREACH(GameObject *, obj, self->game_objects, {
+    if (strcmp(obj->tag, tag) == 0 &&
+        vec3_within_dist(obj->position, user->position, radius)) {
+      fn(self, user, obj);
     }
   })
 }

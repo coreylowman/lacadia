@@ -27,10 +27,6 @@ typedef struct GameWorld {
 
   SparseArray *game_objects; // SparseArray<GameObject *>
 
-  SparseArray *collidables; // SparseArray<CollidableComponent *>
-  // the ith element is the index in spells/enemies of the ith collidable
-  SparseArray *indices; // SparseArray<int *>
-
   Renderer *renderer;
 
   // matrix for converting world to screen
@@ -48,7 +44,6 @@ void game_world_free(GameWorld *self);
 GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag);
 
 void game_world_add_object(GameWorld *self, GameObject *object);
-void game_world_add_collidable(GameWorld *self, CollidableComponent *object);
 
 void game_world_update(GameWorld *self, double dt);
 

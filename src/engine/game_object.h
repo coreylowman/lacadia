@@ -1,6 +1,8 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
+#define MAX_COMPONENTS 32
+
 #include "engine/util/vec3.h"
 #include "engine/util/renderer.h"
 
@@ -24,8 +26,9 @@ struct GameObject {
   Vec3 position;
   Vec3 direction;
 
+  int collidable_index;
   int num_components;
-  Component **components;
+  Component *components[MAX_COMPONENTS];
 
   // callbacks to update and render passed into the init function.
   GameObjectUpdateCallback on_update;
@@ -44,7 +47,8 @@ GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectFreeCallback on_free);
 float game_object_get_y_rotation(GameObject *self);
 
-void game_object_alloc_components(GameObject *self, int num_components);
+Component *game_object_add_component(GameObject *self, Component *component);
+Component *game_object_add_collidable(GameObject *self, CollidableComponent *collidable);
 
 void game_object_rotate_by(GameObject *self, float radians);
 
