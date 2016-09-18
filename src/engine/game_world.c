@@ -94,9 +94,8 @@ void game_world_update(GameWorld *self, double dt) {
 
   if (!camera_is_following(self->camera))
     camera_handle_inputs(&self->camera, dt, self->inputs);
-  else {
+  else
     camera_follow(&self->camera, dt, self->inputs);
-  }
 
   self->dt = dt;
 

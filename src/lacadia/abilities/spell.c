@@ -15,10 +15,10 @@ Spell *spell_new(GameWorld *world, GameObject *user, const char *asset_name,
       &self->base_object, asset_name, world->renderer);
   self->base_object.components[1] = (Component *)collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id), on_collide);
-  self->collidable->is_colliding = spell_is_colliding;
+      game_world_get_model_obb(world, ((RenderableComponent *)self->base_object.components[0])->model_id), on_collide);
   self->renderable = (RenderableComponent *)self->base_object.components[0];
   self->collidable = (CollidableComponent *)self->base_object.components[1];
+  self->collidable->is_colliding = spell_is_colliding;
 
   strcpy(self->caster_tag, user->tag);
 

@@ -21,7 +21,7 @@ static Spell *fireball_new(GameWorld *world, GameObject *user) {
   Spell *self = spell_new(world, user, "./assets/fireball", on_collide);
 
   self->base_object.position = vec3_add(user->position, user->direction);
-  self->base_object.position.y += 5;
+  self->base_object.position.y += 2;
   self->base_object.direction = user->direction;
   self->speed = 30.0;
 

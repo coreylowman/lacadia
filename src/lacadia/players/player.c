@@ -23,7 +23,7 @@ Player *player_new(GameWorld *world, const char *asset_name) {
       &self->base_object, asset_name, world->renderer);
   self->base_object.components[2] = (Component *)collidable_component_new(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id),
+      game_world_get_model_obb(world, ((RenderableComponent *)self->base_object.components[1])->model_id),
       player_on_collide);
 
   self->affectable = (AffectableComponent *)self->base_object.components[0];
