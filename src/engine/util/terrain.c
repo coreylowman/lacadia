@@ -116,11 +116,9 @@ static void terrain_vertex_push(ArrayList_tv *arr, Quad q, Vec3 n) {
   array_list_push_tv(arr, vs[3]);
 }
 
-// todo:
-// to optimize:
-//-since there are only 5 possible normals (since its a cube with no rotation),
-// instead of passing a normal, pass an index (0-4) into a normal array in the
-// shader
+// todo
+// change this to generate a triangle mesh instead of a quad mesh
+// change this to generate different colors for different heights (e.g. want sand at anything near or below starting hiehgt)
 
 Terrain terrain_new() {
   Terrain self;
@@ -181,7 +179,7 @@ void terrain_regen(Terrain *self) {
       }
 
       height_map[i][j] *= height;
-      height_map[i][j] =
+	  height_map[i][j] =
           block_dimensions.y * ((int)(height_map[i][j]) + start.y);
       height_map[i][j] += terrain_offset.y;
     }

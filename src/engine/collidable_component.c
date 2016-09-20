@@ -23,7 +23,7 @@ CollidableComponent collidable_component_init(GameObject *container,
                                               OnCollideCallback on_collide) {
   CollidableComponent self;
 
-  self.base_component = component_init(container, on_update, on_render, NULL);
+  self.base_component = component_init(container, on_update, NULL, NULL);
   self.bounding_box = bounding_box;
   self.is_colliding = collidable_component_is_colliding;
   self.on_collide = on_collide;

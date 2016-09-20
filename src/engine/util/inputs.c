@@ -175,4 +175,7 @@ void inputs_reset_frame(Inputs *i) {
   i->mouse_vel[0] = 0;
   i->mouse_vel[1] = 0;
   i->scroll_amount = 0;
+
+  i->mouse_down_start_pos[0] = i->mouse_pos[0];
+  i->mouse_down_start_pos[1] = i->mouse_pos[1];
 }

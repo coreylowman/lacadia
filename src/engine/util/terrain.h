@@ -3,6 +3,7 @@
 
 #include "vec3.h"
 
+// todo change this to use a color value instead of texture
 typedef struct TerrainVertex {
   float position[3];
   float normal[3];
