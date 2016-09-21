@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <float.h>
 #include <GL/glew.h>
 #include "terrain.h"
 #include "simplex_noise.h"
@@ -8,37 +9,10 @@
 #include "engine/util/array_list.h"
 
 #define OCTAVES 5
-#define JAGGEDNESS 2.0
-#define FREQUENCY 2.0
-#define FLATTENING 3.0
+#define JAGGEDNESS 1.5
+#define DETAIL 2.0
+#define FLATTENING 2.5
 #define RANDOM_TERRAIN
-
-/*
-#define TERRAIN_SIZE 64
-#define OCTAVES 3
-#define JAGGEDNESS 0.5
-#define DAMPENING 0.5
-
-29.88 85.65
-15.729239 98.638878
-
-*/
-
-/*
-oct: 5
-jagg: 1.0
-damp: 0.2
-91.235085 97.946098
-5.478073 9.646901
-*/
-
-/*
-oct: 5
-jagg: 0.5
-damp: 0.2
-25.345623 65.031891
-88.967560 49.69634
-*/
 
 static float sx = 15.729239, sy = 98.638878;
 
@@ -68,11 +42,6 @@ static void terrain_vertex_unload(TerrainVertex *arr, Tri q, Vec3 n, Vec3 color)
 	arr[i].color[2] = color.z;
   }
 }
-
-// todo
-// change this to generate a triangle mesh instead of a quad mesh
-// change this to generate different colors for different heights (e.g. want sand at anything near or below starting hiehgt)
-// change this to accept a function to call to calculate color of triangle
 
 Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height, int length, int unit_size) {
   Terrain self;
@@ -106,7 +75,7 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   float octave_ivals[OCTAVES];
 
   for (i = 0; i < OCTAVES; i++) {
-	  octave_vals[i] = pow(FREQUENCY, i);
+	  octave_vals[i] = pow(DETAIL, i);
     octave_ivals[i] = 1.0 / octave_vals[i];
   }
 
@@ -117,41 +86,51 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   printf("%f %f\n", sx, sy);
 #endif
 
+  int ind;
   float max_height = 0;
+  float min_height = FLT_MAX;
   // compute the height for the terrain
   for (i = 0; i < self->width; i++) {
     for (j = 0; j < self->length; j++) {
+      ind = i + self->width * j;
       tx = (JAGGEDNESS * i) / self->width;
       tz = (JAGGEDNESS * j) / self->length;
 
-      self->height_map[i + self->width * j] = 0;
+      self->height_map[ind] = 0;
 
       for (k = 0; k < OCTAVES; k++) {
-		  self->height_map[i + self->width * j] +=
+		  self->height_map[ind] +=
             octave_ivals[k] *
             simplex_noise(sx + octave_vals[k] * tx, sy + octave_vals[k] * tz);
       }
 
-	  if (self->height_map[i + self->width * j] > max_height) {
-		  max_height = self->height_map[i + self->width * j];
-	  }
+  	  if (self->height_map[ind] > max_height) {
+  		  max_height = self->height_map[ind];
+  	  }
+
+      if (self->height_map[ind] < min_height) {
+        min_height = self->height_map[ind];
+      }
     }
   }
 
-  // normalize heights to [0, height]
+  // normalize [min_height, max_height] to [0, height]
+  float diff = max_height - min_height;
   for (i = 0; i < self->width; i++) {
 	  for (j = 0; j < self->length; j++) {
-		  self->height_map[i + self->width * j] /= max_height;
+      ind = i + self->width * j;
 
-		  self->height_map[i + self->width * j] = powf(self->height_map[i + self->width * j], FLATTENING);
+      self->height_map[ind] -= min_height;
+		  self->height_map[ind] /= diff;
 
-		  self->height_map[i + self->width * j] *= self->height;
+		  self->height_map[ind] = powf(self->height_map[ind], FLATTENING);
+
+		  self->height_map[ind] *= self->height;
 	  }
   }
 
   // create mesh
   Vec3 brown = VEC3(156.0f / 255.0f, 143.0f / 255.0f, 124.0f / 255.0f);
-  int ind;
   Vec3 normal;
   Tri q;
   float ti[2], tj[2];

@@ -46,6 +46,14 @@ Vec3 vec3_rotate_around_y(Vec3 vec, float degrees) {
   return vec3_from_3f(x, vec.y, z);
 }
 
+Vec3 vec3_mix(Vec3 v1, Vec3 v2, float factor) {
+  Vec3 out;
+  out.x = v1.x * factor + v2.x * (1 - factor);
+  out.y = v1.y * factor + v2.y * (1 - factor);
+  out.z = v1.z * factor + v2.z * (1 - factor);
+  return out;
+}
+
 float vec3_length(Vec3 vec) {
   return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }

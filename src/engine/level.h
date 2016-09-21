@@ -14,6 +14,8 @@ typedef struct Level {
   Terrain terrain;
 } Level;
 
+void level_terrain_callback(TerrainVertex *vert);
+
 Level *level_new(GameWorld *world);
 void level_free(Level *self);
 
