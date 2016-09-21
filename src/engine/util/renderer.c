@@ -28,8 +28,12 @@ static int load_png_data(const char *filename, unsigned char **image,
   return 1;
 }
 
-static void render_text(Renderer *self);
+
 static void init_text(Renderer *self);
+static void render_text(Renderer *self);
+
+static void init_terrain(Renderer *self);
+static void render_terrain(Renderer *self, Mat4 proj, Mat4 view);
 
 Renderer *renderer_new() {
   Renderer *self = malloc(sizeof(*self));
@@ -141,81 +145,7 @@ Renderer *renderer_new() {
   glBindVertexArray(0);
 
   init_text(self);
-
-  //
-  // TERRAINS
-  //
-  shader_init(&self->terrain_shader, "./shaders/terrain_vert.glsl",
-              "./shaders/terrain_frag.glsl");
-  self->num_terrains = 0;
-  glGenVertexArrays(1, &self->terrain_vao);
-  glBindVertexArray(self->terrain_vao);
-
-  glGenBuffers(1, &self->terrain_vbo);
-
-  // vertex data buffer object
-  glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex),
-                        (const GLvoid *)0);
-  glEnableVertexAttribArray(0);
-
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex),
-                        (const GLvoid *)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex),
-                        (const GLvoid *)(6 * sizeof(float)));
-  glEnableVertexAttribArray(2);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-
-  unsigned png_width, png_height;
-
-  // size should be 256x256
-  if (!load_png_data("./assets/grass.2d.png", &self->textures[0], &png_width,
-                     &png_height)) {
-    printf("error: cannot load \"./assets/grass.2d.png\"\n");
-  }
-
-  if (!load_png_data("./assets/grass_dirt.2d.png", &self->textures[1],
-                     &png_width, &png_height)) {
-    printf("error: cannot load \"./assets/grass_dirt.2d.png\"\n");
-  }
-
-  if (!load_png_data("./assets/dirt.2d.png", &self->textures[2], &png_width,
-                     &png_height)) {
-    printf("error: cannot load \"./assets/dirt.2d.png\"\n");
-  }
-
-  glGenTextures(3, &self->texture_ids[0]);
-
-  glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, self->textures[0]);
-
-  glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, self->textures[1]);
-
-  glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, self->textures[2]);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
+  init_terrain(self);
 
   return self;
 }
@@ -301,15 +231,38 @@ static void init_text(Renderer *self) {
   FT_Done_FreeType(ft_library);
 }
 
+static void init_terrain(Renderer *self) {
+	shader_init(&self->terrain_shader, "./shaders/terrain_vert.glsl",
+		"./shaders/terrain_frag.glsl");
+	self->num_terrains = 0;
+	glGenVertexArrays(1, &self->terrain_vao);
+	glBindVertexArray(self->terrain_vao);
+
+	glGenBuffers(1, &self->terrain_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex),
+		(const GLvoid *)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex),
+		(const GLvoid *)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex),
+		(const GLvoid *)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 void renderer_free(Renderer *self) {
   int i;
   for (i = 0; i < self->num_models; i++) {
     obj_model_free(self->models[i]);
     array_list_free_m4(self->model_model_matrices[i]);
   }
-  free(self->textures[0]);
-  free(self->textures[1]);
-  free(self->textures[2]);
   free(self);
 }
 
@@ -403,51 +356,7 @@ void renderer_render(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix) {
 
   self->num_lines = 0;
 
-  // render terrain
-  glUseProgram(self->terrain_shader.program);
-  glUniformMatrix4fv(self->terrain_shader.projection_matrix_location, 1,
-                     GL_TRUE, &projection_matrix.data[0]);
-  glUniformMatrix4fv(self->terrain_shader.view_matrix_location, 1, GL_TRUE,
-                     &view_matrix.data[0]);
-  glUniform3f(self->terrain_shader.light_position_location, light_position.x,
-              light_position.y, light_position.z);
-
-  glUniform1i(self->terrain_shader.texture_location, 0);
-  glActiveTexture(GL_TEXTURE0);
-
-  Terrain t;
-  for (i = 0; i < self->num_terrains; i++) {
-    t = self->terrains[i];
-    glBindVertexArray(self->terrain_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
-
-    glBufferData(GL_ARRAY_BUFFER, t.num_grass_vertices * sizeof(TerrainVertex),
-                 &t.grass_vertices[0], GL_DYNAMIC_DRAW);
-    glBindTexture(GL_TEXTURE_2D, self->texture_ids[0]);
-    glDrawArrays(GL_QUADS, 0, t.num_grass_vertices);
-
-    if (t.num_grass_dirt_vertices > 0) {
-      glBufferData(GL_ARRAY_BUFFER,
-                   t.num_grass_dirt_vertices * sizeof(TerrainVertex),
-                   &t.grass_dirt_vertices[0], GL_DYNAMIC_DRAW);
-      glBindTexture(GL_TEXTURE_2D, self->texture_ids[1]);
-      glDrawArrays(GL_QUADS, 0, t.num_grass_dirt_vertices);
-    }
-
-    if (t.num_dirt_vertices > 0) {
-      glBufferData(GL_ARRAY_BUFFER, t.num_dirt_vertices * sizeof(TerrainVertex),
-                   &t.dirt_vertices[0], GL_DYNAMIC_DRAW);
-      glBindTexture(GL_TEXTURE_2D, self->texture_ids[2]);
-      glDrawArrays(GL_QUADS, 0, t.num_dirt_vertices);
-    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-  }
-
-  self->num_terrains = 0;
-
-  // render text
+  render_terrain(self, projection_matrix, view_matrix);
   render_text(self);
 }
 
@@ -496,6 +405,33 @@ void renderer_render_line(Renderer *self, Line line) {
   } else {
     printf("error! too many lines\n");
   }
+}
+
+static void render_terrain(Renderer *self, Mat4 projection_matrix, Mat4 view_matrix) {
+	glUseProgram(self->terrain_shader.program);
+	glUniformMatrix4fv(self->terrain_shader.projection_matrix_location, 1,
+		GL_TRUE, &projection_matrix.data[0]);
+	glUniformMatrix4fv(self->terrain_shader.view_matrix_location, 1, GL_TRUE,
+		&view_matrix.data[0]);
+	glUniform3f(self->terrain_shader.light_position_location, light_position.x,
+		light_position.y, light_position.z);
+
+	int i;
+	Terrain t;
+	for (i = 0; i < self->num_terrains; i++) {
+		t = self->terrains[i];
+		glBindVertexArray(self->terrain_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, self->terrain_vbo);
+
+		glBufferData(GL_ARRAY_BUFFER, t.num_vertices * sizeof(TerrainVertex),
+			&t.vertices[0], GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_TRIANGLES, 0, t.num_vertices);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
+	self->num_terrains = 0;
 }
 
 void renderer_render_terrain(Renderer *self, Terrain terrain) {

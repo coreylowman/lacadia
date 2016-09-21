@@ -4,6 +4,10 @@
 #include "engine/util/mat4.h"
 #include "engine/util/terrain.h"
 
+void terrain_vert_callback(TerrainVertex *vert) {
+
+}
+
 Level *level_new(GameWorld *world) {
   Level *self = malloc(sizeof(*self));
 
@@ -27,7 +31,7 @@ Level *level_new(GameWorld *world) {
     game_world_add_object(world, (GameObject *)walls[i]);
   }
 
-  self->terrain = terrain_new();
+  self->terrain = terrain_new(terrain_vert_callback, 100, 50, 100, 5);
 
   return self;
 }

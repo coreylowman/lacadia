@@ -7,11 +7,11 @@
 #include "random.h"
 #include "engine/util/array_list.h"
 
-#define TERRAIN_SIZE 128
-#define OCTAVES 3
-#define JAGGEDNESS 0.5
-#define DAMPENING 0.5
-//#define RANDOM_TERRAIN
+#define OCTAVES 5
+#define JAGGEDNESS 2.0
+#define FREQUENCY 2.0
+#define FLATTENING 3.0
+#define RANDOM_TERRAIN
 
 /*
 #define TERRAIN_SIZE 64
@@ -40,29 +40,21 @@ damp: 0.2
 88.967560 49.69634
 */
 
-static float height_map[TERRAIN_SIZE][TERRAIN_SIZE];
-
-static float height = TERRAIN_SIZE * 0.25;
-static Vec3 start = {
-    .data = {-TERRAIN_SIZE * 0.5, -TERRAIN_SIZE * 0.125, -TERRAIN_SIZE * 0.5}};
-static Vec3 block_dimensions = {.data = {5, 5, 5}};
-static Vec3 terrain_offset = {.data = {-2.5, -30, -17.5}};
-
 static float sx = 15.729239, sy = 98.638878;
 
-typedef struct { Vec3 p[4]; } Quad;
+typedef struct { Vec3 p[3]; } Tri;
 
-static Vec3 quad_normal(Quad q) {
+static Vec3 tri_normal(Tri q) {
   Vec3 e1 = vec3_sub(q.p[1], q.p[0]);
-  Vec3 e2 = vec3_sub(q.p[3], q.p[0]);
+  Vec3 e2 = vec3_sub(q.p[2], q.p[0]);
   Vec3 n = vec3_cross(e2, e1);
   vec3_normalize(&n);
   return n;
 }
 
-static void terrain_vertex_unload(TerrainVertex *arr, Quad q, Vec3 n) {
+static void terrain_vertex_unload(TerrainVertex *arr, Tri q, Vec3 n, Vec3 color) {
   int i;
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < 3; i++) {
     arr[i].position[0] = q.p[i].x;
     arr[i].position[1] = q.p[i].y;
     arr[i].position[2] = q.p[i].z;
@@ -70,90 +62,51 @@ static void terrain_vertex_unload(TerrainVertex *arr, Quad q, Vec3 n) {
     arr[i].normal[0] = n.x;
     arr[i].normal[1] = n.y;
     arr[i].normal[2] = n.z;
+
+	arr[i].color[0] = color.x;
+	arr[i].color[1] = color.y;
+	arr[i].color[2] = color.z;
   }
-
-  arr[0].texture[0] = 0;
-  arr[0].texture[1] = 1;
-
-  arr[1].texture[0] = 0;
-  arr[1].texture[1] = 0;
-
-  arr[2].texture[0] = 1;
-  arr[2].texture[1] = 0;
-
-  arr[3].texture[0] = 1;
-  arr[3].texture[1] = 1;
-}
-
-static void terrain_vertex_push(ArrayList_tv *arr, Quad q, Vec3 n) {
-  TerrainVertex vs[4];
-  int i;
-  for (i = 0; i < 4; i++) {
-    vs[i].position[0] = q.p[i].x;
-    vs[i].position[1] = q.p[i].y;
-    vs[i].position[2] = q.p[i].z;
-
-    vs[i].normal[0] = n.x;
-    vs[i].normal[1] = n.y;
-    vs[i].normal[2] = n.z;
-  }
-
-  vs[0].texture[0] = 0;
-  vs[0].texture[1] = 1;
-
-  vs[1].texture[0] = 0;
-  vs[1].texture[1] = 0;
-
-  vs[2].texture[0] = 1;
-  vs[2].texture[1] = 0;
-
-  vs[3].texture[0] = 1;
-  vs[3].texture[1] = 1;
-
-  array_list_push_tv(arr, vs[0]);
-  array_list_push_tv(arr, vs[1]);
-  array_list_push_tv(arr, vs[2]);
-  array_list_push_tv(arr, vs[3]);
 }
 
 // todo
 // change this to generate a triangle mesh instead of a quad mesh
 // change this to generate different colors for different heights (e.g. want sand at anything near or below starting hiehgt)
+// change this to accept a function to call to calculate color of triangle
 
-Terrain terrain_new() {
+Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height, int length, int unit_size) {
   Terrain self;
 
-  self.num_grass_vertices = 0;
-  self.grass_vertices = NULL;
+  self.unit_size = unit_size;
+  self.width = width;
+  self.height = height;
+  self.length = length;
 
-  self.num_grass_dirt_vertices = 0;
-  self.grass_dirt_vertices = NULL;
+  self.height_map = malloc(width * length * sizeof(float));
 
-  self.num_dirt_vertices = 0;
-  self.dirt_vertices = NULL;
-
-  terrain_regen(&self);
+  self.num_vertices = 0;
+  self.vertices = NULL;
+  
+  terrain_regen(&self, vertexCallback);
 
   return self;
 }
 
-void terrain_regen(Terrain *self) {
-  free(self->grass_vertices);
-  free(self->grass_dirt_vertices);
-  free(self->dirt_vertices);
+#define VEC3(_x,_y,_z) (Vec3) { .x = _x, .y = _y, .z = _z }
 
-  self->num_grass_vertices = 4 * TERRAIN_SIZE * TERRAIN_SIZE;
-  self->grass_vertices =
-      malloc(self->num_grass_vertices * sizeof(*(self->grass_vertices)));
+void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
+  free(self->vertices);
+
+  self->num_vertices = 2 * 3 * self->width * self->length;
+  self->vertices = malloc(self->num_vertices * sizeof(*(self->vertices)));
 
   int i, j, k;
   float tx, tz;
   float octave_vals[OCTAVES];
   float octave_ivals[OCTAVES];
-  float inv_damp = 1.0 / DAMPENING;
 
   for (i = 0; i < OCTAVES; i++) {
-    octave_vals[i] = pow(inv_damp, i);
+	  octave_vals[i] = pow(FREQUENCY, i);
     octave_ivals[i] = 1.0 / octave_vals[i];
   }
 
@@ -164,124 +117,92 @@ void terrain_regen(Terrain *self) {
   printf("%f %f\n", sx, sy);
 #endif
 
+  float max_height = 0;
   // compute the height for the terrain
-  for (i = 0; i < TERRAIN_SIZE; i++) {
-    for (j = 0; j < TERRAIN_SIZE; j++) {
-      tx = JAGGEDNESS * i / TERRAIN_SIZE;
-      tz = JAGGEDNESS * j / TERRAIN_SIZE;
+  for (i = 0; i < self->width; i++) {
+    for (j = 0; j < self->length; j++) {
+      tx = (JAGGEDNESS * i) / self->width;
+      tz = (JAGGEDNESS * j) / self->length;
 
-      height_map[i][j] = 0;
+      self->height_map[i + self->width * j] = 0;
 
       for (k = 0; k < OCTAVES; k++) {
-        height_map[i][j] +=
+		  self->height_map[i + self->width * j] +=
             octave_ivals[k] *
             simplex_noise(sx + octave_vals[k] * tx, sy + octave_vals[k] * tz);
       }
 
-      height_map[i][j] *= height;
-	  height_map[i][j] =
-          block_dimensions.y * ((int)(height_map[i][j]) + start.y);
-      height_map[i][j] += terrain_offset.y;
+	  if (self->height_map[i + self->width * j] > max_height) {
+		  max_height = self->height_map[i + self->width * j];
+	  }
     }
   }
 
-  // build the mesh for the terrain
-  ArrayList_tv *extra_vertices = array_list_new_tv();
+  // normalize heights to [0, height]
+  for (i = 0; i < self->width; i++) {
+	  for (j = 0; j < self->length; j++) {
+		  self->height_map[i + self->width * j] /= max_height;
 
+		  self->height_map[i + self->width * j] = powf(self->height_map[i + self->width * j], FLATTENING);
+
+		  self->height_map[i + self->width * j] *= self->height;
+	  }
+  }
+
+  // create mesh
+  Vec3 brown = VEC3(156.0f / 255.0f, 143.0f / 255.0f, 124.0f / 255.0f);
   int ind;
   Vec3 normal;
-  Quad q;
+  Tri q;
   float ti[2], tj[2];
-  float h[2];
-  for (i = 0; i < TERRAIN_SIZE; i++) {
-    for (j = 0; j < TERRAIN_SIZE; j++) {
-      ind = 4 * (i + j * TERRAIN_SIZE);
+  float h[4] = { 0 };
+  for (i = 0; i < self->width; i++) {
+    for (j = 0; j < self->length; j++) {
+      ind = 2 * 3 * (i + j * self->width);
 
-      h[0] = height_map[i][j];
+	  // i,j
+	  h[0] = self->height_map[i + self->width * j];
+	  // i+1,j
+	  h[1] = i == self->width - 1 ? 0 : self->height_map[i + 1 + self->width * j];
+	  // i, j+1
+	  h[2] = j == self->length - 1 ? 0 : self->height_map[i + self->width * (j + 1)];
+	  // i+1,j+1
+	  if (i == self->width - 1 || j == self->length - 1) {
+		  h[3] = 0;
+	  } else {
+		  h[3] = self->height_map[i + 1 + self->width * (j + 1)];
+	  }
 
       // x positions
-      ti[0] = (start.x + i) * block_dimensions.x + terrain_offset.x;
-      ti[1] = ti[0] + block_dimensions.x;
+      ti[0] = i * self->unit_size;
+      ti[1] = ti[0] + self->unit_size;
 
       // z positions
-      tj[0] = (start.z + j) * block_dimensions.z + terrain_offset.z;
-      tj[1] = tj[0] + block_dimensions.z;
+	  tj[0] = j * self->unit_size;
+      tj[1] = tj[0] + self->unit_size;
 
-      q.p[0] = vec3_from_3f(ti[0], h[0], tj[0]);
-      q.p[1] = vec3_from_3f(ti[1], h[0], tj[0]);
-      q.p[2] = vec3_from_3f(ti[1], h[0], tj[1]);
-      q.p[3] = vec3_from_3f(ti[0], h[0], tj[1]);
-      normal = quad_normal(q);
-      terrain_vertex_unload(self->grass_vertices + ind, q, normal);
+      q.p[0] = VEC3(ti[0], h[0], tj[0]);
+      q.p[1] = VEC3(ti[1], h[1], tj[0]);
+      q.p[2] = VEC3(ti[1], h[3], tj[1]);
+      normal = tri_normal(q);
+      terrain_vertex_unload(self->vertices + ind, q, normal, brown);
 
-      if (i < TERRAIN_SIZE - 1) {
-        if (height_map[i][j] < height_map[i + 1][j]) {
-          // at start you are facing -z
-          // with +x to the right
-
-          // current spot is lower than place to the right
-          h[0] = height_map[i][j];
-          h[1] = height_map[i + 1][j];
-
-          q.p[0] = vec3_from_3f(ti[1], h[0], tj[0]);
-          q.p[1] = vec3_from_3f(ti[1], h[1], tj[0]);
-          q.p[2] = vec3_from_3f(ti[1], h[1], tj[1]);
-          q.p[3] = vec3_from_3f(ti[1], h[0], tj[1]);
-          normal = quad_normal(q);
-          terrain_vertex_push(extra_vertices, q, normal);
-        } else if (height_map[i][j] > height_map[i + 1][j]) {
-          // current spot is higher than place to the right
-          h[0] = height_map[i + 1][j];
-          h[1] = height_map[i][j];
-
-          q.p[0] = vec3_from_3f(ti[1], h[0], tj[1]);
-          q.p[1] = vec3_from_3f(ti[1], h[1], tj[1]);
-          q.p[2] = vec3_from_3f(ti[1], h[1], tj[0]);
-          q.p[3] = vec3_from_3f(ti[1], h[0], tj[0]);
-          normal = quad_normal(q);
-          terrain_vertex_push(extra_vertices, q, normal);
-        }
-      }
-
-      if (j < TERRAIN_SIZE - 1) {
-        if (height_map[i][j] < height_map[i][j + 1]) {
-          // at start you are facing -z
-          // with +x to the right
-
-          // current spot is lower than place behind
-          h[0] = height_map[i][j];
-          h[1] = height_map[i][j + 1];
-
-          q.p[0] = vec3_from_3f(ti[1], h[0], tj[1]);
-          q.p[1] = vec3_from_3f(ti[1], h[1], tj[1]);
-          q.p[2] = vec3_from_3f(ti[0], h[1], tj[1]);
-          q.p[3] = vec3_from_3f(ti[0], h[0], tj[1]);
-          normal = quad_normal(q);
-          terrain_vertex_push(extra_vertices, q, normal);
-        } else if (height_map[i][j] > height_map[i][j + 1]) {
-          // current spot is higher than place behind
-          h[0] = height_map[i][j + 1];
-          h[1] = height_map[i][j];
-
-          q.p[0] = vec3_from_3f(ti[0], h[0], tj[1]);
-          q.p[1] = vec3_from_3f(ti[0], h[1], tj[1]);
-          q.p[2] = vec3_from_3f(ti[1], h[1], tj[1]);
-          q.p[3] = vec3_from_3f(ti[1], h[0], tj[1]);
-          normal = quad_normal(q);
-          terrain_vertex_push(extra_vertices, q, normal);
-        }
-      }
+	  q.p[0] = VEC3(ti[0], h[0], tj[0]);
+	  q.p[1] = VEC3(ti[1], h[3], tj[1]);
+	  q.p[2] = VEC3(ti[0], h[2], tj[1]);
+	  normal = tri_normal(q);
+	  terrain_vertex_unload(self->vertices + ind + 3, q, normal, brown);
+	  
+	  if (vertexCallback != NULL) {
+		  for (k = 0; k < 6; k++) {
+			  vertexCallback(self->vertices + ind + k);
+		  }
+	  }
     }
   }
-
-  self->num_grass_dirt_vertices = extra_vertices->length;
-  self->grass_dirt_vertices = extra_vertices->data;
-  extra_vertices->data = NULL;
-  array_list_free_tv(extra_vertices);
 }
 
 void terrain_free(Terrain self) {
-  free(self.grass_vertices);
-  free(self.grass_dirt_vertices);
-  free(self.dirt_vertices);
+	free(self.height_map);
+	free(self.vertices);
 }

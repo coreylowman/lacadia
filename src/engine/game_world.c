@@ -72,7 +72,7 @@ void game_world_update(GameWorld *self, double dt) {
   // }
 
   if (self->inputs.r_pressed) {
-    terrain_regen(&self->level->terrain);
+    terrain_regen(&self->level->terrain, NULL);
   }
 
   if (!camera_is_following(self->camera))
