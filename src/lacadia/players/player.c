@@ -99,7 +99,7 @@ void player_render(GameObject *obj, Renderer *renderer) {
     ability_square.height =
         max_height *
         (1 - self->abilities[i].cooldown / self->abilities[i].max_cooldown);
-    renderer_render_rect(renderer, ability_square, COLOR_RED);
+    // renderer_render_rect(renderer, ability_square, COLOR_RED);
     ability_square.x += width + spacing;
   }
 }

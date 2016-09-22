@@ -2,7 +2,7 @@
 #include "lacadia/players/player.h"
 #include "soulburn.h"
 #include "engine/util/random.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 #include "lacadia/effects/affectable_component.h"
 
 static void soulburn_on_apply(Effect *self, AffectableComponent *affectable);

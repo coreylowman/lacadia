@@ -4,13 +4,12 @@
 #include "engine/util/array_list.h"
 #include "engine/util/sparse_array.h"
 #include "engine/util/object_model.h"
-#include "engine/util/shader.h"
 #include "engine/util/obb.h"
 #include "engine/util/rect.h"
 #include "engine/util/mat4.h"
-#include "engine/util/renderer.h"
 #include "engine/util/camera.h"
 #include "engine/util/inputs.h"
+#include "engine/graphics/renderer.h"
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;

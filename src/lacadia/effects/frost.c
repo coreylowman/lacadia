@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "frost.h"
 #include "engine/util/random.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 #include "lacadia/enemies/enemy.h"
 #include "lacadia/effects/affectable_component.h"
 #include "permafrost.h"

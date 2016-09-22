@@ -106,14 +106,14 @@ void affectable_component_render(Component *component, Renderer *renderer) {
   healthbar.y = screen_pos.y;
   healthbar.width = .1 * self->health / self->max_health;
   healthbar.height = 0.01;
-  renderer_render_rect(renderer, healthbar, COLOR_RED);
+  // renderer_render_rect(renderer, healthbar, COLOR_RED);
 
   Rect2 background;
   background.x = screen_pos.x - 0.05;
   background.y = screen_pos.y;
   background.width = .1;
   background.height = 0.01;
-  renderer_render_rect(renderer, background, COLOR_WHITE);
+  // renderer_render_rect(renderer, background, COLOR_WHITE);
 }
 
 void affectable_component_free(void *component) {

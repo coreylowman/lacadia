@@ -4,7 +4,7 @@
 #define MAX_COMPONENTS 32
 
 #include "engine/util/vec3.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 typedef struct GameObject GameObject;
 

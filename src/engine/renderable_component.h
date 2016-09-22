@@ -2,7 +2,7 @@
 #define RENDERABLE_COMPONENT_H
 
 #include "component.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 #include "engine/util/mat4.h"
 
 typedef struct RenderableComponent {

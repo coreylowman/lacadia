@@ -13,7 +13,7 @@
 
 #include "engine/util/inputs.h"
 #include "engine/util/camera.h"
-#include "engine/util/shader.h"
+#include "engine/graphics/shader.h"
 #include "engine/util/random.h"
 #include "engine/game_world.h"
 #include "players/player.h"

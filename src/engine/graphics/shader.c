@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <stdio.h>
 #include "shader.h"
+#include "engine/util/camera.h"
 
 static void print_shader_info_log(GLuint shader) {
   int max_length = 2048;
@@ -42,7 +43,8 @@ static int parse_file_into_str(const char *file_name, char *shader_str,
 }
 
 int shader_init(Shader *shader, const char *vertex_shader_loc,
-                const char *fragment_shader_loc) {
+                const char *fragment_shader_loc, ShaderPreRenderCallback on_pre_render,
+                ShaderRenderCallback on_render, ShaderPostRenderCallback on_post_render) {
   int params = -1;
   char vertex_shader_source[1024 * 256];
   char fragment_shader_source[1024 * 256];
@@ -86,13 +88,25 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
     return 1;
   }
 
-  shader->projection_matrix_location =
-      glGetUniformLocation(shader->program, "projection_matrix");
-  shader->view_matrix_location =
-      glGetUniformLocation(shader->program, "view_matrix");
-  shader->light_position_location =
-      glGetUniformLocation(shader->program, "light_position");
-  shader->texture_location = glGetUniformLocation(shader->program, "tex");
+  shader->on_pre_render = on_pre_render;
+  shader->on_render = on_render;
+  shader->on_post_render = on_post_render;
 
   return 0;
+}
+
+void shader_render(Shader *self, Camera camera) {
+  if(self->on_pre_render != NULL) {
+    self->on_pre_render(self, camera);
+  }
+
+  if (self->on_render != NULL) {
+    self->on_render(self, camera);
+  }
+}
+
+void shader_post_render(Shader *self) {
+  if(self->on_post_render != NULL) {
+    self->on_post_render(self);
+  }
 }

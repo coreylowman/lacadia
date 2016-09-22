@@ -142,9 +142,10 @@ void game_world_render(GameWorld *self) {
                        { game_object_render(obj, self->renderer); })
   level_render(self->level, self->renderer);
 
+  renderer_render_text(self->renderer, "lacadia", 7, (Vec3) {.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
+
   // actually draw stuff
-  renderer_render(self->renderer, self->camera.projection_matrix,
-                  self->camera.view_matrix);
+  renderer_render(self->renderer, self->camera);
 }
 
 int game_world_get_model_id(GameWorld *self, const char *name) {

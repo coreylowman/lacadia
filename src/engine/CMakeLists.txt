@@ -1,4 +1,5 @@
 add_subdirectory(util)
+add_subdirectory(graphics)
 
 list(APPEND ENGINE_SOURCES
     colors.h
@@ -27,5 +28,6 @@ target_include_directories(engine
 
 set(ENGINE_OBJECT_LIBRARIES
     $<TARGET_OBJECTS:util>
+    $<TARGET_OBJECTS:graphics>
     $<TARGET_OBJECTS:engine>
 )

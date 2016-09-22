@@ -13,8 +13,6 @@ list(APPEND UTIL_SOURCES
     rect.h
     sparse_array.c
     sparse_array.h
-    shader.c
-    shader.h
     string_helpers.c
     string_helpers.h
     vec3.c
@@ -28,8 +26,6 @@ list(APPEND UTIL_SOURCES
     simplex_noise.c
     terrain.h
     terrain.c
-    renderer.h
-    renderer.c
 )
 
 add_library(util OBJECT ${UTIL_SOURCES})

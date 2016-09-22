@@ -10,6 +10,7 @@ list(APPEND LACADIA_SOURCES
 
     ${EXTERNAL_OBJECT_LIBRARIES}
     $<TARGET_OBJECTS:util>
+    $<TARGET_OBJECTS:graphics>
     $<TARGET_OBJECTS:engine>
     $<TARGET_OBJECTS:players>
     $<TARGET_OBJECTS:enemies>

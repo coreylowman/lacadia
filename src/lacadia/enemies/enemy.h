@@ -1,7 +1,7 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 #include "engine/game_world.h"
 #include "engine/game_object.h"
 #include "engine/renderable_component.h"

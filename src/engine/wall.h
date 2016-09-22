@@ -6,7 +6,7 @@
 #include "engine/renderable_component.h"
 #include "engine/collidable_component.h"
 #include "engine/util/vec3.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 #define MAX_WALL_LENGTH 32
 

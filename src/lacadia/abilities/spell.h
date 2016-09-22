@@ -5,7 +5,7 @@
 #include "engine/game_object.h"
 #include "engine/collidable_component.h"
 #include "engine/renderable_component.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 typedef struct Spell {
   GameObject base_object;

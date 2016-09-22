@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "burn.h"
 #include "engine/util/random.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 #include "affectable_component.h"
 
 static void burn_on_apply(Effect *self, AffectableComponent *affectable);

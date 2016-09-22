@@ -10,7 +10,7 @@
 #include "lacadia/effects/effect.h"
 #include "engine/util/array_list.h"
 #include "engine/util/inputs.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 typedef struct Player {
   GameObject base_object;

@@ -4,7 +4,7 @@
 #include "game_world.h"
 #include "wall.h"
 #include "engine/util/terrain.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 #define MAX_NUM_WALLS 64
 

@@ -2,7 +2,7 @@
 #define COMPONENT_H
 
 #include "engine/game_object.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 typedef void (*ComponentUpdateCallback)(struct Component *self, double dt);
 typedef void (*ComponentRenderCallback)(struct Component *self,

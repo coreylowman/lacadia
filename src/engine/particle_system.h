@@ -4,7 +4,7 @@
 #include "engine/util/vec3.h"
 #include "engine/renderable_component.h"
 #include "game_world.h"
-#include "engine/util/renderer.h"
+#include "engine/graphics/renderer.h"
 
 #define MAX_PARTICLES 256
 
