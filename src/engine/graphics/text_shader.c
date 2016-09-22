@@ -10,14 +10,15 @@ static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
 TextShader *text_shader_new() {
-    TextShader *self = malloc(sizeof(*self));
+  TextShader *self = malloc(sizeof(*self));
 
-    int result =shader_init(&self->base_shader, "./shaders/text_vert.glsl",
-              "./shaders/text_frag.glsl", pre_render, render, post_render);
-if(result) {
-        printf("Error loading text shader\n");
-        exit(result);
-    }
+  int result =
+      shader_init(&self->base_shader, "./shaders/text_vert.glsl",
+                  "./shaders/text_frag.glsl", pre_render, render, post_render);
+  if (result) {
+    printf("Error loading text shader\n");
+    exit(result);
+  }
 
   glGenVertexArrays(1, &self->vao);
   glBindVertexArray(self->vao);
@@ -90,15 +91,13 @@ if(result) {
   FT_Done_Face(face);
   FT_Done_FreeType(ft_library);
 
-    return self;
+  return self;
 }
 
-void text_shader_free(TextShader *self) {
-	free(self);
-}
+void text_shader_free(TextShader *self) { free(self); }
 
 static void pre_render(Shader *shader, Camera camera) {
-	TextShader *self = (TextShader *)shader;
+  TextShader *self = (TextShader *)shader;
   glUseProgram(self->base_shader.program);
 
   // todo load uniform location in constructor
@@ -107,7 +106,7 @@ static void pre_render(Shader *shader, Camera camera) {
 }
 
 static void render(Shader *shader, Camera camera) {
-	TextShader *self = (TextShader *)shader;
+  TextShader *self = (TextShader *)shader;
   int i;
   for (i = 0; i < 128; i++) {
     if (self->num_character_vertices[i] == 0)
@@ -131,11 +130,11 @@ static void render(Shader *shader, Camera camera) {
 }
 
 static void post_render(Shader *shader) {
-	TextShader *self = (TextShader *)shader;
-    int i;
-    for(i = 0; i < 128;i++) {
-        self->num_character_vertices[i] = 0;
-    }
+  TextShader *self = (TextShader *)shader;
+  int i;
+  for (i = 0; i < 128; i++) {
+    self->num_character_vertices[i] = 0;
+  }
 }
 
 static float vertices[6][4] = {{0, 0, 0.0, 0.0},
@@ -165,7 +164,7 @@ static void fill_vertices(float x, float y, float w, float h) {
   vertices[5][1] = y + h;
 }
 
-void text_shader_add_text(TextShader *self,  const char *buffer, int len,
+void text_shader_add_text(TextShader *self, const char *buffer, int len,
                           Vec3 xyscale, Vec3 color) {
   float x = xyscale.x;
   float y = xyscale.y;

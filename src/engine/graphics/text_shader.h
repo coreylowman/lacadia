@@ -20,7 +20,7 @@ typedef struct TextCharacterVertex {
 } TextCharacterVertex;
 
 typedef struct TextShader {
-    Shader base_shader;
+  Shader base_shader;
 
   CharacterStats char_stats[128];
   int num_character_vertices[128];
@@ -30,7 +30,7 @@ typedef struct TextShader {
 
 TextShader *text_shader_new();
 void text_shader_free(TextShader *self);
-void text_shader_add_text(TextShader *self,  const char *buffer, int len,
+void text_shader_add_text(TextShader *self, const char *buffer, int len,
                           Vec3 xyscale, Vec3 color);
 
 #endif

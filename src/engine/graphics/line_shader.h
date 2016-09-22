@@ -7,7 +7,7 @@
 #define MAX_LINES 2048
 
 typedef struct LineShader {
-    Shader base_shader;
+  Shader base_shader;
 
   int num_lines;
   Line lines[MAX_LINES];

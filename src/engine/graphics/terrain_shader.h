@@ -7,7 +7,7 @@
 #define MAX_TERRAINS 8
 
 typedef struct TerrainShader {
-    Shader base_shader;
+  Shader base_shader;
 
   int num_terrains;
   Terrain terrains[MAX_TERRAINS];

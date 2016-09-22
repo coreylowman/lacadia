@@ -43,8 +43,10 @@ static int parse_file_into_str(const char *file_name, char *shader_str,
 }
 
 int shader_init(Shader *shader, const char *vertex_shader_loc,
-                const char *fragment_shader_loc, ShaderPreRenderCallback on_pre_render,
-                ShaderRenderCallback on_render, ShaderPostRenderCallback on_post_render) {
+                const char *fragment_shader_loc,
+                ShaderPreRenderCallback on_pre_render,
+                ShaderRenderCallback on_render,
+                ShaderPostRenderCallback on_post_render) {
   int params = -1;
   char vertex_shader_source[1024 * 256];
   char fragment_shader_source[1024 * 256];
@@ -96,7 +98,7 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
 }
 
 void shader_render(Shader *self, Camera camera) {
-  if(self->on_pre_render != NULL) {
+  if (self->on_pre_render != NULL) {
     self->on_pre_render(self, camera);
   }
 
@@ -106,7 +108,7 @@ void shader_render(Shader *self, Camera camera) {
 }
 
 void shader_post_render(Shader *self) {
-  if(self->on_post_render != NULL) {
+  if (self->on_post_render != NULL) {
     self->on_post_render(self);
   }
 }

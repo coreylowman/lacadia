@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +27,8 @@ static Vec3 tri_normal(Tri q) {
   return n;
 }
 
-static void terrain_vertex_unload(TerrainVertex *arr, Tri q, Vec3 n, Vec3 color) {
+static void terrain_vertex_unload(TerrainVertex *arr, Tri q, Vec3 n,
+                                  Vec3 color) {
   int i;
   for (i = 0; i < 3; i++) {
     arr[i].position[0] = q.p[i].x;
@@ -37,13 +39,14 @@ static void terrain_vertex_unload(TerrainVertex *arr, Tri q, Vec3 n, Vec3 color)
     arr[i].normal[1] = n.y;
     arr[i].normal[2] = n.z;
 
-	arr[i].color[0] = color.x;
-	arr[i].color[1] = color.y;
-	arr[i].color[2] = color.z;
+    arr[i].color[0] = color.x;
+    arr[i].color[1] = color.y;
+    arr[i].color[2] = color.z;
   }
 }
 
-Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height, int length, int unit_size) {
+Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height,
+                    int length, int unit_size) {
   Terrain self;
 
   self.unit_size = unit_size;
@@ -55,13 +58,14 @@ Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height,
 
   self.num_vertices = 0;
   self.vertices = NULL;
-  
+
   terrain_regen(&self, vertexCallback);
 
   return self;
 }
 
-#define VEC3(_x,_y,_z) (Vec3) { .x = _x, .y = _y, .z = _z }
+#define VEC3(_x, _y, _z)                                                       \
+  (Vec3) { .x = _x, .y = _y, .z = _z }
 
 void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   free(self->vertices);
@@ -75,7 +79,7 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   float octave_ivals[OCTAVES];
 
   for (i = 0; i < OCTAVES; i++) {
-	  octave_vals[i] = pow(DETAIL, i);
+    octave_vals[i] = pow(DETAIL, i);
     octave_ivals[i] = 1.0 / octave_vals[i];
   }
 
@@ -99,14 +103,14 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
       self->height_map[ind] = 0;
 
       for (k = 0; k < OCTAVES; k++) {
-		  self->height_map[ind] +=
+        self->height_map[ind] +=
             octave_ivals[k] *
             simplex_noise(sx + octave_vals[k] * tx, sy + octave_vals[k] * tz);
       }
 
-  	  if (self->height_map[ind] > max_height) {
-  		  max_height = self->height_map[ind];
-  	  }
+      if (self->height_map[ind] > max_height) {
+        max_height = self->height_map[ind];
+      }
 
       if (self->height_map[ind] < min_height) {
         min_height = self->height_map[ind];
@@ -117,16 +121,16 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   // normalize [min_height, max_height] to [0, height]
   float diff = max_height - min_height;
   for (i = 0; i < self->width; i++) {
-	  for (j = 0; j < self->length; j++) {
+    for (j = 0; j < self->length; j++) {
       ind = i + self->width * j;
 
       self->height_map[ind] -= min_height;
-		  self->height_map[ind] /= diff;
+      self->height_map[ind] /= diff;
 
-		  self->height_map[ind] = powf(self->height_map[ind], FLATTENING);
+      self->height_map[ind] = powf(self->height_map[ind], FLATTENING);
 
-		  self->height_map[ind] *= self->height;
-	  }
+      self->height_map[ind] *= self->height;
+    }
   }
 
   // create mesh
@@ -134,30 +138,33 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   Vec3 normal;
   Tri q;
   float ti[2], tj[2];
-  float h[4] = { 0 };
+  float h[4] = {0};
   for (i = 0; i < self->width; i++) {
     for (j = 0; j < self->length; j++) {
       ind = 2 * 3 * (i + j * self->width);
 
-	  // i,j
-	  h[0] = self->height_map[i + self->width * j];
-	  // i+1,j
-	  h[1] = i == self->width - 1 ? 0 : self->height_map[i + 1 + self->width * j];
-	  // i, j+1
-	  h[2] = j == self->length - 1 ? 0 : self->height_map[i + self->width * (j + 1)];
-	  // i+1,j+1
-	  if (i == self->width - 1 || j == self->length - 1) {
-		  h[3] = 0;
-	  } else {
-		  h[3] = self->height_map[i + 1 + self->width * (j + 1)];
-	  }
+      // i,j
+      h[0] = self->height_map[i + self->width * j];
+      // i+1,j
+      h[1] =
+          i == self->width - 1 ? 0 : self->height_map[i + 1 + self->width * j];
+      // i, j+1
+      h[2] = j == self->length - 1
+                 ? 0
+                 : self->height_map[i + self->width * (j + 1)];
+      // i+1,j+1
+      if (i == self->width - 1 || j == self->length - 1) {
+        h[3] = 0;
+      } else {
+        h[3] = self->height_map[i + 1 + self->width * (j + 1)];
+      }
 
       // x positions
       ti[0] = i * self->unit_size;
       ti[1] = ti[0] + self->unit_size;
 
       // z positions
-	  tj[0] = j * self->unit_size;
+      tj[0] = j * self->unit_size;
       tj[1] = tj[0] + self->unit_size;
 
       q.p[0] = VEC3(ti[0], h[0], tj[0]);
@@ -166,22 +173,22 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
       normal = tri_normal(q);
       terrain_vertex_unload(self->vertices + ind, q, normal, brown);
 
-	  q.p[0] = VEC3(ti[0], h[0], tj[0]);
-	  q.p[1] = VEC3(ti[1], h[3], tj[1]);
-	  q.p[2] = VEC3(ti[0], h[2], tj[1]);
-	  normal = tri_normal(q);
-	  terrain_vertex_unload(self->vertices + ind + 3, q, normal, brown);
-	  
-	  if (vertexCallback != NULL) {
-		  for (k = 0; k < 6; k++) {
-			  vertexCallback(self->vertices + ind + k);
-		  }
-	  }
+      q.p[0] = VEC3(ti[0], h[0], tj[0]);
+      q.p[1] = VEC3(ti[1], h[3], tj[1]);
+      q.p[2] = VEC3(ti[0], h[2], tj[1]);
+      normal = tri_normal(q);
+      terrain_vertex_unload(self->vertices + ind + 3, q, normal, brown);
+
+      if (vertexCallback != NULL) {
+        for (k = 0; k < 6; k++) {
+          vertexCallback(self->vertices + ind + k);
+        }
+      }
     }
   }
 }
 
 void terrain_free(Terrain self) {
-	free(self.height_map);
-	free(self.vertices);
+  free(self.height_map);
+  free(self.vertices);
 }

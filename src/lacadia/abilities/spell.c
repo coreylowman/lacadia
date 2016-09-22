@@ -10,11 +10,15 @@ Spell *spell_new(GameWorld *world, GameObject *user, const char *asset_name,
   self->base_object =
       game_object_init(world, "spell", spell_update, spell_render, spell_free);
 
-  self->renderable = game_object_add_component(&self->base_object, (Component *)renderable_component_new(
-      &self->base_object, asset_name, world->renderer));
-  self->collidable = game_object_add_collidable(&self->base_object, (Component *)collidable_component_new(
+  self->renderable = (RenderableComponent *)game_object_add_component(
+      &self->base_object, (Component *)renderable_component_new(
+                              &self->base_object, asset_name, world->renderer));
+  self->collidable = (CollidableComponent *)game_object_add_collidable(
       &self->base_object,
-      game_world_get_model_obb(world, self->renderable->model_id), on_collide));
+      collidable_component_new(
+          &self->base_object,
+          game_world_get_model_obb(world, self->renderable->model_id),
+          on_collide));
   self->collidable->is_colliding = spell_is_colliding;
 
   strcpy(self->caster_tag, user->tag);

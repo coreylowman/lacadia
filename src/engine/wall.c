@@ -40,8 +40,9 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
   bounding_box.radius.data[which] *= length;
   bounding_box.center.data[which] += width * (length - 1) * 0.5;
   game_object_add_collidable(&self->base_object,
-    (Component *)collidable_component_new(&self->base_object, bounding_box,
-                                            wall_on_collide));
+                             collidable_component_new(&self->base_object,
+                                                      bounding_box,
+                                                      wall_on_collide));
   self->base_object.components[length]->on_update = NULL;
 
   self->normal = which == 0 ? VEC3_UNIT_Z : VEC3_UNIT_X;

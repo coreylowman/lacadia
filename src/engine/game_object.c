@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -31,16 +32,17 @@ GameObject game_object_init(GameWorld *world, const char *tag,
 }
 
 Component *game_object_add_component(GameObject *self, Component *component) {
-  if(self->num_components < MAX_COMPONENTS) {
+  if (self->num_components < MAX_COMPONENTS) {
     self->components[self->num_components++] = component;
     return component;
   } else {
-    printf("Error: too many components.");
+    printf("Error: too many components.\n");
     return NULL;
   }
 }
 
-Component *game_object_add_collidable(GameObject *self, CollidableComponent *collidable) {
+Component *game_object_add_collidable(GameObject *self,
+                                      CollidableComponent *collidable) {
   self->collidable_index = self->num_components;
   return game_object_add_component(self, (Component *)collidable);
 }

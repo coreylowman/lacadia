@@ -4,7 +4,8 @@
 #include "engine/util/mat4.h"
 #include "engine/util/terrain.h"
 
-#define VEC3(_x,_y,_z) { .x = _x, .y = _y, .z = _z }
+#define VEC3(_x, _y, _z)                                                       \
+  { .x = _x, .y = _y, .z = _z }
 
 static Vec3 snowy = VEC3(245.0f / 255.0f, 245.0f / 255.0f, 245.0f / 255.0f);
 static Vec3 grassy = VEC3(0, 179.0f / 255.0f, 0);
@@ -12,25 +13,25 @@ static Vec3 rocky = VEC3(156.0f / 255.0f, 143.0f / 255.0f, 124.0f / 255.0f);
 static Vec3 sandy = VEC3(242.0f / 255.0f, 245.0f / 255.0f, 198.0f / 255.0f);
 
 void level_terrain_callback(TerrainVertex *vert) {
-	if (vert->position[1] >= 40) {
-		// snowy
-		vert->color[0] = snowy.x;
-		vert->color[1] = snowy.y;
-		vert->color[2] = snowy.z;
-	} else if (vert->position[1] >= 25) {
-		vert->color[0] = rocky.x;
-		vert->color[1] = rocky.y;
-		vert->color[2] = rocky.z;
-	} else if (vert->position[1] >= 5) {
-		Vec3 color = vec3_mix(rocky, grassy, (vert->position[1] - 5) / 20);
-		vert->color[0] = color.x;
-		vert->color[1] = color.y;
-		vert->color[2] = color.z;
+  if (vert->position[1] >= 40) {
+    // snowy
+    vert->color[0] = snowy.x;
+    vert->color[1] = snowy.y;
+    vert->color[2] = snowy.z;
+  } else if (vert->position[1] >= 25) {
+    vert->color[0] = rocky.x;
+    vert->color[1] = rocky.y;
+    vert->color[2] = rocky.z;
+  } else if (vert->position[1] >= 5) {
+    Vec3 color = vec3_mix(rocky, grassy, (vert->position[1] - 5) / 20);
+    vert->color[0] = color.x;
+    vert->color[1] = color.y;
+    vert->color[2] = color.z;
   } else {
     // sandy
-	vert->color[0] = sandy.x;
-	vert->color[1] = sandy.y;
-	vert->color[2] = sandy.z;
+    vert->color[0] = sandy.x;
+    vert->color[1] = sandy.y;
+    vert->color[2] = sandy.z;
   }
 }
 

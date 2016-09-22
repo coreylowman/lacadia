@@ -9,16 +9,16 @@
 #define MAX_MODELS 32
 
 typedef struct ModelShader {
-    Shader base_shader;
+  Shader base_shader;
 
-    unsigned int vbo[2], vao;
-    int num_models;
-    ObjectModel *models[MAX_MODELS];
-    ArrayList_m4 *model_model_matrices[MAX_MODELS]; // ArrayList<Mat4>[MAX_MODELS]
+  unsigned int vbo[2], vao;
+  int num_models;
+  ObjectModel *models[MAX_MODELS];
+  ArrayList_m4 *model_model_matrices[MAX_MODELS]; // ArrayList<Mat4>[MAX_MODELS]
 
-    int projection_matrix_location;
-    int view_matrix_location;
-    int light_position_location;
+  int projection_matrix_location;
+  int view_matrix_location;
+  int light_position_location;
 } ModelShader;
 
 ModelShader *model_shader_new(int num_models, ObjectModel **models);

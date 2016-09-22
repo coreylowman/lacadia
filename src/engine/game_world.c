@@ -85,26 +85,29 @@ void game_world_update(GameWorld *self, double dt) {
   int i;
   GameObject *obj;
   for (i = 0; i < self->game_objects->length; i++) {
-	  if (self->game_objects->data[i] == NULL) continue;
-	  obj = self->game_objects->data[i];
+    if (self->game_objects->data[i] == NULL)
+      continue;
+    obj = self->game_objects->data[i];
 
-	  game_object_update(obj, dt);
-	  if (obj->destroy) {
-		  sparse_array_remove_at(self->game_objects, i);
-	  }
+    game_object_update(obj, dt);
+    if (obj->destroy) {
+      sparse_array_remove_at(self->game_objects, i);
+    }
   }
 
   int j;
   CollidableComponent *c1, *c2;
   GameObject *obj1, *obj2;
-  for(i = 0;i < self->game_objects->length - 1;i++) {
+  for (i = 0; i < self->game_objects->length - 1; i++) {
     obj1 = self->game_objects->data[i];
-    if(obj1 == NULL || obj1->collidable_index == -1) continue;
+    if (obj1 == NULL || obj1->collidable_index == -1)
+      continue;
     c1 = (CollidableComponent *)obj1->components[obj1->collidable_index];
 
-    for(j = i + 1;j < self->game_objects->length;j++) {
+    for (j = i + 1; j < self->game_objects->length; j++) {
       obj2 = self->game_objects->data[j];
-      if(obj2 == NULL || obj2->collidable_index == -1) continue;
+      if (obj2 == NULL || obj2->collidable_index == -1)
+        continue;
       c2 = (CollidableComponent *)obj2->components[obj2->collidable_index];
 
       if (c1->is_colliding(*c1, *c2) && c2->is_colliding(*c2, *c1)) {
@@ -142,7 +145,8 @@ void game_world_render(GameWorld *self) {
                        { game_object_render(obj, self->renderer); })
   level_render(self->level, self->renderer);
 
-  renderer_render_text(self->renderer, "lacadia", 7, (Vec3) {.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
+  renderer_render_text(self->renderer, "lacadia", 7,
+                       (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
 
   // actually draw stuff
   renderer_render(self->renderer, self->camera);

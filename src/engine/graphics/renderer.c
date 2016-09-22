@@ -69,7 +69,7 @@ void renderer_render(Renderer *self, Camera camera) {
   shader_render((Shader *)self->line_shader, camera);
   shader_render((Shader *)self->text_shader, camera);
   shader_render((Shader *)self->terrain_shader, camera);
-  
+
   shader_post_render((Shader *)self->model_shader);
   shader_post_render((Shader *)self->line_shader);
   shader_post_render((Shader *)self->text_shader);
