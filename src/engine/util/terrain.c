@@ -13,9 +13,9 @@
 #define JAGGEDNESS 1.5
 #define DETAIL 2.0
 #define FLATTENING 2.5
-#define RANDOM_TERRAIN
+//#define RANDOM_TERRAIN
 
-static float sx = 15.729239, sy = 98.638878;
+static float sx =81.270790, sy = 43.907982;
 
 typedef struct { Vec3 p[3]; } Tri;
 
@@ -160,11 +160,11 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
       }
 
       // x positions
-      ti[0] = i * self->unit_size;
+      ti[0] = (i - self->width * 0.5) * self->unit_size;
       ti[1] = ti[0] + self->unit_size;
 
       // z positions
-      tj[0] = j * self->unit_size;
+      tj[0] = (j - self->length * 0.5) * self->unit_size;
       tj[1] = tj[0] + self->unit_size;
 
       q.p[0] = VEC3(ti[0], h[0], tj[0]);

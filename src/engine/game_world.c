@@ -150,6 +150,7 @@ void game_world_render(GameWorld *self) {
 
   renderer_render_text(self->renderer, "lacadia", 7,
                        (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
+  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 10, .z = 0}, 10, 10);
 
   // actually draw stuff
   renderer_render(self->renderer, self->camera);

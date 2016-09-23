@@ -72,7 +72,7 @@ static void render(Shader *shader, Camera camera) {
       continue;
 
     glBindVertexArray(self->vao);
-    // todo fix this
+
     glBindTexture(GL_TEXTURE_2D, self->texture_ids[i]);
 
     glBindBuffer(GL_ARRAY_BUFFER, self->vbo);

@@ -8,6 +8,7 @@
 #include "engine/graphics/text_shader.h"
 #include "engine/graphics/terrain_shader.h"
 #include "engine/graphics/texture_shader.h"
+#include "engine/graphics/water_shader.h"
 #include "engine/asset_manager.h"
 
 typedef struct Renderer {
@@ -19,6 +20,7 @@ typedef struct Renderer {
   TextShader *text_shader;
   TerrainShader *terrain_shader;
   TextureShader *texture_shader;
+  WaterShader *water_shader;
 } Renderer;
 
 Renderer *renderer_new(AssetManager *asset_manager);
@@ -37,5 +39,6 @@ void renderer_render_sphere(Renderer *self, Vec3 position);
 void renderer_render_text(Renderer *self, const char *buffer, int len,
                           Vec3 xyscale, Vec3 color);
 void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset, Vec3 top_offset, int texture_id);
+void renderer_render_water(Renderer *self, Vec3 center, float width, float length);
 
 #endif

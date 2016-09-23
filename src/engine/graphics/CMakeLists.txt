@@ -9,6 +9,8 @@ list(APPEND GRAPHICS_SOURCES
     terrain_shader.c
     texture_shader.h
     texture_shader.c
+    water_shader.h
+    water_shader.c
     renderer.h
     renderer.c
     shader.h

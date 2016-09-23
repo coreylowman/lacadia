@@ -16,7 +16,7 @@ Renderer *renderer_new(AssetManager *asset_manager) {
   self->line_shader = line_shader_new();
   self->text_shader = text_shader_new();
   self->terrain_shader = terrain_shader_new();
-
+  self->water_shader = water_shader_new();
 
   return self;
 }
@@ -29,6 +29,7 @@ void renderer_free(Renderer *self) {
   line_shader_free(self->line_shader);
   text_shader_free(self->text_shader);
   terrain_shader_free(self->terrain_shader);
+  water_shader_free(self->water_shader);
 
   free(self);
 }
@@ -41,17 +42,36 @@ Obb renderer_get_model_obb(Renderer *self, int model_id) {
   return asset_manager_get_model(self->asset_manager, model_id)->bounding_box;
 }
 
-void renderer_render(Renderer *self, Camera camera) {
-  shader_render((Shader *)self->terrain_shader, camera);
-  shader_render((Shader *)self->model_shader, camera);
-  shader_render((Shader *)self->texture_shader, camera);
-  shader_render((Shader *)self->line_shader, camera);
-  shader_render((Shader *)self->text_shader, camera);
+static void render(Renderer *self, Camera camera) {
+	shader_render((Shader *)self->terrain_shader, camera);
+	shader_render((Shader *)self->model_shader, camera);
+	shader_render((Shader *)self->texture_shader, camera);
+	shader_render((Shader *)self->line_shader, camera);
+}
 
+static void post_render(Renderer *self) {
   shader_post_render((Shader *)self->terrain_shader);
   shader_post_render((Shader *)self->model_shader);
   shader_post_render((Shader *)self->texture_shader);
   shader_post_render((Shader *)self->line_shader);
+}
+
+unsigned char image[100];
+
+void renderer_render(Renderer *self, Camera camera) {
+  water_shader_pre_reflection_render(self->water_shader, camera);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  render(self, camera);
+  water_shader_post_reflection_render(self->water_shader, camera);
+
+  renderer_render_texture(self, (Vec3) { .x = -30, .y = 30, .z = 0 }, (Vec3) { .x = -15, 0, 0 }, (Vec3) { .x = 0, .y = 0, .z = -15 }, self->water_shader->reflection_texture);
+
+  render(self, camera);
+  shader_render((Shader *)self->water_shader, camera);
+  shader_render((Shader *)self->text_shader, camera);
+
+  post_render(self);
+  shader_post_render((Shader *)self->water_shader);
   shader_post_render((Shader *)self->text_shader);
 }
 
@@ -83,4 +103,8 @@ void renderer_render_text(Renderer *self, const char *buffer, int len,
 
 void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset, Vec3 top_offset, int texture_id) {
   texture_shader_add_texture(self->texture_shader, center, left_offset, top_offset, texture_id);
+}
+
+void renderer_render_water(Renderer *self, Vec3 center, float width, float length) {
+  water_shader_add_chunk(self->water_shader, center, width, length);
 }

@@ -48,19 +48,19 @@ void player_update(GameObject *obj, double dt) {
 
   Inputs inputs = self->base_object.world->inputs;
 
-  if (inputs.tab_pressed) { // move vertically
-    printf("switched stance!");
-    self->on_switch_stance(self);
-  }
+  // if (inputs.tab_pressed) { // move vertically
+  //   printf("switched stance!");
+  //   self->on_switch_stance(self);
+  // }
 
-  if (inputs.left_mouse_down)
-    player_use_ability(self, 0);
-  if (inputs.right_mouse_down)
-    player_use_ability(self, 1);
-  if (inputs.e_pressed)
-    player_use_ability(self, 2);
-  if (inputs.q_pressed)
-    player_use_ability(self, 3);
+  // if (inputs.left_mouse_down)
+  //   player_use_ability(self, 0);
+  // if (inputs.right_mouse_down)
+  //   player_use_ability(self, 1);
+  // if (inputs.e_pressed)
+  //   player_use_ability(self, 2);
+  // if (inputs.q_pressed)
+  //   player_use_ability(self, 3);
 
   double width_2 = (double)(width)*0.5;
   double height_2 = (double)(height)*0.5;
@@ -73,14 +73,14 @@ void player_update(GameObject *obj, double dt) {
       vec3_sub(mouse_world, self->base_object.position);
   vec3_normalize(&self->base_object.direction);
 
-  if (inputs.w_down)
-    player_move_forwards(self, dt, 1.0);
-  if (inputs.s_down)
-    player_move_forwards(self, dt, -1.0);
-  if (inputs.d_down)
-    player_strafe(self, dt, 1.0);
-  if (inputs.a_down)
-    player_strafe(self, dt, -1.0);
+  // if (inputs.w_down)
+  //   player_move_forwards(self, dt, 1.0);
+  // if (inputs.s_down)
+  //   player_move_forwards(self, dt, -1.0);
+  // if (inputs.d_down)
+  //   player_strafe(self, dt, 1.0);
+  // if (inputs.a_down)
+  //   player_strafe(self, dt, -1.0);
 }
 
 void player_render(GameObject *obj, Renderer *renderer) {
