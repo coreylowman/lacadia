@@ -49,12 +49,14 @@ TerrainShader *terrain_shader_new() {
       glGetUniformLocation(self->base_shader.program, "view_matrix");
   self->light_position_location =
       glGetUniformLocation(self->base_shader.program, "light_position");
+  self->clip_plane_location =
+      glGetUniformLocation(self->base_shader.program, "clip_plane");
   return self;
 }
 
 void terrain_shader_free(TerrainShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
   TerrainShader *self = (TerrainShader *)shader;
   glUseProgram(self->base_shader.program);
   glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
@@ -63,6 +65,7 @@ static void pre_render(Shader *shader, Camera camera) {
                      &camera.view_matrix.data[0]);
   glUniform3f(self->light_position_location, light_position.x, light_position.y,
               light_position.z);
+  glUniform4f(self->clip_plane_location, clip_plane.x, clip_plane.y, clip_plane.z, clip_dist);
 }
 
 static void render(Shader *shader, Camera camera) {

@@ -42,21 +42,21 @@ Level *level_new(GameWorld *world) {
 
   Vec3 dims = wall_dimensions(world);
 
-  int num_walls = 4;
-  Wall *walls[4];
-  walls[0] = wall_new(world, (Vec3){.data = {dims.x * -5, 0.0, dims.z * -5}},
-                      VEC3_UNIT_X, 10);
-  walls[1] = wall_new(world, (Vec3){.data = {dims.x * 5, 0.0, dims.z * -5}},
-                      VEC3_UNIT_Z, 10);
-  walls[2] = wall_new(world, (Vec3){.data = {dims.x * -4, 0.0, dims.z * 5}},
-                      VEC3_UNIT_X, 10);
-  walls[3] = wall_new(world, (Vec3){.data = {dims.x * -5, 0.0, dims.z * -4}},
-                      VEC3_UNIT_Z, 10);
+  // int num_walls = 4;
+  // Wall *walls[4];
+  // walls[0] = wall_new(world, (Vec3){.data = {dims.x * -5, 0.0, dims.z * -5}},
+  //                     VEC3_UNIT_X, 10);
+  // walls[1] = wall_new(world, (Vec3){.data = {dims.x * 5, 0.0, dims.z * -5}},
+  //                     VEC3_UNIT_Z, 10);
+  // walls[2] = wall_new(world, (Vec3){.data = {dims.x * -4, 0.0, dims.z * 5}},
+  //                     VEC3_UNIT_X, 10);
+  // walls[3] = wall_new(world, (Vec3){.data = {dims.x * -5, 0.0, dims.z * -4}},
+  //                     VEC3_UNIT_Z, 10);
 
-  int i;
-  for (i = 0; i < num_walls; i++) {
-    game_world_add_object(world, (GameObject *)walls[i]);
-  }
+  // int i;
+  // for (i = 0; i < num_walls; i++) {
+  //   game_world_add_object(world, (GameObject *)walls[i]);
+  // }
 
   self->terrain = terrain_new(level_terrain_callback, 100, 50, 100, 5);
 

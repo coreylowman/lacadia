@@ -30,6 +30,8 @@ typedef struct WaterShader {
 
   int projection_matrix_location;
   int view_matrix_location;
+  int reflection_texture_location;
+  int refraction_texture_location;
 } WaterShader;
 
 WaterShader *water_shader_new();

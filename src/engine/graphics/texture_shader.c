@@ -4,7 +4,7 @@
 #include "engine/util/camera.h"
 #include "texture_shader.h"
 
-static void pre_render(Shader *self, Camera camera);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
@@ -53,7 +53,7 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
 
 void texture_shader_free(TextureShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
   TextureShader *self = (TextureShader *)shader;
   glUseProgram(self->base_shader.program);
   glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,

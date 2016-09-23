@@ -42,35 +42,54 @@ Obb renderer_get_model_obb(Renderer *self, int model_id) {
   return asset_manager_get_model(self->asset_manager, model_id)->bounding_box;
 }
 
-static void render(Renderer *self, Camera camera) {
-	shader_render((Shader *)self->terrain_shader, camera);
-	shader_render((Shader *)self->model_shader, camera);
-	shader_render((Shader *)self->texture_shader, camera);
-	shader_render((Shader *)self->line_shader, camera);
+static void render_entities(Renderer *self, Camera camera, Vec3 clip_plane, float clip_dist) {
+	shader_render((Shader *)self->terrain_shader, camera, clip_plane, clip_dist);
+	shader_render((Shader *)self->model_shader, camera, clip_plane, clip_dist);
 }
 
-static void post_render(Renderer *self) {
+static void render_gui(Renderer *self, Camera camera) {
+	shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
+	shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
+}
+
+static float water_height;
+
+void renderer_render(Renderer *self, Camera camera) {
+	glEnable(GL_CLIP_DISTANCE0);
+
+	{
+        camera_invert_pitch(&camera, water_height);
+		
+		// capture reflection in water
+		water_shader_pre_reflection_render(self->water_shader, camera);
+		render_entities(self, camera, VEC3_UNIT_Y, -water_height);
+		water_shader_post_reflection_render(self->water_shader, camera);
+
+		camera_invert_pitch(&camera, water_height);
+
+		// render the reflection to reflection framebuffer
+		//renderer_render_texture(self, (Vec3) { .x = -30, .y = 30, .z = -15 }, (Vec3) { .x = -15, 0, 0 }, (Vec3) { .x = 0, .y = 15, .z = 0 }, self->water_shader->reflection_texture);
+		//renderer_render_texture(self, (Vec3) { .x = -0.75, .y = 0.75, .z = 0 }, (Vec3) { .x = -0.125, 0, 0 }, (Vec3) { .x = 0, .y = 0.125, .z = 0 }, self->water_shader->reflection_texture);
+	}
+
+	{
+		// capture refraction in water
+		water_shader_pre_refraction_render(self->water_shader, camera);
+		render_entities(self, camera, VEC3_UNIT_NY, water_height);
+		water_shader_post_refraction_render(self->water_shader, camera);
+
+		// render the reflection to reflection framebuffer
+		//renderer_render_texture(self, (Vec3) { .x = 30, .y = 30, .z = -15 }, (Vec3) { .x = -15, 0, 0 }, (Vec3) { .x = 0, .y = 15, .z = 0 }, self->water_shader->refraction_texture);
+	}
+
+  render_entities(self, camera, VEC3_UNIT_NY, 10000);
+  render_gui(self, camera);
+  shader_render((Shader *)self->water_shader, camera, VEC3_ZERO, 0);
+
   shader_post_render((Shader *)self->terrain_shader);
   shader_post_render((Shader *)self->model_shader);
   shader_post_render((Shader *)self->texture_shader);
   shader_post_render((Shader *)self->line_shader);
-}
-
-unsigned char image[100];
-
-void renderer_render(Renderer *self, Camera camera) {
-  water_shader_pre_reflection_render(self->water_shader, camera);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  render(self, camera);
-  water_shader_post_reflection_render(self->water_shader, camera);
-
-  renderer_render_texture(self, (Vec3) { .x = -30, .y = 30, .z = 0 }, (Vec3) { .x = -15, 0, 0 }, (Vec3) { .x = 0, .y = 0, .z = -15 }, self->water_shader->reflection_texture);
-
-  render(self, camera);
-  shader_render((Shader *)self->water_shader, camera);
-  shader_render((Shader *)self->text_shader, camera);
-
-  post_render(self);
   shader_post_render((Shader *)self->water_shader);
   shader_post_render((Shader *)self->text_shader);
 }
@@ -106,5 +125,6 @@ void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset, Vec3
 }
 
 void renderer_render_water(Renderer *self, Vec3 center, float width, float length) {
+	water_height = center.y;
   water_shader_add_chunk(self->water_shader, center, width, length);
 }

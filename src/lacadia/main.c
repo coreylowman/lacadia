@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
   // camera_set_follow(&world->camera, &player->position, 5);
   // game_world_add_object(world,
   //                   (GameObject *)bug_spawner_new(world, VEC3_ZERO, 5.0));
-  game_world_add_object(world, coin_new(world, (Vec3){.x = 5, .y = 2, .z = 0}));
+  game_world_add_object(world, coin_new(world, (Vec3){.x = 5, .y = 15, .z = -15}));
 
   total_time = glfwGetTime();
   last_update_seconds = total_time;

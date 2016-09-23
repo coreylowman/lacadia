@@ -20,6 +20,7 @@ typedef struct ModelShader {
   int projection_matrix_location;
   int view_matrix_location;
   int light_position_location;
+  int clip_plane_location;
 } ModelShader;
 
 ModelShader *model_shader_new(AssetManager *asset_manager);

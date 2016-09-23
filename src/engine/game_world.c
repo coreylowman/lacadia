@@ -75,7 +75,10 @@ void game_world_update(GameWorld *self, double dt) {
   // }
 
   if (self->inputs.r_pressed) {
-    terrain_regen(&self->level->terrain, level_terrain_callback);
+    // terrain_regen(&self->level->terrain, level_terrain_callback);
+    float dist = 2 * (self->camera.location.y - 6);
+    self->camera.location.y -= dist;
+    camera_update_view_matrix(&self->camera);
   }
 
   if (!camera_is_following(self->camera))
@@ -150,7 +153,7 @@ void game_world_render(GameWorld *self) {
 
   renderer_render_text(self->renderer, "lacadia", 7,
                        (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
-  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 10, .z = 0}, 10, 10);
+  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 1000, 1000);
 
   // actually draw stuff
   renderer_render(self->renderer, self->camera);

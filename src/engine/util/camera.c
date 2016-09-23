@@ -6,7 +6,7 @@
 void camera_init(Camera *camera, int width, int height) {
   camera->location.x = 0;
   camera->location.y = 20;
-  camera->location.z = 20;
+  camera->location.z = 30;
 
   camera->look_at.x = 0;
   camera->look_at.y = 0;
@@ -94,8 +94,8 @@ void camera_move_forwards(Camera *camera, double dt, float direction) {
   }
   vec3_normalize(&forwards);
   for (i = 0; i < 3; i++) {
-    camera->look_at.data[i] +=
-        camera->speed * direction * dt * forwards.data[i];
+    // camera->look_at.data[i] +=
+    //     camera->speed * direction * dt * forwards.data[i];
     camera->location.data[i] +=
         camera->speed * direction * dt * forwards.data[i];
   }
@@ -181,6 +181,20 @@ void camera_update_projection_matrix(Camera *camera) {
   mat4_ident(&camera->projection_matrix);
   mat4_persp(&camera->projection_matrix, camera->fov, camera->aspect_ratio,
              camera->z_near, camera->z_far);
+}
+
+static Vec3 reflect(Vec3 d, Vec3 n) {
+  float dot = 2 * vec3_dot(d, n);
+  return vec3_sub(d, vec3_scale(n, dot));
+}
+
+void camera_invert_pitch(Camera *camera, float height) {
+  Vec3 forwards = vec3_sub(camera->look_at, camera->location);
+  float dist = 2 * (camera->location.y - height);
+  camera->location.y -= dist;
+  camera->look_at = vec3_add(camera->location, reflect(forwards, VEC3_UNIT_Y));
+  camera->up = vec3_scale(camera->up, -1.0);
+  camera_update_view_matrix(camera);
 }
 
 void camera_handle_inputs(Camera *camera, double dt, Inputs inputs) {

@@ -7,6 +7,7 @@ layout(location = 2) in vec3 vertex_color;
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
 uniform vec3 light_position;
+uniform vec4 clip_plane;
 
 out vec3 fragment_position;
 out vec3 fragment_normal;
@@ -14,6 +15,8 @@ out vec3 fragment_color;
 out vec3 light_position_camera;
 
 void main() {
+    gl_ClipDistance[0] = dot(clip_plane, vec4(vertex_position, 1.0));
+
     mat4 VP = projection_matrix * view_matrix;
     gl_Position = VP * vec4(vertex_position, 1.0);
 

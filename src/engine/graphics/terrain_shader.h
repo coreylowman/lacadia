@@ -16,6 +16,7 @@ typedef struct TerrainShader {
   int projection_matrix_location;
   int view_matrix_location;
   int light_position_location;
+  int clip_plane_location;
 } TerrainShader;
 
 TerrainShader *terrain_shader_new();

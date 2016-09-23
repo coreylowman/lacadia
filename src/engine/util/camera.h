@@ -42,6 +42,8 @@ void camera_rotate_around_lookat(Camera *camera, double side_amt,
                                  double up_amt);
 void camera_strafe(Camera *camera, double dt, float direction);
 
+void camera_invert_pitch(Camera *camera, float height);
+
 void camera_update_view_matrix(Camera *camera);
 void camera_update_projection_matrix(Camera *camera);
 

@@ -5,7 +5,7 @@
 #include "text_shader.h"
 #include "engine/util/camera.h"
 
-static void pre_render(Shader *self, Camera camera);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
@@ -98,7 +98,7 @@ TextShader *text_shader_new() {
 
 void text_shader_free(TextShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
   TextShader *self = (TextShader *)shader;
   glUseProgram(self->base_shader.program);
 

@@ -12,7 +12,7 @@
 
 extern int width, height;
 
-static void pre_render(Shader *self, Camera camera);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
@@ -92,7 +92,7 @@ WaterShader *water_shader_new() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(WaterVertex), 0);
   glEnableVertexAttribArray(0);
 
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(WaterVertex), (const GLvoid *)3);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(WaterVertex), (const GLvoid *)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -102,6 +102,10 @@ WaterShader *water_shader_new() {
       glGetUniformLocation(self->base_shader.program, "projection_matrix");
   self->view_matrix_location =
       glGetUniformLocation(self->base_shader.program, "view_matrix");
+  self->reflection_texture_location =
+      glGetUniformLocation(self->base_shader.program, "reflection_texture");
+  self->refraction_texture_location =
+      glGetUniformLocation(self->base_shader.program, "refraction_texture");
 
   self->reflection_frame_buffer = create_framebuffer();
   self->reflection_texture = add_texture_attachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -129,13 +133,19 @@ void water_shader_free(WaterShader *self) {
 	free(self);
 }
 
-static void pre_render(Shader *shader, Camera camera) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
   WaterShader *self = (WaterShader *)shader;
   glUseProgram(self->base_shader.program);
   glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
                      &camera.projection_matrix.data[0]);
   glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
                      &camera.view_matrix.data[0]);
+  glUniform1i(self->reflection_texture_location, 0);
+  glUniform1i(self->refraction_texture_location, 1);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, self->reflection_texture);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, self->refraction_texture);
 }
 
 static void render(Shader *shader, Camera camera) {
@@ -208,6 +218,7 @@ void water_shader_add_chunk(WaterShader *self, Vec3 center, float width, float l
 
 void water_shader_pre_reflection_render(WaterShader *self, Camera camera) {
   bind_framebuffer(self->reflection_frame_buffer, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void water_shader_post_reflection_render(WaterShader *self, Camera camera) {
@@ -216,6 +227,7 @@ void water_shader_post_reflection_render(WaterShader *self, Camera camera) {
 
 void water_shader_pre_refraction_render(WaterShader *self, Camera camera) {
   bind_framebuffer(self->refraction_frame_buffer, REFRACTION_WIDTH, REFRACTION_HEIGHT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void water_shader_post_refraction_render(WaterShader *self, Camera camera) {
