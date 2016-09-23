@@ -38,6 +38,8 @@ TextShader *text_shader_new() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
+  self->texture_location = glGetUniformLocation(self->base_shader.program, "text");
+
   FT_Library ft_library;
   if (FT_Init_FreeType(&ft_library)) {
     printf("Error: Freetype could not init freetype library\n");
@@ -101,7 +103,7 @@ static void pre_render(Shader *shader, Camera camera) {
   glUseProgram(self->base_shader.program);
 
   // todo load uniform location in constructor
-  glUniform1i(glGetUniformLocation(self->base_shader.program, "text"), 0);
+  glUniform1i(self->texture_location, 0);
   glActiveTexture(GL_TEXTURE0);
 }
 

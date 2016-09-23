@@ -13,7 +13,7 @@ static void on_collide(GameObject *self, GameObject *object);
 
 Enemy *bug_new(GameWorld *world, Vec3 position) {
   Enemy *self =
-      enemy_new(world, "./assets/bug", on_update, enemy_render, enemy_free);
+      enemy_new(world, "bug", on_update, enemy_render, enemy_free);
 
   self->base_object.position = position;
   self->base_object.direction = (Vec3){.data = {0, 0, -1}};
@@ -25,7 +25,7 @@ Enemy *bug_new(GameWorld *world, Vec3 position) {
                               &self->base_object, 25, 6.5, 0, 1, 0));
   self->renderable = (RenderableComponent *)game_object_add_component(
       &self->base_object,
-      (Component *)renderable_component_new(&self->base_object, "./assets/bug",
+      (Component *)renderable_component_new(&self->base_object, "bug",
                                             world->renderer));
   self->collidable = (CollidableComponent *)game_object_add_collidable(
       &self->base_object,

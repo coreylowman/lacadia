@@ -7,11 +7,11 @@
 #include "engine/graphics/line_shader.h"
 #include "engine/graphics/text_shader.h"
 #include "engine/graphics/terrain_shader.h"
+#include "engine/asset_manager.h"
 
 typedef struct Renderer {
-  int num_models;
-  char *model_names[MAX_MODELS];
-  ObjectModel *models[MAX_MODELS];
+  //reference to asset manager, we don't own
+  AssetManager *asset_manager;
 
   ModelShader *model_shader;
   LineShader *line_shader;
@@ -19,7 +19,7 @@ typedef struct Renderer {
   TerrainShader *terrain_shader;
 } Renderer;
 
-Renderer *renderer_new();
+Renderer *renderer_new(AssetManager *asset_manager);
 void renderer_free(Renderer *self);
 
 int renderer_get_model_id(Renderer *self, const char *name);

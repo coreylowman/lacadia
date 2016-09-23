@@ -28,7 +28,7 @@ Frost *frost_new(GameWorld *world, GameObject *target,
   self->slow_pct_per_degree = slow_pct_per_degree;
 
   self->particle_system =
-      particle_system_new(world, target->position, "./assets/frost_particle", 8,
+      particle_system_new(world, target->position, "frost_particle", 8,
                           duration, duration * 0.4);
   particle_system_set_particle_init(self->particle_system, frost_particle_init);
   particle_system_set_follow_target(self->particle_system, target);

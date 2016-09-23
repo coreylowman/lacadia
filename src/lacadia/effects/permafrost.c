@@ -32,7 +32,7 @@ Permafrost *permafrost_new(GameWorld *world, GameObject *target, float dmg,
   self->slow_pct = slow_pct;
 
   self->particle_system =
-      particle_system_new(world, target->position, "./assets/frost_particle",
+      particle_system_new(world, target->position, "frost_particle",
                           64, duration, duration * 0.2);
   particle_system_set_particle_init(self->particle_system,
                                     permafrost_particle_init);

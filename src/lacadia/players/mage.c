@@ -19,7 +19,7 @@ static void fire_passive(Player *self, double dt);
 static void on_switch_stance(Player *self);
 
 Player *mage_new(GameWorld *world) {
-  Player *self = player_new(world, "./assets/mage");
+  Player *self = player_new(world, "mage");
 
   self->stance = 0;
   self->on_switch_stance = on_switch_stance;

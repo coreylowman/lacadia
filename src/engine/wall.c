@@ -15,7 +15,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
   float width =
       grow_direction.x ? dims.x : (grow_direction.y ? dims.y : dims.z);
 
-  int model_id = game_world_get_model_id(world, "./assets/wall");
+  int model_id = game_world_get_model_id(world, "wall");
   int i;
   Vec3 pos;
   Mat4 model_matrix;
@@ -27,7 +27,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
                   3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
     mat4_translate(&model_matrix, pos);
 
-    renderable = renderable_component_new(&self->base_object, "./assets/wall",
+    renderable = renderable_component_new(&self->base_object, "wall",
                                           world->renderer);
     renderable->base_component.on_update = NULL;
     renderable_component_set_model_matrix(renderable, model_matrix);
@@ -64,7 +64,7 @@ void wall_on_collide(GameObject *self, GameObject *other) {
 }
 
 Vec3 wall_dimensions(GameWorld *world) {
-  int model_id = game_world_get_model_id(world, "./assets/wall");
+  int model_id = game_world_get_model_id(world, "wall");
   Obb obb = game_world_get_model_obb(world, model_id);
   return vec3_scale(obb.radius, 2.0);
 }

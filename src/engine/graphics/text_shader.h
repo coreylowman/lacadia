@@ -27,6 +27,8 @@ typedef struct TextShader {
   int num_character_vertices[128];
   TextCharacterVertex characters[128][MAX_CHAR_VERTS];
   unsigned int vbo, vao;
+
+  unsigned int texture_location;
 } TextShader;
 
 TextShader *text_shader_new();

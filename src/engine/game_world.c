@@ -27,7 +27,7 @@ GameWorld *game_world_new() {
   self->game_objects = sparse_array_new(free_obj);
 
   self->asset_manager = asset_manager_new("./assets/");
-  self->renderer = renderer_new();
+  self->renderer = renderer_new(self->asset_manager);
 
   self->inputs = inputs_init();
   camera_init(&self->camera, width, height);
@@ -39,7 +39,9 @@ GameWorld *game_world_new() {
 void game_world_free(GameWorld *self) {
   sparse_array_free(self->game_objects);
 
+  
   renderer_free(self->renderer);
+  asset_manager_free(self->asset_manager);
 
   level_free(self->level);
 

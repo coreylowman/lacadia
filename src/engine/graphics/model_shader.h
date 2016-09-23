@@ -5,6 +5,7 @@
 #include "engine/util/object_model.h"
 #include "engine/util/array_list.h"
 #include "engine/util/mat4.h"
+#include "engine/asset_manager.h"
 
 #define MAX_MODELS 32
 
@@ -21,7 +22,7 @@ typedef struct ModelShader {
   int light_position_location;
 } ModelShader;
 
-ModelShader *model_shader_new(int num_models, ObjectModel **models);
+ModelShader *model_shader_new(AssetManager *asset_manager);
 void model_shader_free(ModelShader *self);
 void model_shader_add_model(ModelShader *self, int model_id, Mat4 model_matrix);
 

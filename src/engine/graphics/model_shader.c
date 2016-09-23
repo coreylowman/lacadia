@@ -10,7 +10,7 @@ static void pre_render(Shader *self, Camera camera);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
-ModelShader *model_shader_new(int num_models, ObjectModel **models) {
+ModelShader *model_shader_new(AssetManager *asset_manager) {
   ModelShader *self = malloc(sizeof(*self));
   int result =
       shader_init(&self->base_shader, "./assets/shaders/model_vert.glsl",
@@ -20,18 +20,18 @@ ModelShader *model_shader_new(int num_models, ObjectModel **models) {
     exit(result);
   }
 
-  if (num_models >= MAX_MODELS) {
+  if (asset_manager->num_models >= MAX_MODELS) {
     printf("Too many models\n");
     exit(1);
   }
 
-  self->num_models = num_models;
+  self->num_models = asset_manager->num_models;
   int i;
-  for (i = 0; i < num_models; i++) {
-    self->models[i] = models[i];
+  for (i = 0; i < asset_manager->num_models; i++) {
+    self->models[i] = asset_manager->models[i];
     self->model_model_matrices[i] = array_list_new_m4();
   }
-  for (i = num_models; i < MAX_MODELS; i++) {
+  for (i = asset_manager->num_models; i < MAX_MODELS; i++) {
     self->models[i] = NULL;
     self->model_model_matrices[i] = NULL;
   }

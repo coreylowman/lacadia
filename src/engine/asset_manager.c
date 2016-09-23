@@ -25,7 +25,7 @@ static int load_png_data(const char *filename, TextureAsset *texture) {
 static int load_textures(AssetManager *self, char *dir_path, int dir_name_len) {
 	DIR *directory;
 	struct dirent *entry;
-	int result;
+	int result = 0;
 
 	char name_buffer[128] = { 0 };
 
@@ -37,7 +37,9 @@ static int load_textures(AssetManager *self, char *dir_path, int dir_name_len) {
 			{
 				char *extension = strchr(entry->d_name, '.');
 				if (strcmp(extension, ".png") == 0) {
+					extension[0] = 0;
 					self->texture_names[self->num_textures] = strdup(entry->d_name);
+					extension[0] = '.';
 
 					memset(name_buffer, 0, 128 * sizeof(char));
 					strcpy(name_buffer, dir_path);
@@ -56,7 +58,7 @@ static int load_textures(AssetManager *self, char *dir_path, int dir_name_len) {
 				result = load_textures(self, dir_path, dir_name_len + entry->d_namlen);
 				dir_path[dir_name_len] = 0;
 				if (result) {
-					return result;
+					goto end;
 				}
 				break;
 			default:
@@ -65,16 +67,17 @@ static int load_textures(AssetManager *self, char *dir_path, int dir_name_len) {
 		}
 	} else {
 		printf("load_textures: Cannot open directory %s\n", dir_path);
-		return 1;
 	}
 
-	return 0;
+end:
+	closedir(directory);
+	return result;
 }
 
 static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 	DIR *directory;
 	struct dirent *entry;
-	int result;
+	int result = 0;
 
 	char name_buffer[128] = { 0 };
 
@@ -86,12 +89,12 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 			{
 				char *extension = strchr(entry->d_name, '.');
 				if (strcmp(extension, ".obj") == 0) {
+					extension[0] = 0;
 					self->model_names[self->num_models] = strdup(entry->d_name);
 
 					memset(name_buffer, 0, 128 * sizeof(char));
 					strcpy(name_buffer, dir_path);
 					strcat(name_buffer, "/");
-					extension[0] = 0;
 					strcat(name_buffer, entry->d_name);
 					extension[0] = '.';
 					printf("Loading model %s\n", name_buffer);
@@ -107,7 +110,7 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 				result = load_models(self, dir_path, dir_name_len + entry->d_namlen);
 				dir_path[dir_name_len] = 0;
 				if (result) {
-					return result;
+					goto end;
 				}
 				break;
 			default:
@@ -116,10 +119,12 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 		}
 	} else {
 		printf("load_models: Cannot open directory %s\n", dir_path);
-		return 1;
+		result = 1;
 	}
 
-	return 0;
+end:
+	closedir(directory);
+	return result;
 }
 
 AssetManager *asset_manager_new(const char *asset_root_path) {
@@ -163,8 +168,30 @@ void asset_manager_free(AssetManager *self) {
 	free(self);
 }
 
-int asset_manager_get_texture_id(AssetManager *self, const char *asset_name);
-int asset_manager_get_model_id(AssetManager *self, const char *asset_name);
+int asset_manager_get_texture_id(AssetManager *self, const char *asset_name) {
+	int i;
+	for(i = 0;i < self->num_textures;i++) {
+		if(strcmp(self->texture_names[i], asset_name) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
 
-unsigned char *asset_manager_get_texture(AssetManager *self, int asset_id);
-ObjectModel *asset_manager_get_model(AssetManager *self, int asset_id);
+int asset_manager_get_model_id(AssetManager *self, const char *asset_name) {
+	int i;
+	for(i = 0;i < self->num_models;i++) {
+		if(strcmp(self->model_names[i], asset_name) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+TextureAsset asset_manager_get_texture(AssetManager *self, int asset_id) {
+	return self->textures[asset_id];
+}
+
+ObjectModel *asset_manager_get_model(AssetManager *self, int asset_id) {
+	return self->models[asset_id];
+}
