@@ -22,6 +22,7 @@ typedef struct TextCharacterVertex {
 typedef struct TextShader {
   Shader base_shader;
 
+  // todo move this to asset_manager;
   CharacterStats char_stats[128];
   int num_character_vertices[128];
   TextCharacterVertex characters[128][MAX_CHAR_VERTS];

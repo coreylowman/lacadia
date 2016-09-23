@@ -10,17 +10,17 @@ Renderer *renderer_new() {
   Renderer *self = malloc(sizeof(*self));
 
   self->num_models = 11;
-  self->model_names[0] = "./assets/default_box";
-  self->model_names[1] = "./assets/mage";
-  self->model_names[2] = "./assets/hunter";
-  self->model_names[3] = "./assets/bug";
-  self->model_names[4] = "./assets/fireball";
-  self->model_names[5] = "./assets/icicle";
-  self->model_names[6] = "./assets/burn_particle";
-  self->model_names[7] = "./assets/wall";
-  self->model_names[8] = "./assets/sphere";
-  self->model_names[9] = "./assets/frost_particle";
-  self->model_names[10] = "./assets/coin";
+  self->model_names[0] = "./assets/models/default_box";
+  self->model_names[1] = "./assets/models/mage";
+  self->model_names[2] = "./assets/models/hunter";
+  self->model_names[3] = "./assets/models/bug";
+  self->model_names[4] = "./assets/models/fireball";
+  self->model_names[5] = "./assets/models/icicle";
+  self->model_names[6] = "./assets/models/burn_particle";
+  self->model_names[7] = "./assets/models/wall";
+  self->model_names[8] = "./assets/models/sphere";
+  self->model_names[9] = "./assets/models/frost_particle";
+  self->model_names[10] = "./assets/models/coin";
 
   printf("Loading models... ");
   int i;

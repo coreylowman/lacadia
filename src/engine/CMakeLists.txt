@@ -2,6 +2,8 @@ add_subdirectory(util)
 add_subdirectory(graphics)
 
 list(APPEND ENGINE_SOURCES
+    asset_manager.h
+    asset_manager.c
     colors.h
     game_object.c
     game_object.h

@@ -13,8 +13,8 @@ TextShader *text_shader_new() {
   TextShader *self = malloc(sizeof(*self));
 
   int result =
-      shader_init(&self->base_shader, "./shaders/text_vert.glsl",
-                  "./shaders/text_frag.glsl", pre_render, render, post_render);
+      shader_init(&self->base_shader, "./assets/shaders/text_vert.glsl",
+                  "./assets/shaders/text_frag.glsl", pre_render, render, post_render);
   if (result) {
     printf("Error loading text shader\n");
     exit(result);

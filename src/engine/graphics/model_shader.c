@@ -13,8 +13,8 @@ static void post_render(Shader *self);
 ModelShader *model_shader_new(int num_models, ObjectModel **models) {
   ModelShader *self = malloc(sizeof(*self));
   int result =
-      shader_init(&self->base_shader, "./shaders/model_vert.glsl",
-                  "./shaders/model_frag.glsl", pre_render, render, post_render);
+      shader_init(&self->base_shader, "./assets/shaders/model_vert.glsl",
+                  "./assets/shaders/model_frag.glsl", pre_render, render, post_render);
   if (result) {
     printf("Error loading model shader\n");
     exit(result);

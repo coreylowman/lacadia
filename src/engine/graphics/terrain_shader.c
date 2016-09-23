@@ -13,8 +13,8 @@ static void post_render(Shader *self);
 TerrainShader *terrain_shader_new() {
   TerrainShader *self = malloc(sizeof(*self));
   self->num_terrains = 0;
-  int result = shader_init(&self->base_shader, "./shaders/terrain_vert.glsl",
-                           "./shaders/terrain_frag.glsl", pre_render, render,
+  int result = shader_init(&self->base_shader, "./assets/shaders/terrain_vert.glsl",
+                           "./assets/shaders/terrain_frag.glsl", pre_render, render,
                            post_render);
 
   if (result) {

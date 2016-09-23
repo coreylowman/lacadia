@@ -26,6 +26,7 @@ GameWorld *game_world_new() {
   GameWorld *self = malloc(sizeof(*self));
   self->game_objects = sparse_array_new(free_obj);
 
+  self->asset_manager = asset_manager_new("./assets/");
   self->renderer = renderer_new();
 
   self->inputs = inputs_init();

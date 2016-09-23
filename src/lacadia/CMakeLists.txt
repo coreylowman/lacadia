@@ -42,12 +42,7 @@ target_link_libraries(lacadia
 endif(UNIX)
 
 add_custom_command(TARGET lacadia
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:lacadia>/shaders
-)
-
-add_custom_command(TARGET lacadia
-    POST_BUILD
+    PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/assets $<TARGET_FILE_DIR:lacadia>/assets
 )
 

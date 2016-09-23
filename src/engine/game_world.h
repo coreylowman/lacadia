@@ -10,6 +10,7 @@
 #include "engine/util/camera.h"
 #include "engine/util/inputs.h"
 #include "engine/graphics/renderer.h"
+#include "asset_manager.h"
 
 typedef struct Player Player;
 typedef struct Enemy Enemy;
@@ -26,6 +27,7 @@ typedef struct GameWorld {
 
   SparseArray *game_objects; // SparseArray<GameObject *>
 
+  AssetManager *asset_manager;
   Renderer *renderer;
 
   // matrix for converting world to screen

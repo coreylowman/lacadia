@@ -11,8 +11,8 @@ static void post_render(Shader *self);
 LineShader *line_shader_new() {
   LineShader *self = malloc(sizeof(*self));
   int result =
-      shader_init(&self->base_shader, "./shaders/line_vert.glsl",
-                  "./shaders/line_frag.glsl", pre_render, render, post_render);
+      shader_init(&self->base_shader, "./assets/shaders/line_vert.glsl",
+                  "./assets/shaders/line_frag.glsl", pre_render, render, post_render);
   if (result) {
     printf("Error loading line shader\n");
     exit(result);
