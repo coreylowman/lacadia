@@ -102,7 +102,6 @@ static void pre_render(Shader *shader, Camera camera) {
   TextShader *self = (TextShader *)shader;
   glUseProgram(self->base_shader.program);
 
-  // todo load uniform location in constructor
   glUniform1i(self->texture_location, 0);
   glActiveTexture(GL_TEXTURE0);
 }

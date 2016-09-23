@@ -9,6 +9,7 @@
 typedef struct TextureAsset {
     unsigned int width, height;
     unsigned char *data;
+    int id;
 } TextureAsset;
 
 typedef struct AssetManager {

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <GL/glew.h>
 #include "lodepng.h"
 #include "asset_manager.h"
 
@@ -19,6 +20,17 @@ static int load_png_data(const char *filename, TextureAsset *texture) {
 	}
 
 	free(png);
+
+	// load it into opengl
+	glGenTextures(1, &texture->id);
+	glBindTexture(GL_TEXTURE_2D, texture->id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	return 1;
 }
 
@@ -172,7 +184,7 @@ int asset_manager_get_texture_id(AssetManager *self, const char *asset_name) {
 	int i;
 	for(i = 0;i < self->num_textures;i++) {
 		if(strcmp(self->texture_names[i], asset_name) == 0) {
-			return i;
+			return self->textures[i].id;
 		}
 	}
 	return -1;

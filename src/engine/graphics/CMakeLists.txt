@@ -7,6 +7,8 @@ list(APPEND GRAPHICS_SOURCES
     text_shader.c
     terrain_shader.h
     terrain_shader.c
+    texture_shader.h
+    texture_shader.c
     renderer.h
     renderer.c
     shader.h
