@@ -37,6 +37,7 @@ typedef struct WaterShader {
   int refraction_texture_location;
   int distortion_texture_location;
   int move_factor_location;
+  int camera_position_location;
 } WaterShader;
 
 WaterShader *water_shader_new(AssetManager *asset_manager);

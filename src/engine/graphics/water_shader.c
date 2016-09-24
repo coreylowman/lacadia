@@ -112,6 +112,8 @@ WaterShader *water_shader_new(AssetManager *asset_manager) {
       glGetUniformLocation(self->base_shader.program, "distortion_texture");
   self->move_factor_location =
       glGetUniformLocation(self->base_shader.program, "move_factor");
+  self->camera_position_location =
+      glGetUniformLocation(self->base_shader.program, "camera_position");
 
   self->reflection_frame_buffer = create_framebuffer();
   self->reflection_texture = add_texture_attachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -157,6 +159,7 @@ static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float cli
                      &camera.projection_matrix.data[0]);
   glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
                      &camera.view_matrix.data[0]);
+  glUniform3f(self->camera_position_location, camera.location.x, camera.location.y, camera.location.z);
   glUniform1f(self->move_factor_location, move_factor);
   glUniform1i(self->reflection_texture_location, 0);
   glUniform1i(self->refraction_texture_location, 1);

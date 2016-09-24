@@ -5,9 +5,11 @@ layout(location = 1) in vec2 tex_coords;
 
 out vec4 clip_space;
 out vec2 texture_coords;
+out vec3 to_camera;
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
+uniform vec3 camera_position;
 
 const float tiling = 6.0;
 
@@ -15,4 +17,5 @@ void main() {
     clip_space = projection_matrix * view_matrix * vec4(vertex_position, 1.0);
     gl_Position = clip_space;
     texture_coords = tex_coords * tiling;
+    to_camera = camera_position - vertex_position;
 }
