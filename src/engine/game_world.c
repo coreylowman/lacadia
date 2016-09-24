@@ -18,6 +18,8 @@
 
 extern int width, height;
 
+double DELTA_TIME;
+
 Vec3 light_position;
 
 static void free_obj(void *ptr) { game_object_free((GameObject *)ptr); }
@@ -62,7 +64,6 @@ GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag) {
 }
 
 void game_world_update(GameWorld *self, double dt) {
-
   // if (self->inputs.l_pressed){
   //    if (!camera_is_following(self->camera))
   //        follow();
@@ -87,6 +88,7 @@ void game_world_update(GameWorld *self, double dt) {
     camera_follow(&self->camera, dt, self->inputs);
 
   self->dt = dt;
+  DELTA_TIME = dt;
 
   int i;
   GameObject *obj;
@@ -153,7 +155,7 @@ void game_world_render(GameWorld *self) {
 
   renderer_render_text(self->renderer, "lacadia", 7,
                        (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
-  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 1000, 1000);
+  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 500, 500);
 
   // actually draw stuff
   renderer_render(self->renderer, self->camera);

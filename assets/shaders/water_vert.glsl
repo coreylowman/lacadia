@@ -1,14 +1,18 @@
 #version 400
 
 layout(location = 0) in vec3 vertex_position;
-layout(location = 1) in vec2 texture_coords;
+layout(location = 1) in vec2 tex_coords;
 
 out vec4 clip_space;
+out vec2 texture_coords;
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
 
+const float tiling = 6.0;
+
 void main() {
     clip_space = projection_matrix * view_matrix * vec4(vertex_position, 1.0);
     gl_Position = clip_space;
+    texture_coords = tex_coords * tiling;
 }

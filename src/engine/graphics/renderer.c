@@ -16,7 +16,7 @@ Renderer *renderer_new(AssetManager *asset_manager) {
   self->line_shader = line_shader_new();
   self->text_shader = text_shader_new();
   self->terrain_shader = terrain_shader_new();
-  self->water_shader = water_shader_new();
+  self->water_shader = water_shader_new(self->asset_manager);
 
   return self;
 }
