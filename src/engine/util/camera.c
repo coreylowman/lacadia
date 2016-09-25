@@ -94,8 +94,8 @@ void camera_move_forwards(Camera *camera, double dt, float direction) {
   }
   vec3_normalize(&forwards);
   for (i = 0; i < 3; i++) {
-    // camera->look_at.data[i] +=
-    //     camera->speed * direction * dt * forwards.data[i];
+     camera->look_at.data[i] +=
+         camera->speed * direction * dt * forwards.data[i];
     camera->location.data[i] +=
         camera->speed * direction * dt * forwards.data[i];
   }
@@ -207,9 +207,9 @@ void camera_handle_inputs(Camera *camera, double dt, Inputs inputs) {
   }
 
   if (inputs.left_mouse_down) {
-    double dx = (inputs.mouse_pos[0] - inputs.mouse_down_start_pos[0]) / 100;
-    double dy = -(inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]) / 100;
-    camera_rotate_lookat(camera, dx, dy);
+	  double dx = (inputs.mouse_pos[0] - inputs.mouse_down_start_pos[0]) / 100;
+	  double dy = -(inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]) / 100;
+	  camera_rotate_lookat(camera, dx, dy);
   }
 
   if (inputs.w_down)

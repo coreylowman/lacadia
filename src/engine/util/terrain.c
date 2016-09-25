@@ -13,7 +13,7 @@
 #define JAGGEDNESS 1.5
 #define DETAIL 2.0
 #define FLATTENING 2.5
-//#define RANDOM_TERRAIN
+#define RANDOM_TERRAIN
 
 static float sx =81.270790, sy = 43.907982;
 

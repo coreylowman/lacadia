@@ -22,6 +22,7 @@ typedef struct WaterShader {
   unsigned int vbo, vao;
 
   unsigned int distortion_texture;
+  unsigned int normal_texture;
 
   unsigned int reflection_frame_buffer;
   unsigned int reflection_texture;
@@ -36,8 +37,11 @@ typedef struct WaterShader {
   int reflection_texture_location;
   int refraction_texture_location;
   int distortion_texture_location;
+  int depth_texture_location;
+  int normal_texture_location;
   int move_factor_location;
   int camera_position_location;
+  int light_position_location;
 } WaterShader;
 
 WaterShader *water_shader_new(AssetManager *asset_manager);

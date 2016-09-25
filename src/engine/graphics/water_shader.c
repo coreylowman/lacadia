@@ -4,11 +4,11 @@
 #include "engine/util/camera.h"
 #include "water_shader.h"
 
-#define REFLECTION_WIDTH 640
-#define REFLECTION_HEIGHT 360
+#define REFLECTION_WIDTH 360
+#define REFLECTION_HEIGHT 180
 
-#define REFRACTION_WIDTH 640
-#define REFRACTION_HEIGHT 360
+#define REFRACTION_WIDTH 1280
+#define REFRACTION_HEIGHT 960
 
 extern int width, height;
 
@@ -42,8 +42,8 @@ static unsigned int add_depth_texture_attachment(int width, int height) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height,
 		0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 		texture, 0);
 	return texture;
@@ -99,6 +99,7 @@ WaterShader *water_shader_new(AssetManager *asset_manager) {
   glBindVertexArray(0);
 
   self->distortion_texture = asset_manager_get_texture_id(asset_manager, "waterDUDV");
+  self->normal_texture = asset_manager_get_texture_id(asset_manager, "waterNormal");
 
   self->projection_matrix_location =
       glGetUniformLocation(self->base_shader.program, "projection_matrix");
@@ -114,6 +115,12 @@ WaterShader *water_shader_new(AssetManager *asset_manager) {
       glGetUniformLocation(self->base_shader.program, "move_factor");
   self->camera_position_location =
       glGetUniformLocation(self->base_shader.program, "camera_position");
+  self->normal_texture_location =
+      glGetUniformLocation(self->base_shader.program, "normal_texture");
+  self->light_position_location =
+      glGetUniformLocation(self->base_shader.program, "light_position");
+  self->depth_texture_location =
+      glGetUniformLocation(self->base_shader.program, "depth_texture");
 
   self->reflection_frame_buffer = create_framebuffer();
   self->reflection_texture = add_texture_attachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -147,6 +154,7 @@ void water_shader_free(WaterShader *self) {
 static float wave_speed = 0.015f;
 static float move_factor = 0.0f;
 extern double DELTA_TIME;
+extern Vec3 light_position;
 
 static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
   WaterShader *self = (WaterShader *)shader;
@@ -160,16 +168,23 @@ static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float cli
   glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
                      &camera.view_matrix.data[0]);
   glUniform3f(self->camera_position_location, camera.location.x, camera.location.y, camera.location.z);
+  glUniform3f(self->light_position_location, light_position.x, light_position.y, light_position.z);
   glUniform1f(self->move_factor_location, move_factor);
   glUniform1i(self->reflection_texture_location, 0);
   glUniform1i(self->refraction_texture_location, 1);
   glUniform1i(self->distortion_texture_location, 2);
+  glUniform1i(self->normal_texture_location, 3);
+  glUniform1i(self->depth_texture_location, 4);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, self->reflection_texture);
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, self->refraction_texture);
   glActiveTexture(GL_TEXTURE2);
   glBindTexture(GL_TEXTURE_2D, self->distortion_texture);
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_2D, self->normal_texture);
+  glActiveTexture(GL_TEXTURE4);
+  glBindTexture(GL_TEXTURE_2D, self->refraction_depth_texture);
 }
 
 static void render(Shader *shader, Camera camera) {

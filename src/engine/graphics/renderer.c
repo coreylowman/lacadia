@@ -62,24 +62,17 @@ void renderer_render(Renderer *self, Camera camera) {
 		
 		// capture reflection in water
 		water_shader_pre_reflection_render(self->water_shader, camera);
-		render_entities(self, camera, VEC3_UNIT_Y, -water_height);
+		render_entities(self, camera, VEC3_UNIT_Y, -water_height+0.1);
 		water_shader_post_reflection_render(self->water_shader, camera);
 
 		camera_invert_pitch(&camera, water_height);
-
-		// render the reflection to reflection framebuffer
-		//renderer_render_texture(self, (Vec3) { .x = -30, .y = 30, .z = -15 }, (Vec3) { .x = -15, 0, 0 }, (Vec3) { .x = 0, .y = 15, .z = 0 }, self->water_shader->reflection_texture);
-		//renderer_render_texture(self, (Vec3) { .x = -0.75, .y = 0.75, .z = 0 }, (Vec3) { .x = -0.125, 0, 0 }, (Vec3) { .x = 0, .y = 0.125, .z = 0 }, self->water_shader->reflection_texture);
 	}
 
 	{
 		// capture refraction in water
 		water_shader_pre_refraction_render(self->water_shader, camera);
-		render_entities(self, camera, VEC3_UNIT_NY, water_height);
+		render_entities(self, camera, VEC3_UNIT_NY, water_height+0.1);
 		water_shader_post_refraction_render(self->water_shader, camera);
-
-		// render the reflection to reflection framebuffer
-		//renderer_render_texture(self, (Vec3) { .x = 30, .y = 30, .z = -15 }, (Vec3) { .x = -15, 0, 0 }, (Vec3) { .x = 0, .y = 15, .z = 0 }, self->water_shader->refraction_texture);
 	}
 
   render_entities(self, camera, VEC3_UNIT_NY, 10000);

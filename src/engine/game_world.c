@@ -76,10 +76,7 @@ void game_world_update(GameWorld *self, double dt) {
   // }
 
   if (self->inputs.r_pressed) {
-    // terrain_regen(&self->level->terrain, level_terrain_callback);
-    float dist = 2 * (self->camera.location.y - 6);
-    self->camera.location.y -= dist;
-    camera_update_view_matrix(&self->camera);
+    terrain_regen(&self->level->terrain, level_terrain_callback);
   }
 
   if (!camera_is_following(self->camera))
