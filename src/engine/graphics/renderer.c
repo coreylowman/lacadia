@@ -54,6 +54,16 @@ static void render_gui(Renderer *self, Camera camera) {
 
 static float water_height;
 
+static void render_all(Renderer *self, Camera camera) {
+  shader_render((Shader *)self->terrain_shader, camera, VEC3_UNIT_NY, 10000);
+  shader_render((Shader *)self->model_shader, camera, VEC3_UNIT_Y, -water_height);
+
+  shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
+  shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
+
+  shader_render((Shader *)self->water_shader, camera, VEC3_ZERO, 0);
+}
+
 void renderer_render(Renderer *self, Camera camera) {
 	glEnable(GL_CLIP_DISTANCE0);
 
@@ -75,9 +85,7 @@ void renderer_render(Renderer *self, Camera camera) {
 		water_shader_post_refraction_render(self->water_shader, camera);
 	}
 
-  render_entities(self, camera, VEC3_UNIT_NY, 10000);
-  render_gui(self, camera);
-  shader_render((Shader *)self->water_shader, camera, VEC3_ZERO, 0);
+  render_all(self, camera);
 
   shader_post_render((Shader *)self->terrain_shader);
   shader_post_render((Shader *)self->model_shader);

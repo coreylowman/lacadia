@@ -59,7 +59,6 @@ Level *level_new(GameWorld *world) {
   // }
 
   self->terrain = terrain_new(level_terrain_callback, 100, 50, 100, 5);
-
   return self;
 }
 

@@ -31,4 +31,6 @@ Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height,
 void terrain_regen(Terrain *t, TerrainVertexCallback vertexCallback);
 void terrain_free(Terrain self);
 
+float terrain_get_height(Terrain *self, float x, float y);
+
 #endif

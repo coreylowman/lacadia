@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "engine/level.h"
 #include "player.h"
 #include "engine/wall.h"
 #include "engine/colors.h"
@@ -73,14 +74,16 @@ void player_update(GameObject *obj, double dt) {
       vec3_sub(mouse_world, self->base_object.position);
   vec3_normalize(&self->base_object.direction);
 
-  // if (inputs.w_down)
-  //   player_move_forwards(self, dt, 1.0);
-  // if (inputs.s_down)
-  //   player_move_forwards(self, dt, -1.0);
-  // if (inputs.d_down)
-  //   player_strafe(self, dt, 1.0);
-  // if (inputs.a_down)
-  //   player_strafe(self, dt, -1.0);
+   if (inputs.w_down)
+     player_move_forwards(self, dt, 1.0);
+   if (inputs.s_down)
+     player_move_forwards(self, dt, -1.0);
+   if (inputs.d_down)
+     player_strafe(self, dt, 1.0);
+   if (inputs.a_down)
+     player_strafe(self, dt, -1.0);
+
+  self->base_object.position.y = terrain_get_height(&self->base_object.world->level->terrain, self->base_object.position.x, self->base_object.position.z);
 }
 
 void player_render(GameObject *obj, Renderer *renderer) {

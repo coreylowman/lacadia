@@ -64,8 +64,7 @@ Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height,
   return self;
 }
 
-#define VEC3(_x, _y, _z)                                                       \
-  (Vec3) { .x = _x, .y = _y, .z = _z }
+#define VEC3(_x, _y, _z) (Vec3) { .x = _x, .y = _y, .z = _z }
 
 void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   free(self->vertices);
@@ -191,4 +190,52 @@ void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
 void terrain_free(Terrain self) {
   free(self.height_map);
   free(self.vertices);
+}
+
+// reference: https://www.opengl.org/discussion_boards/showthread.php/138914-Terrain-Renderer-How-to-Get-Height-at-x-y
+float terrain_get_height(Terrain *self, float x, float y){
+	float tx = x / (float)self->unit_size + (float)self->width * 0.5;
+	float ty = y / (float)self->unit_size + (float)self->length * 0.5;
+
+  int i = tx;
+  int j = ty;
+
+  if (i >= self->width || i < 0 || j >= self->length || j < 0) {
+	  return 0;
+  }
+
+  float x_fac = tx - i;
+  float y_fac = ty - j;
+
+  // triangles are specified like
+  // ___
+  //| /|
+  //|/ |
+  // --
+  // any point below the line will have x_fac < y_fac
+  // any point above the line will have x_fac >= y_fac
+  // todo explain this!
+  int vert_ind = 0;
+  if (x_fac < y_fac) {
+    // upper triangle
+    vert_ind = 2 * 3 * (i + self->width * j) + 3;
+  } else {
+    // lower triangle
+    vert_ind = 2 * 3 * (i + self->width * j);
+  }
+
+  int k;
+  float normal[3] = {0};
+  float position[3] = {0};
+  for(k = 0;k < 3;k++) {
+      position[k] = self->vertices[vert_ind].position[k];
+      normal[k] = self->vertices[vert_ind].normal[k];
+  }
+
+  float c = 0;
+  for(k = 0;k < 3;k++){
+    c += position[k] * normal[k];
+  }
+
+  return (c - normal[0] * x - normal[2] * y) / normal[1];
 }
