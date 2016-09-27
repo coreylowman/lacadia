@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -67,7 +68,7 @@ static int load_textures(AssetManager *self, char *dir_path, int dir_name_len) {
 					continue;
 				}
 				strcat(dir_path, entry->d_name);
-				result = load_textures(self, dir_path, dir_name_len + entry->d_namlen);
+				result = load_textures(self, dir_path, dir_name_len + strlen(entry->d_name));
 				dir_path[dir_name_len] = 0;
 				if (result) {
 					goto end;
@@ -119,7 +120,7 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 					continue;
 				}
 				strcat(dir_path, entry->d_name);
-				result = load_models(self, dir_path, dir_name_len + entry->d_namlen);
+				result = load_models(self, dir_path, dir_name_len + strlen(entry->d_name));
 				dir_path[dir_name_len] = 0;
 				if (result) {
 					goto end;

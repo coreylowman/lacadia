@@ -37,10 +37,15 @@ list(APPEND LACADIA_INCLUDE_DIRS
     ${LACADIA_SOURCE_DIR}/src
     ${LACADIA_SOURCE_DIR}/external/lodepng/include
     ${LACADIA_SOURCE_DIR}/external/freetype-2.6.5/include
-    ${LACADIA_SOURCE_DIR}/external/dirent/include
     ${GLEW_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
 )
+
+if(WIN32)
+    list(APPEND LACADIA_INCLUDE_DIRS
+        ${LACADIA_SOURCE_DIR}/external/dirent/include
+    )
+endif(WIN32)
 
 
 add_subdirectory(external/lodepng)

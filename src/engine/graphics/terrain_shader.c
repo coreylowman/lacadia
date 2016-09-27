@@ -6,7 +6,7 @@
 
 extern Vec3 light_position;
 
-static void pre_render(Shader *self, Camera camera);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 

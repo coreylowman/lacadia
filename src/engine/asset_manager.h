@@ -9,16 +9,16 @@
 typedef struct TextureAsset {
     unsigned int width, height;
     unsigned char *data;
-    int id;
+    unsigned int id;
 } TextureAsset;
 
 typedef struct AssetManager {
     int num_textures;
-    const char *texture_names[MAX_TEXTURES];
+    char *texture_names[MAX_TEXTURES];
     TextureAsset textures[MAX_TEXTURES];
 
     int num_models;
-    const char *model_names[MAX_MODELS];
+    char *model_names[MAX_MODELS];
     ObjectModel *models[MAX_MODELS];
 } AssetManager;
 

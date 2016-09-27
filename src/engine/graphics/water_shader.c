@@ -17,7 +17,7 @@ static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
 static unsigned int create_framebuffer() {
-	int framebuffer;
+	unsigned int framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -25,7 +25,7 @@ static unsigned int create_framebuffer() {
 }
 
 static unsigned int add_texture_attachment(int width, int height) {
-	int texture;
+	unsigned int texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
@@ -37,7 +37,7 @@ static unsigned int add_texture_attachment(int width, int height) {
 }
 
 static unsigned int add_depth_texture_attachment(int width, int height) {
-	int texture;
+	unsigned int texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height,
@@ -50,7 +50,7 @@ static unsigned int add_depth_texture_attachment(int width, int height) {
 }
 
 static unsigned int add_depth_buffer_attachment(int width, int height) {
- int depth_buffer;
+ unsigned int depth_buffer;
  glGenRenderbuffers(1, &depth_buffer);
   glBindRenderbuffer(GL_RENDERBUFFER, depth_buffer);
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
