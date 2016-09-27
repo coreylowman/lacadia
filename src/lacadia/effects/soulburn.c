@@ -28,9 +28,8 @@ Soulburn *soulburn_new(GameWorld *world, GameObject *target, GameObject *user,
   self->dps = dps;
   self->user = user;
 
-  self->particle_system =
-      particle_system_new(world, target->position, "burn_particle", 16,
-                          duration, duration * 0.4);
+  self->particle_system = particle_system_new(
+      world, target->position, "burn_particle", 16, duration, duration * 0.4);
   particle_system_set_particle_init(self->particle_system,
                                     soulburn_particle_init);
   particle_system_set_follow_target(self->particle_system, target);

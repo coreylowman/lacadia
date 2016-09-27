@@ -5,16 +5,17 @@
 #include "text_shader.h"
 #include "engine/util/camera.h"
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
+                       float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
 TextShader *text_shader_new() {
   TextShader *self = malloc(sizeof(*self));
 
-  int result =
-      shader_init(&self->base_shader, "./assets/shaders/text_vert.glsl",
-                  "./assets/shaders/text_frag.glsl", pre_render, render, post_render);
+  int result = shader_init(
+      &self->base_shader, "./assets/shaders/text_vert.glsl",
+      "./assets/shaders/text_frag.glsl", pre_render, render, post_render);
   if (result) {
     printf("Error loading text shader\n");
     exit(result);
@@ -38,7 +39,8 @@ TextShader *text_shader_new() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  self->texture_location = glGetUniformLocation(self->base_shader.program, "text");
+  self->texture_location =
+      glGetUniformLocation(self->base_shader.program, "text");
 
   FT_Library ft_library;
   if (FT_Init_FreeType(&ft_library)) {
@@ -98,7 +100,8 @@ TextShader *text_shader_new() {
 
 void text_shader_free(TextShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
+                       float clip_dist) {
   TextShader *self = (TextShader *)shader;
   glUseProgram(self->base_shader.program);
 

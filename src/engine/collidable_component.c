@@ -70,9 +70,9 @@ static void on_render(Component *component, Renderer *renderer) {
   for (i = 0; i < 3; i++) {
     ti = (i + 1) % 3;
 
-	renderer_render_line(renderer, min, vec3_add(min, rs[i]));
-	renderer_render_line(renderer, max, vec3_sub(max, rs[i]));
-	renderer_render_line(renderer, vec3_add(min, rs[i]), vec3_sub(max, rs[ti]));
-	renderer_render_line(renderer, vec3_add(min, rs[ti]), vec3_sub(max, rs[i]));
+    renderer_render_line(renderer, min, vec3_add(min, rs[i]));
+    renderer_render_line(renderer, max, vec3_sub(max, rs[i]));
+    renderer_render_line(renderer, vec3_add(min, rs[i]), vec3_sub(max, rs[ti]));
+    renderer_render_line(renderer, vec3_add(min, rs[ti]), vec3_sub(max, rs[i]));
   }
 }

@@ -31,9 +31,8 @@ Permafrost *permafrost_new(GameWorld *world, GameObject *target, float dmg,
   self->damage = dmg;
   self->slow_pct = slow_pct;
 
-  self->particle_system =
-      particle_system_new(world, target->position, "frost_particle",
-                          64, duration, duration * 0.2);
+  self->particle_system = particle_system_new(
+      world, target->position, "frost_particle", 64, duration, duration * 0.2);
   particle_system_set_particle_init(self->particle_system,
                                     permafrost_particle_init);
   particle_system_set_follow_target(self->particle_system, target);

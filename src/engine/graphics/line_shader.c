@@ -4,15 +4,16 @@
 #include "engine/util/camera.h"
 #include "line_shader.h"
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
+                       float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
 LineShader *line_shader_new() {
   LineShader *self = malloc(sizeof(*self));
-  int result =
-      shader_init(&self->base_shader, "./assets/shaders/line_vert.glsl",
-                  "./assets/shaders/line_frag.glsl", pre_render, render, post_render);
+  int result = shader_init(
+      &self->base_shader, "./assets/shaders/line_vert.glsl",
+      "./assets/shaders/line_frag.glsl", pre_render, render, post_render);
   if (result) {
     printf("Error loading line shader\n");
     exit(result);
@@ -41,7 +42,8 @@ LineShader *line_shader_new() {
 
 void line_shader_free(LineShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
+                       float clip_dist) {
   LineShader *self = (LineShader *)shader;
   glUseProgram(self->base_shader.program);
   glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,

@@ -24,9 +24,8 @@ Burn *burn_new(GameWorld *world, GameObject *target, float dmg,
   self->degree = 1;
   self->dps = dmg;
 
-  self->particle_system =
-      particle_system_new(world, target->position, "burn_particle", 16,
-                          duration, duration * 0.4);
+  self->particle_system = particle_system_new(
+      world, target->position, "burn_particle", 16, duration, duration * 0.4);
   particle_system_set_particle_init(self->particle_system, burn_particle_init);
   particle_system_set_follow_target(self->particle_system, target);
 

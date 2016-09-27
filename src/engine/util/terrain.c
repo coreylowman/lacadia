@@ -15,7 +15,7 @@
 #define FLATTENING 2.5
 #define RANDOM_TERRAIN
 
-static float sx =81.270790, sy = 43.907982;
+static float sx = 81.270790, sy = 43.907982;
 
 typedef struct { Vec3 p[3]; } Tri;
 
@@ -64,7 +64,8 @@ Terrain terrain_new(TerrainVertexCallback vertexCallback, int width, int height,
   return self;
 }
 
-#define VEC3(_x, _y, _z) (Vec3) { .x = _x, .y = _y, .z = _z }
+#define VEC3(_x, _y, _z)                                                       \
+  (Vec3) { .x = _x, .y = _y, .z = _z }
 
 void terrain_regen(Terrain *self, TerrainVertexCallback vertexCallback) {
   free(self->vertices);
@@ -193,60 +194,62 @@ void terrain_free(Terrain self) {
 }
 
 static int get_vert_index(Terrain *self, float x, float y) {
-	float tx = x / (float)self->unit_size + (float)self->width * 0.5;
-	float ty = y / (float)self->unit_size + (float)self->length * 0.5;
+  float tx = x / (float)self->unit_size + (float)self->width * 0.5;
+  float ty = y / (float)self->unit_size + (float)self->length * 0.5;
 
-	int i = tx;
-	int j = ty;
+  int i = tx;
+  int j = ty;
 
-	if (i >= self->width || i < 0 || j >= self->length || j < 0) {
-		return 0;
-	}
+  if (i >= self->width || i < 0 || j >= self->length || j < 0) {
+    return 0;
+  }
 
-	float x_fac = tx - i;
-	float y_fac = ty - j;
+  float x_fac = tx - i;
+  float y_fac = ty - j;
 
-	// triangles are specified like
-	// ___
-	//| /|
-	//|/ |
-	// --
-	// any point below the line will have x_fac < y_fac
-	// any point above the line will have x_fac >= y_fac
-	// todo explain this!
-	int vert_ind = 0;
-	if (x_fac < y_fac) {
-		// upper triangle
-		vert_ind = 2 * 3 * (i + self->width * j) + 3;
-	} else {
-		// lower triangle
-		vert_ind = 2 * 3 * (i + self->width * j);
-	}
+  // triangles are specified like
+  // ___
+  //| /|
+  //|/ |
+  // --
+  // any point below the line will have x_fac < y_fac
+  // any point above the line will have x_fac >= y_fac
+  // todo explain this!
+  int vert_ind = 0;
+  if (x_fac < y_fac) {
+    // upper triangle
+    vert_ind = 2 * 3 * (i + self->width * j) + 3;
+  } else {
+    // lower triangle
+    vert_ind = 2 * 3 * (i + self->width * j);
+  }
 
-	return vert_ind;
+  return vert_ind;
 }
 
-void terrain_apply_at(Terrain *self, TerrainVertexCallback cb, float x, float y) {
-	int vert_ind = get_vert_index(self, x, y);
-	cb(self->vertices + vert_ind);
-	cb(self->vertices + vert_ind + 1);
-	cb(self->vertices + vert_ind + 2);
+void terrain_apply_at(Terrain *self, TerrainVertexCallback cb, float x,
+                      float y) {
+  int vert_ind = get_vert_index(self, x, y);
+  cb(self->vertices + vert_ind);
+  cb(self->vertices + vert_ind + 1);
+  cb(self->vertices + vert_ind + 2);
 }
 
-// reference: https://www.opengl.org/discussion_boards/showthread.php/138914-Terrain-Renderer-How-to-Get-Height-at-x-y
-float terrain_get_height(Terrain *self, float x, float y){
-	
-	int vert_ind = get_vert_index(self, x, y);
+// reference:
+// https://www.opengl.org/discussion_boards/showthread.php/138914-Terrain-Renderer-How-to-Get-Height-at-x-y
+float terrain_get_height(Terrain *self, float x, float y) {
+
+  int vert_ind = get_vert_index(self, x, y);
   int k;
   float normal[3] = {0};
   float position[3] = {0};
-  for(k = 0;k < 3;k++) {
-      position[k] = self->vertices[vert_ind].position[k];
-      normal[k] = self->vertices[vert_ind].normal[k];
+  for (k = 0; k < 3; k++) {
+    position[k] = self->vertices[vert_ind].position[k];
+    normal[k] = self->vertices[vert_ind].normal[k];
   }
 
   float c = 0;
-  for(k = 0;k < 3;k++){
+  for (k = 0; k < 3; k++) {
     c += position[k] * normal[k];
   }
 

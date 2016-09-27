@@ -27,8 +27,8 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
                   3.14159265358979323846 * 0.5 * (float)random_in_rangei(0, 4));
     mat4_translate(&model_matrix, pos);
 
-    renderable = renderable_component_new(&self->base_object, "wall",
-                                          world->renderer);
+    renderable =
+        renderable_component_new(&self->base_object, "wall", world->renderer);
     renderable->base_component.on_update = NULL;
     renderable_component_set_model_matrix(renderable, model_matrix);
     game_object_add_component(&self->base_object, (Component *)renderable);

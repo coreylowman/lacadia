@@ -47,8 +47,8 @@ static void on_collide(GameObject *self, GameObject *other) {
   } else if (strcmp(other->tag, "wall") == 0) {
     Spell *fireball = (Spell *)self;
     ParticleSystem *ps = particle_system_new(
-        self->world, fireball->collidable->bounding_box.center,
-        "burn_particle", 32, 0.0, 0.75);
+        self->world, fireball->collidable->bounding_box.center, "burn_particle",
+        32, 0.0, 0.75);
     particle_system_set_particle_init(ps, fizzle_particle_init);
     // this gives ownership to game_world... we don't have to worry about
     // freeing

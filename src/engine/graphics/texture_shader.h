@@ -9,8 +9,8 @@
 #define MAX_TEXTURE_VERTICES 8
 
 typedef struct TextureVertex {
-    Vec3 position;
-    float u, v;
+  Vec3 position;
+  float u, v;
 } TextureVertex;
 
 typedef struct TextureShader {
@@ -31,6 +31,8 @@ typedef struct TextureShader {
 
 TextureShader *texture_shader_new(AssetManager *asset_manager);
 void texture_shader_free(TextureShader *self);
-void texture_shader_add_texture(TextureShader *self, Vec3 center, Vec3 left_offset, Vec3 top_offset, int texture_id);
+void texture_shader_add_texture(TextureShader *self, Vec3 center,
+                                Vec3 left_offset, Vec3 top_offset,
+                                int texture_id);
 
 #endif

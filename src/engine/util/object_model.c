@@ -46,12 +46,12 @@ ObjectModel *obj_model_from_file(const char *filename) {
   ArrayList_v3 *normal_list = array_list_new_v3();
   ArrayList_v3 *texture_list = array_list_new_v3();
 
-  char line[256] = { 0 };
+  char line[256] = {0};
   char *token;
   Vec3 p, n, t;
   int i;
 
-  char obj_filename[256] = { 0 };
+  char obj_filename[256] = {0};
   sprintf(obj_filename, "%s.obj", filename);
 
   FILE *input = fopen(obj_filename, "r");
@@ -99,7 +99,7 @@ ObjectModel *obj_model_from_file(const char *filename) {
 
   unsigned char *png_data;
   unsigned png_width, png_height;
-  char png_filename[256] = { 0 };
+  char png_filename[256] = {0};
   sprintf(png_filename, "%s.png", filename);
 
   if (!load_png_data(png_filename, &png_data, &png_width, &png_height)) {
@@ -115,7 +115,7 @@ ObjectModel *obj_model_from_file(const char *filename) {
   int tx, ty;
   float inv_255 = 1.0 / 255.0;
 
-  float min[3] = { FLT_MAX }, max[3] = { FLT_MIN };
+  float min[3] = {FLT_MAX}, max[3] = {FLT_MIN};
 
   ObjectModelVertex objVertex;
   for (i = 0; i < face_list->length; i++) {

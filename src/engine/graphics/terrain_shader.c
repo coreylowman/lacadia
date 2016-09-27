@@ -6,16 +6,17 @@
 
 extern Vec3 light_position;
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
+                       float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
 TerrainShader *terrain_shader_new() {
   TerrainShader *self = malloc(sizeof(*self));
   self->num_terrains = 0;
-  int result = shader_init(&self->base_shader, "./assets/shaders/terrain_vert.glsl",
-                           "./assets/shaders/terrain_frag.glsl", pre_render, render,
-                           post_render);
+  int result = shader_init(
+      &self->base_shader, "./assets/shaders/terrain_vert.glsl",
+      "./assets/shaders/terrain_frag.glsl", pre_render, render, post_render);
 
   if (result) {
     printf("Error loading terrain shader\n");
@@ -56,7 +57,8 @@ TerrainShader *terrain_shader_new() {
 
 void terrain_shader_free(TerrainShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
+                       float clip_dist) {
   TerrainShader *self = (TerrainShader *)shader;
   glUseProgram(self->base_shader.program);
   glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
@@ -65,7 +67,8 @@ static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float cli
                      &camera.view_matrix.data[0]);
   glUniform3f(self->light_position_location, light_position.x, light_position.y,
               light_position.z);
-  glUniform4f(self->clip_plane_location, clip_plane.x, clip_plane.y, clip_plane.z, clip_dist);
+  glUniform4f(self->clip_plane_location, clip_plane.x, clip_plane.y,
+              clip_plane.z, clip_dist);
 }
 
 static void render(Shader *shader, Camera camera) {

@@ -12,7 +12,7 @@
 #include "engine/asset_manager.h"
 
 typedef struct Renderer {
-  //reference to asset manager, we don't own
+  // reference to asset manager, we don't own
   AssetManager *asset_manager;
 
   ModelShader *model_shader;
@@ -38,7 +38,9 @@ void renderer_render_terrain(Renderer *self, Terrain terrain);
 void renderer_render_sphere(Renderer *self, Vec3 position);
 void renderer_render_text(Renderer *self, const char *buffer, int len,
                           Vec3 xyscale, Vec3 color);
-void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset, Vec3 top_offset, int texture_id);
-void renderer_render_water(Renderer *self, Vec3 center, float width, float length);
+void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset,
+                             Vec3 top_offset, int texture_id);
+void renderer_render_water(Renderer *self, Vec3 center, float width,
+                           float length);
 
 #endif

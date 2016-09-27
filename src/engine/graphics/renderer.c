@@ -42,21 +42,23 @@ Obb renderer_get_model_obb(Renderer *self, int model_id) {
   return asset_manager_get_model(self->asset_manager, model_id)->bounding_box;
 }
 
-static void render_entities(Renderer *self, Camera camera, Vec3 clip_plane, float clip_dist) {
-	shader_render((Shader *)self->terrain_shader, camera, clip_plane, clip_dist);
-	shader_render((Shader *)self->model_shader, camera, clip_plane, clip_dist);
+static void render_entities(Renderer *self, Camera camera, Vec3 clip_plane,
+                            float clip_dist) {
+  shader_render((Shader *)self->terrain_shader, camera, clip_plane, clip_dist);
+  shader_render((Shader *)self->model_shader, camera, clip_plane, clip_dist);
 }
 
 static void render_gui(Renderer *self, Camera camera) {
-	shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
-	shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
+  shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
+  shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
 }
 
 static float water_height;
 
 static void render_all(Renderer *self, Camera camera) {
   shader_render((Shader *)self->terrain_shader, camera, VEC3_UNIT_NY, 10000);
-  shader_render((Shader *)self->model_shader, camera, VEC3_UNIT_Y, -water_height);
+  shader_render((Shader *)self->model_shader, camera, VEC3_UNIT_Y,
+                -water_height);
 
   shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
   shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
@@ -65,25 +67,25 @@ static void render_all(Renderer *self, Camera camera) {
 }
 
 void renderer_render(Renderer *self, Camera camera) {
-	glEnable(GL_CLIP_DISTANCE0);
+  glEnable(GL_CLIP_DISTANCE0);
 
-	{
-        camera_invert_pitch(&camera, water_height);
+  {
+    camera_invert_pitch(&camera, water_height);
 
-		// capture reflection of stuff above water
-		water_shader_pre_reflection_render(self->water_shader, camera);
-		render_entities(self, camera, VEC3_UNIT_Y, -water_height+0.01);
-		water_shader_post_reflection_render(self->water_shader, camera);
+    // capture reflection of stuff above water
+    water_shader_pre_reflection_render(self->water_shader, camera);
+    render_entities(self, camera, VEC3_UNIT_Y, -water_height + 0.01);
+    water_shader_post_reflection_render(self->water_shader, camera);
 
-		camera_invert_pitch(&camera, water_height);
-	}
+    camera_invert_pitch(&camera, water_height);
+  }
 
-	{
-		// capture refraction of stuff below water
-		water_shader_pre_refraction_render(self->water_shader, camera);
-		render_entities(self, camera, VEC3_UNIT_NY, water_height+0.01);
-		water_shader_post_refraction_render(self->water_shader, camera);
-	}
+  {
+    // capture refraction of stuff below water
+    water_shader_pre_refraction_render(self->water_shader, camera);
+    render_entities(self, camera, VEC3_UNIT_NY, water_height + 0.01);
+    water_shader_post_refraction_render(self->water_shader, camera);
+  }
 
   render_all(self, camera);
 
@@ -100,7 +102,7 @@ void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix) {
 }
 
 void renderer_render_line(Renderer *self, Vec3 start, Vec3 end) {
-  line_shader_add_line(self->line_shader, (Line) { .start = start, .end = end });
+  line_shader_add_line(self->line_shader, (Line){.start = start, .end = end});
 }
 
 void renderer_render_terrain(Renderer *self, Terrain terrain) {
@@ -121,11 +123,14 @@ void renderer_render_text(Renderer *self, const char *buffer, int len,
   text_shader_add_text(self->text_shader, buffer, len, xyscale, color);
 }
 
-void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset, Vec3 top_offset, int texture_id) {
-  texture_shader_add_texture(self->texture_shader, center, left_offset, top_offset, texture_id);
+void renderer_render_texture(Renderer *self, Vec3 center, Vec3 left_offset,
+                             Vec3 top_offset, int texture_id) {
+  texture_shader_add_texture(self->texture_shader, center, left_offset,
+                             top_offset, texture_id);
 }
 
-void renderer_render_water(Renderer *self, Vec3 center, float width, float length) {
-	water_height = center.y;
+void renderer_render_water(Renderer *self, Vec3 center, float width,
+                           float length) {
+  water_height = center.y;
   water_shader_add_chunk(self->water_shader, center, width, length);
 }

@@ -60,7 +60,7 @@ Vec3 vec3_normalized(Vec3 arr) {
 }
 
 Vec3 vec3_reflect(Vec3 v, Vec3 normal) {
-	return vec3_sub(v, vec3_scale(normal, 2 * vec3_dot(v, normal)));
+  return vec3_sub(v, vec3_scale(normal, 2 * vec3_dot(v, normal)));
 }
 
 float vec3_length(Vec3 vec) {

@@ -35,7 +35,8 @@ Vec3 camera_get_sideways(Camera camera);
 void camera_move_forwards(Camera *camera, double dt, float direction);
 void camera_move_vertically(Camera *camera, double dt, float direction);
 void camera_rotate_view(Camera *camera, float dx_radians, float dy_radians);
-void camera_rotate_around_follow(Camera *camera, float dx_radians, float dy_radians);
+void camera_rotate_around_follow(Camera *camera, float dx_radians,
+                                 float dy_radians);
 void camera_strafe(Camera *camera, double dt, float direction);
 
 void camera_invert_pitch(Camera *camera, float height);

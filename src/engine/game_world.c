@@ -41,7 +41,6 @@ GameWorld *game_world_new() {
 void game_world_free(GameWorld *self) {
   sparse_array_free(self->game_objects);
 
-  
   renderer_free(self->renderer);
   asset_manager_free(self->asset_manager);
 
@@ -139,7 +138,8 @@ void game_world_render(GameWorld *self) {
 
   renderer_render_text(self->renderer, "lacadia", 7,
                        (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
-  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 500, 500);
+  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 500,
+                        500);
 
   // actually draw stuff
   renderer_render(self->renderer, self->camera);

@@ -4,15 +4,16 @@
 #include "engine/util/camera.h"
 #include "texture_shader.h"
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist);
+static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
+                       float clip_dist);
 static void render(Shader *self, Camera camera);
 static void post_render(Shader *self);
 
 TextureShader *texture_shader_new(AssetManager *asset_manager) {
   TextureShader *self = malloc(sizeof(*self));
-  int result =
-      shader_init(&self->base_shader, "./assets/shaders/texture_vert.glsl",
-                  "./assets/shaders/texture_frag.glsl", pre_render, render, post_render);
+  int result = shader_init(
+      &self->base_shader, "./assets/shaders/texture_vert.glsl",
+      "./assets/shaders/texture_frag.glsl", pre_render, render, post_render);
   if (result) {
     printf("Error loading texture shader\n");
     exit(result);
@@ -21,9 +22,9 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
   self->asset_manager = asset_manager;
 
   int i;
-  for(i = 0;i < MAX_TEXTURES;i++) {
+  for (i = 0; i < MAX_TEXTURES; i++) {
     self->num_texture_vertices[i] = 0;
-	self->texture_ids[i] = 0;
+    self->texture_ids[i] = 0;
   }
   self->num_textures = 0;
   glGenVertexArrays(1, &self->vao);
@@ -33,10 +34,12 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
 
   glBindBuffer(GL_ARRAY_BUFFER, self->vbo);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TextureVertex), (const GLvoid *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TextureVertex),
+                        (const GLvoid *)0);
   glEnableVertexAttribArray(0);
 
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(TextureVertex), (const GLvoid *)(3 * sizeof(float)));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(TextureVertex),
+                        (const GLvoid *)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -53,7 +56,8 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
 
 void texture_shader_free(TextureShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float clip_dist) {
+static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
+                       float clip_dist) {
   TextureShader *self = (TextureShader *)shader;
   glUseProgram(self->base_shader.program);
   glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
@@ -92,13 +96,15 @@ static void render(Shader *shader, Camera camera) {
 static void post_render(Shader *shader) {
   TextureShader *self = (TextureShader *)shader;
   int i;
-  for(i = 0;i < MAX_TEXTURES;i++) {
+  for (i = 0; i < MAX_TEXTURES; i++) {
     self->num_texture_vertices[i] = 0;
   }
   self->num_textures = 0;
 }
 
-void texture_shader_add_texture(TextureShader *self, Vec3 center, Vec3 left_offset, Vec3 top_offset, int texture_id) {
+void texture_shader_add_texture(TextureShader *self, Vec3 center,
+                                Vec3 left_offset, Vec3 top_offset,
+                                int texture_id) {
   if (self->num_textures >= MAX_TEXTURES) {
     printf("error: too many textures\n");
     return;
@@ -115,8 +121,8 @@ void texture_shader_add_texture(TextureShader *self, Vec3 center, Vec3 left_offs
   int location = self->num_textures;
   int i;
   int found = 0;
-  for(i = 0;i < self->num_textures;i++) {
-    if(self->texture_ids[i] == texture_id) {
+  for (i = 0; i < self->num_textures; i++) {
+    if (self->texture_ids[i] == texture_id) {
       location = i;
       found = 1;
       break;
@@ -125,32 +131,32 @@ void texture_shader_add_texture(TextureShader *self, Vec3 center, Vec3 left_offs
 
   if (!found) {
     self->texture_ids[location] = texture_id;
-	self->num_textures++;
+    self->num_textures++;
   }
 
   i = self->num_texture_vertices[location];
   if (i < MAX_TEXTURE_VERTICES) {
-	  self->texture_vertices[location][i].position = top_left;
+    self->texture_vertices[location][i].position = top_left;
     self->texture_vertices[location][i].u = 0;
     self->texture_vertices[location][i++].v = 0;
 
-	self->texture_vertices[location][i].position = bottom_left;
+    self->texture_vertices[location][i].position = bottom_left;
     self->texture_vertices[location][i].u = 0;
     self->texture_vertices[location][i++].v = 1;
 
-	self->texture_vertices[location][i].position = bottom_right;
+    self->texture_vertices[location][i].position = bottom_right;
     self->texture_vertices[location][i].u = 1;
     self->texture_vertices[location][i++].v = 1;
 
-	self->texture_vertices[location][i].position = top_left;
+    self->texture_vertices[location][i].position = top_left;
     self->texture_vertices[location][i].u = 0;
     self->texture_vertices[location][i++].v = 0;
 
-	self->texture_vertices[location][i].position = top_right;
+    self->texture_vertices[location][i].position = top_right;
     self->texture_vertices[location][i].u = 1;
     self->texture_vertices[location][i++].v = 0;
 
-	self->texture_vertices[location][i].position = bottom_right;
+    self->texture_vertices[location][i].position = bottom_right;
     self->texture_vertices[location][i].u = 1;
     self->texture_vertices[location][i++].v = 1;
 

@@ -7,19 +7,19 @@
 #define MAX_MODELS 32
 
 typedef struct TextureAsset {
-    unsigned int width, height;
-    unsigned char *data;
-    unsigned int id;
+  unsigned int width, height;
+  unsigned char *data;
+  unsigned int id;
 } TextureAsset;
 
 typedef struct AssetManager {
-    int num_textures;
-    char *texture_names[MAX_TEXTURES];
-    TextureAsset textures[MAX_TEXTURES];
+  int num_textures;
+  char *texture_names[MAX_TEXTURES];
+  TextureAsset textures[MAX_TEXTURES];
 
-    int num_models;
-    char *model_names[MAX_MODELS];
-    ObjectModel *models[MAX_MODELS];
+  int num_models;
+  char *model_names[MAX_MODELS];
+  ObjectModel *models[MAX_MODELS];
 } AssetManager;
 
 AssetManager *asset_manager_new(const char *asset_root_path);

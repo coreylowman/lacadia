@@ -97,7 +97,8 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
   return 0;
 }
 
-void shader_render(Shader *self, Camera camera, Vec3 clip_plane, float clip_dist) {
+void shader_render(Shader *self, Camera camera, Vec3 clip_plane,
+                   float clip_dist) {
   if (self->on_pre_render != NULL) {
     self->on_pre_render(self, camera, clip_plane, clip_dist);
   }
