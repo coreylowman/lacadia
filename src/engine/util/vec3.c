@@ -59,6 +59,10 @@ Vec3 vec3_normalized(Vec3 arr) {
   return arr;
 }
 
+Vec3 vec3_reflect(Vec3 v, Vec3 normal) {
+	return vec3_sub(v, vec3_scale(normal, 2 * vec3_dot(v, normal)));
+}
+
 float vec3_length(Vec3 vec) {
   return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }

@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
   world = game_world_new();
   GameObject *player = (GameObject *)mage_new(world);
   game_world_add_object(world, player);
-  //camera_set_follow(&world->camera, &player->position, (Vec3) {.x = 0, .y = 20, .z = 20 });
+  camera_set_follow(&world->camera, &player->position, (Vec3) {.x = 0, .y = 20, .z = 20 });
   // game_world_add_object(world,
   //                   (GameObject *)bug_spawner_new(world, VEC3_ZERO, 5.0));
   game_world_add_object(world, coin_new(world, (Vec3){.x = 5, .y = 15, .z = -15}));

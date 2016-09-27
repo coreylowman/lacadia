@@ -102,14 +102,32 @@ void camera_rotate_view(Camera *camera, float dx_radians, float dy_radians) {
 	}
 }
 
-void camera_rotate_around_follow(Camera *camera, float radians) {
-  Mat4 rotation_matrix = MAT4_IDENT;
-  mat4_rotate(&rotation_matrix, radians, camera->up);
+// todo make sure you can't rotate too low/high?
+void camera_rotate_around_follow(Camera *camera, float dx_radians, float dy_radians) {
+  {
+    Mat4 rotation_matrix = MAT4_IDENT;
+    mat4_rotate(&rotation_matrix, dx_radians, VEC3_UNIT_Y);
 
-  mat4_mul_vec3(&camera->follow_offset, rotation_matrix, camera->follow_offset);
+    mat4_mul_vec3(&camera->follow_offset, rotation_matrix, camera->follow_offset);
 
-  camera->position = vec3_add(*camera->follow_position, camera->follow_offset);
-  camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
+    camera->position = vec3_add(*camera->follow_position, camera->follow_offset);
+    camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
+
+    mat4_mul_vec3(&camera->up, rotation_matrix, camera->up);
+    vec3_normalize(&camera->up);
+  }
+  {
+    Vec3 sideways = vec3_normalized(vec3_cross(camera->forward, camera->up));
+    Mat4 rotation_matrix = MAT4_IDENT;
+    mat4_rotate(&rotation_matrix, dy_radians, sideways);
+
+    mat4_mul_vec3(&camera->follow_offset, rotation_matrix, camera->follow_offset);
+    camera->position = vec3_add(*camera->follow_position, camera->follow_offset);
+    camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
+
+    mat4_mul_vec3(&camera->up, rotation_matrix, camera->up);
+    vec3_normalize(&camera->up);
+  }
 }
 
 void camera_move_vertically(Camera *camera, double dt, float direction) {
@@ -128,15 +146,11 @@ void camera_update_projection_matrix(Camera *camera) {
              camera->z_near, camera->z_far);
 }
 
-static Vec3 reflect(Vec3 d, Vec3 n) {
-  return vec3_sub(d, vec3_scale(n, 2 * vec3_dot(d, n)));
-}
-
 void camera_invert_pitch(Camera *camera, float height) {
   float dist = 2 * (camera->position.y - height);
   camera->position.y -= dist;
-  camera->forward = vec3_normalized(reflect(camera->forward, VEC3_UNIT_Y));
-  camera->up = vec3_normalized(reflect(camera->up, VEC3_UNIT_Y));
+  camera->forward = vec3_normalized(vec3_reflect(camera->forward, VEC3_UNIT_Y));
+  camera->up = vec3_normalized(vec3_reflect(camera->up, VEC3_UNIT_Y));
   camera_update_view_matrix(camera);
 }
 
@@ -144,8 +158,8 @@ void camera_handle_inputs(Camera *camera, double dt, Inputs inputs) {
   if (camera->follow_position != NULL) {
     if(inputs.left_mouse_down) {
         double dx = (inputs.mouse_pos[0] - inputs.mouse_down_start_pos[0]);
-        double dy = -(inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]);
-      camera_rotate_around_follow(camera, dt * dx);
+        double dy = (inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]);
+      camera_rotate_around_follow(camera, dt * dx, dt * dy);
     }
   } else {
     if (inputs.space_down) { // move vertically
