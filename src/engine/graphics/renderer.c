@@ -69,19 +69,19 @@ void renderer_render(Renderer *self, Camera camera) {
 
 	{
         camera_invert_pitch(&camera, water_height);
-		
-		// capture reflection in water
+
+		// capture reflection of stuff above water
 		water_shader_pre_reflection_render(self->water_shader, camera);
-		render_entities(self, camera, VEC3_UNIT_Y, -water_height+0.1);
+		render_entities(self, camera, VEC3_UNIT_Y, -water_height+0.01);
 		water_shader_post_reflection_render(self->water_shader, camera);
 
 		camera_invert_pitch(&camera, water_height);
 	}
 
 	{
-		// capture refraction in water
+		// capture refraction of stuff below water
 		water_shader_pre_refraction_render(self->water_shader, camera);
-		render_entities(self, camera, VEC3_UNIT_NY, water_height+0.1);
+		render_entities(self, camera, VEC3_UNIT_NY, water_height+0.01);
 		water_shader_post_refraction_render(self->water_shader, camera);
 	}
 
@@ -99,8 +99,8 @@ void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix) {
   model_shader_add_model(self->model_shader, model_id, model_matrix);
 }
 
-void renderer_render_line(Renderer *self, Line line) {
-  line_shader_add_line(self->line_shader, line);
+void renderer_render_line(Renderer *self, Vec3 start, Vec3 end) {
+  line_shader_add_line(self->line_shader, (Line) { .start = start, .end = end });
 }
 
 void renderer_render_terrain(Renderer *self, Terrain terrain) {

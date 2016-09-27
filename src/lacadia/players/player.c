@@ -63,16 +63,16 @@ void player_update(GameObject *obj, double dt) {
   // if (inputs.q_pressed)
   //   player_use_ability(self, 3);
 
-  double width_2 = (double)(width)*0.5;
-  double height_2 = (double)(height)*0.5;
-  double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
-  double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
-  Vec3 mouse_screen = (Vec3){.data = {mousex, mousey, 1}};
-  Vec3 mouse_world = game_world_screen_coords_to_world_coords(
-      self->base_object.world, mouse_screen);
-  self->base_object.direction =
-      vec3_sub(mouse_world, self->base_object.position);
-  vec3_normalize(&self->base_object.direction);
+  // double width_2 = (double)(width)*0.5;
+  // double height_2 = (double)(height)*0.5;
+  // double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
+  // double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
+  // Vec3 mouse_screen = (Vec3){.data = {mousex, mousey, 1}};
+  // Vec3 mouse_world = game_world_screen_coords_to_world_coords(
+  //     self->base_object.world, mouse_screen);
+  // self->base_object.direction =
+  //     vec3_sub(mouse_world, self->base_object.position);
+  // vec3_normalize(&self->base_object.direction);
 
    if (inputs.w_down)
      player_move_forwards(self, dt, 1.0);

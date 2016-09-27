@@ -54,6 +54,11 @@ Vec3 vec3_mix(Vec3 v1, Vec3 v2, float factor) {
   return out;
 }
 
+Vec3 vec3_normalized(Vec3 arr) {
+  vec3_normalize(&arr);
+  return arr;
+}
+
 float vec3_length(Vec3 vec) {
   return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }

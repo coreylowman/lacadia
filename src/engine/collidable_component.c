@@ -67,25 +67,12 @@ static void on_render(Component *component, Renderer *renderer) {
   Vec3 max = vec3_add(self->bounding_box.center, r);
   Vec3 min = vec3_sub(self->bounding_box.center, r);
 
-  Line l;
-
   for (i = 0; i < 3; i++) {
     ti = (i + 1) % 3;
 
-    l.start = min;
-    l.end = vec3_add(min, rs[i]);
-    renderer_render_line(renderer, l);
-
-    l.start = max;
-    l.end = vec3_sub(max, rs[i]);
-    renderer_render_line(renderer, l);
-
-    l.start = vec3_add(min, rs[i]);
-    l.end = vec3_sub(max, rs[ti]);
-    renderer_render_line(renderer, l);
-
-    l.start = vec3_add(min, rs[ti]);
-    l.end = vec3_sub(max, rs[i]);
-    renderer_render_line(renderer, l);
+	renderer_render_line(renderer, min, vec3_add(min, rs[i]));
+	renderer_render_line(renderer, max, vec3_sub(max, rs[i]));
+	renderer_render_line(renderer, vec3_add(min, rs[i]), vec3_sub(max, rs[ti]));
+	renderer_render_line(renderer, vec3_add(min, rs[ti]), vec3_sub(max, rs[i]));
   }
 }

@@ -64,7 +64,7 @@ void mat4_rotate(Mat4 *mat, float rads, Vec3 axis) {
          s, c, t, a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23,
          b00, b01, b02, b10, b11, b12, b20, b21, b22;
 
-  if (!len) {
+  if (len == 0.0) {
     return;
   }
   if (len != 1.0) {
@@ -197,37 +197,28 @@ void mat4_persp(Mat4 *mat, float fov, float aspect, float zNear, float zFar) {
   mat->data[15] = 0;
 }
 
-void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up) {
+void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 forward, Vec3 up) {
   int i;
-  Vec3 f, s, u;
-
-  for (i = 0; i < 3; i++) {
-    f.data[i] = center.data[i] - eye.data[i];
-  }
-  // f is z
-  vec3_normalize(&f);
+  Vec3 s;
 
   // s is x
-  s = vec3_cross(f, up);
+  s = vec3_cross(forward, up);
   vec3_normalize(&s);
-
-  // u is y
-  u = vec3_cross(s, f);
 
   mat->data[0] = s.data[0];
   mat->data[1] = s.data[1];
   mat->data[2] = s.data[2];
   mat->data[3] = -vec3_dot(s, eye);
 
-  mat->data[4] = u.data[0];
-  mat->data[5] = u.data[1];
-  mat->data[6] = u.data[2];
-  mat->data[7] = -vec3_dot(u, eye);
+  mat->data[4] = up.data[0];
+  mat->data[5] = up.data[1];
+  mat->data[6] = up.data[2];
+  mat->data[7] = -vec3_dot(up, eye);
 
-  mat->data[8] = -f.data[0];
-  mat->data[9] = -f.data[1];
-  mat->data[10] = -f.data[2];
-  mat->data[11] = vec3_dot(f, eye);
+  mat->data[8] = -forward.data[0];
+  mat->data[9] = -forward.data[1];
+  mat->data[10] = -forward.data[2];
+  mat->data[11] = vec3_dot(forward, eye);
 
   mat->data[12] = 0;
   mat->data[13] = 0;

@@ -64,28 +64,15 @@ GameObject *game_world_get_first_tagged(GameWorld *self, const char *tag) {
 }
 
 void game_world_update(GameWorld *self, double dt) {
-  // if (self->inputs.l_pressed){
-  //    if (!camera_is_following(self->camera))
-  //        follow();
-  //    else
-  //        unfollow();
-  //}
-
-  // if (self->inputs.m_pressed) {
-  //   game_world_add_object(self, (GameObject *)bug_new(self, VEC3_ZERO));
-  // }
+  self->dt = dt;
+  DELTA_TIME = dt;
 
   if (self->inputs.r_pressed) {
     terrain_regen(&self->level->terrain, level_terrain_callback);
   }
 
-  if (!camera_is_following(self->camera))
-    camera_handle_inputs(&self->camera, dt, self->inputs);
-  else
-    camera_follow(&self->camera, dt, self->inputs);
-
-  self->dt = dt;
-  DELTA_TIME = dt;
+  camera_handle_inputs(&self->camera, dt, self->inputs);
+  camera_follow(&self->camera, dt, self->inputs);
 
   int i;
   GameObject *obj;
@@ -198,8 +185,8 @@ Vec3 game_world_screen_coords_to_world_coords(GameWorld *self,
   direction.z /= w;
   vec3_normalize(&direction);
 
-  Vec3 position = self->camera.location;
-  double t = -position.y / direction.y;
+  double t = -self->camera.position.y / direction.y;
+  Vec3 position = vec3_add(self->camera.position, vec3_scale(direction, t));
 
-  return vec3_add(position, vec3_scale(direction, t));
+  return position;
 }

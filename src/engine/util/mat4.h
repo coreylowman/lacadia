@@ -52,7 +52,7 @@ void mat4_copy(Mat4 *dest, Mat4 src);
 
 void mat4_persp(Mat4 *mat, float fov, float aspect, float zNear, float zFar);
 
-void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 center, Vec3 up);
+void mat4_lookat(Mat4 *mat, Vec3 eye, Vec3 forward, Vec3 up);
 
 int mat4_inverse(Mat4 *out_mat, Mat4 mat);
 

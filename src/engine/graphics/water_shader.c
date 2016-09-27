@@ -167,7 +167,7 @@ static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane, float cli
                      &camera.projection_matrix.data[0]);
   glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
                      &camera.view_matrix.data[0]);
-  glUniform3f(self->camera_position_location, camera.location.x, camera.location.y, camera.location.z);
+  glUniform3f(self->camera_position_location, camera.position.x, camera.position.y, camera.position.z);
   glUniform3f(self->light_position_location, light_position.x, light_position.y, light_position.z);
   glUniform1f(self->move_factor_location, move_factor);
   glUniform1i(self->reflection_texture_location, 0);

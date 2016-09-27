@@ -9,9 +9,9 @@ typedef struct Camera {
   Mat4 projection_matrix;
   Mat4 view_matrix;
 
-  // view parameters
-  Vec3 location;
-  Vec3 look_at;
+  float speed;
+  Vec3 position;
+  Vec3 forward;
   Vec3 up;
 
   // perspective projection parameters
@@ -19,17 +19,14 @@ typedef struct Camera {
   float aspect_ratio;
   float z_near, z_far;
 
-  float speed;
-
-  float follow_dist;
-  float target_height;
+  Vec3 follow_offset;
   Vec3 *follow_position;
 } Camera;
 
 void camera_init(Camera *camera, int width, int height);
 
 int camera_is_following(Camera camera);
-void camera_set_follow(Camera *camera, Vec3 *follow_position, float height);
+void camera_set_follow(Camera *camera, Vec3 *follow_position, Vec3 offset);
 void camera_follow(Camera *camera, double dt, Inputs inputs);
 
 Vec3 camera_get_forwards(Camera camera);
@@ -37,9 +34,8 @@ Vec3 camera_get_sideways(Camera camera);
 
 void camera_move_forwards(Camera *camera, double dt, float direction);
 void camera_move_vertically(Camera *camera, double dt, float direction);
-void camera_rotate_lookat(Camera *camera, double side_amt, double up_amt);
-void camera_rotate_around_lookat(Camera *camera, double side_amt,
-                                 double up_amt);
+void camera_rotate_view(Camera *camera, float dx_radians, float dy_radians);
+void camera_rotate_around_follow(Camera *camera, float radians);
 void camera_strafe(Camera *camera, double dt, float direction);
 
 void camera_invert_pitch(Camera *camera, float height);
