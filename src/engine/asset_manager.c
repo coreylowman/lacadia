@@ -92,7 +92,7 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 	struct dirent *entry;
 	int result = 0;
 
-	char name_buffer[128] = { 0 };
+	char name_buffer[256] = { 0 };
 
 	directory = opendir(dir_path);
 	if (directory != NULL) {
@@ -105,13 +105,14 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 					extension[0] = 0;
 					self->model_names[self->num_models] = strdup(entry->d_name);
 
-					memset(name_buffer, 0, 128 * sizeof(char));
+					memset(name_buffer, 0, 256 * sizeof(char));
 					strcpy(name_buffer, dir_path);
 					strcat(name_buffer, "/");
 					strcat(name_buffer, entry->d_name);
 					extension[0] = '.';
-					printf("Loading model %s\n", name_buffer);
+					printf("Loading model %s...", name_buffer);
 					self->models[self->num_models++] = obj_model_from_file(name_buffer);
+					printf("done\n");
 				}
 				break;
 			}
@@ -120,6 +121,7 @@ static int load_models(AssetManager *self, char *dir_path, int dir_name_len) {
 					continue;
 				}
 				strcat(dir_path, entry->d_name);
+				printf("Loading models from %s...\n", dir_path);
 				result = load_models(self, dir_path, dir_name_len + strlen(entry->d_name));
 				dir_path[dir_name_len] = 0;
 				if (result) {
