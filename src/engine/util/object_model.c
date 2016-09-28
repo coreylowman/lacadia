@@ -162,9 +162,9 @@ ObjectModel *obj_model_from_file(const char *filename) {
 
   free(png_data);
   array_list_free(face_list);
-  array_list_free(vertex_list);
-  array_list_free(texture_list);
-  array_list_free(normal_list);
+  array_list_free_v3(vertex_list);
+  array_list_free_v3(texture_list);
+  array_list_free_v3(normal_list);
 
   self->bounding_box.center.x = (max[0] + min[0]) * 0.5;
   self->bounding_box.center.y = (max[1] + min[1]) * 0.5;

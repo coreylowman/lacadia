@@ -14,7 +14,7 @@ ArrayList *array_list_new(void (*free_element)(void *element)) {
   return array;
 }
 
-void array_list_free(void *data) {
+void array_list_free(ArrayList *data) {
   if (data == NULL)
     return;
 
@@ -91,11 +91,10 @@ void array_list_shrink_to_fit(ArrayList *array) {
     return array;                                                              \
   }                                                                            \
                                                                                \
-  void array_list_free_##name(void *data) {                                    \
-    if (data == NULL)                                                          \
+  void array_list_free_##name(ArrayList_##name *array) {                       \
+    if (array == NULL)                                                         \
       return;                                                                  \
                                                                                \
-    ArrayList_##name *array = (ArrayList_##name *)data;                        \
     free(array->data);                                                         \
     free(array);                                                               \
   }                                                                            \
