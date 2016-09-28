@@ -18,11 +18,23 @@ Renderer *renderer_new(AssetManager *asset_manager) {
   self->terrain_shader = terrain_shader_new();
   self->water_shader = water_shader_new(self->asset_manager);
 
+  self->shaders[MODEL_SHADER] = (Shader *)self->model_shader;
+  self->shaders[TEXTURE_SHADER] = (Shader *)self->texture_shader;
+  self->shaders[LINE_SHADER] = (Shader *)self->line_shader;
+  self->shaders[TEXT_SHADER] = (Shader *)self->text_shader;
+  self->shaders[TERRAIN_SHADER] = (Shader *)self->terrain_shader;
+  self->shaders[WATER_SHADER] = (Shader *)self->water_shader;
+
   return self;
 }
 
 void renderer_free(Renderer *self) {
   self->asset_manager = NULL;
+
+  int i;
+  for (i = 0; i < MAX_SHADERS; i++) {
+    self->shaders[i] = NULL;
+  }
 
   model_shader_free(self->model_shader);
   texture_shader_free(self->texture_shader);
@@ -42,59 +54,64 @@ Obb renderer_get_model_obb(Renderer *self, int model_id) {
   return asset_manager_get_model(self->asset_manager, model_id)->bounding_box;
 }
 
-static void render_entities(Renderer *self, Camera camera, Vec3 clip_plane,
-                            float clip_dist) {
-  shader_render((Shader *)self->terrain_shader, camera, clip_plane, clip_dist);
-  shader_render((Shader *)self->model_shader, camera, clip_plane, clip_dist);
-}
-
-static void render_gui(Renderer *self, Camera camera) {
-  shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
-  shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
+static void render_entities(Renderer *self) {
+  shader_render(self->shaders[TERRAIN_SHADER]);
+  shader_render(self->shaders[MODEL_SHADER]);
+  shader_render(self->shaders[LINE_SHADER]);
 }
 
 static float water_height;
 
-static void render_all(Renderer *self, Camera camera) {
-  shader_render((Shader *)self->terrain_shader, camera, VEC3_UNIT_NY, 10000);
-  shader_render((Shader *)self->model_shader, camera, VEC3_UNIT_Y,
-                -water_height);
-
-  shader_render((Shader *)self->texture_shader, camera, VEC3_ZERO, 0);
-  shader_render((Shader *)self->line_shader, camera, VEC3_ZERO, 0);
-
-  shader_render((Shader *)self->water_shader, camera, VEC3_ZERO, 0);
+static void load_base_uniforms(Renderer *self, Mat4 *projection_matrix,
+                               Mat4 *view_matrix, Vec3 *light_position,
+                               Vec3 *clip_plane, float clip_dist) {
+  int i;
+  for (i = 0; i < MAX_SHADERS; i++) {
+    self->shaders[i]->projection_matrix = projection_matrix;
+    self->shaders[i]->view_matrix = view_matrix;
+    self->shaders[i]->light_position = light_position;
+    self->shaders[i]->clip_plane = clip_plane;
+    self->shaders[i]->clip_dist = clip_dist;
+  }
 }
 
 void renderer_render(Renderer *self, Camera camera) {
   glEnable(GL_CLIP_DISTANCE0);
 
   {
-    camera_invert_pitch(&camera, water_height);
-
     // capture reflection of stuff above water
-    water_shader_pre_reflection_render(self->water_shader, camera);
-    render_entities(self, camera, VEC3_UNIT_Y, -water_height + 0.01);
-    water_shader_post_reflection_render(self->water_shader, camera);
+    Vec3 clip_plane = VEC3_UNIT_Y;
+    float clip_dist = -water_height + 0.01;
 
+    camera_invert_pitch(&camera, water_height);
+    load_base_uniforms(self, &camera.projection_matrix, &camera.view_matrix,
+                       &light_position, &clip_plane, clip_dist);
+    water_shader_render_reflection(self->water_shader, self, render_entities);
     camera_invert_pitch(&camera, water_height);
   }
 
   {
     // capture refraction of stuff below water
-    water_shader_pre_refraction_render(self->water_shader, camera);
-    render_entities(self, camera, VEC3_UNIT_NY, water_height + 0.01);
-    water_shader_post_refraction_render(self->water_shader, camera);
+    Vec3 clip_plane = VEC3_UNIT_NY;
+    float clip_dist = water_height + 0.01;
+    load_base_uniforms(self, &camera.projection_matrix, &camera.view_matrix,
+                       &light_position, &clip_plane, clip_dist);
+    water_shader_render_refraction(self->water_shader, self, render_entities);
   }
 
-  render_all(self, camera);
+  {
+    // render everything
+    Vec3 clip_plane = VEC3_UNIT_Y;
+    float clip_dist = 1000000;
 
-  shader_post_render((Shader *)self->terrain_shader);
-  shader_post_render((Shader *)self->model_shader);
-  shader_post_render((Shader *)self->texture_shader);
-  shader_post_render((Shader *)self->line_shader);
-  shader_post_render((Shader *)self->water_shader);
-  shader_post_render((Shader *)self->text_shader);
+    load_base_uniforms(self, &camera.projection_matrix, &camera.view_matrix,
+                       &light_position, &clip_plane, clip_dist);
+    int i;
+    for (i = 0; i < MAX_SHADERS; i++) {
+      shader_render(self->shaders[i]);
+      shader_post_render(self->shaders[i]);
+    }
+  }
 }
 
 void renderer_render_model(Renderer *self, int model_id, Mat4 model_matrix) {

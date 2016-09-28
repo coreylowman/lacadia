@@ -11,10 +11,24 @@
 #include "engine/graphics/water_shader.h"
 #include "engine/asset_manager.h"
 
+typedef enum ShaderIndex {
+  MODEL_SHADER = 0,
+  LINE_SHADER,
+  TEXT_SHADER,
+  TERRAIN_SHADER,
+  TEXTURE_SHADER,
+  WATER_SHADER,
+  MAX_SHADERS,
+} ShaderIndex;
+
 typedef struct Renderer {
   // reference to asset manager, we don't own
   AssetManager *asset_manager;
 
+  // shader array... actual shaders are right below
+  Shader *shaders[MAX_SHADERS];
+
+  // actual pointers
   ModelShader *model_shader;
   LineShader *line_shader;
   TextShader *text_shader;

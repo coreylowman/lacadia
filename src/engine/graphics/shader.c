@@ -90,6 +90,15 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
     return 1;
   }
 
+  shader->projection_matrix_location =
+      glGetUniformLocation(shader->program, "projection_matrix");
+  shader->view_matrix_location =
+      glGetUniformLocation(shader->program, "view_matrix");
+  shader->light_position_location =
+      glGetUniformLocation(shader->program, "light_position");
+  shader->clip_plane_location =
+      glGetUniformLocation(shader->program, "clip_plane");
+
   shader->on_pre_render = on_pre_render;
   shader->on_render = on_render;
   shader->on_post_render = on_post_render;
@@ -97,14 +106,13 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
   return 0;
 }
 
-void shader_render(Shader *self, Camera camera, Vec3 clip_plane,
-                   float clip_dist) {
+void shader_render(Shader *self) {
   if (self->on_pre_render != NULL) {
-    self->on_pre_render(self, camera, clip_plane, clip_dist);
+    self->on_pre_render(self);
   }
 
   if (self->on_render != NULL) {
-    self->on_render(self, camera);
+    self->on_render(self);
   }
 }
 

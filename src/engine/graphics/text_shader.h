@@ -33,6 +33,7 @@ typedef struct TextShader {
 
 TextShader *text_shader_new();
 void text_shader_free(TextShader *self);
+
 void text_shader_add_text(TextShader *self, const char *buffer, int len,
                           Vec3 xyscale, Vec3 color);
 

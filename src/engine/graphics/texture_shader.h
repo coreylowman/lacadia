@@ -24,8 +24,6 @@ typedef struct TextureShader {
   TextureVertex texture_vertices[MAX_TEXTURES][MAX_TEXTURE_VERTICES];
   unsigned int vbo, vao;
 
-  int projection_matrix_location;
-  int view_matrix_location;
   int texture_location;
 } TextureShader;
 

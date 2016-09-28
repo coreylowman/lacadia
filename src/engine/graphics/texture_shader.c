@@ -4,9 +4,8 @@
 #include "engine/util/camera.h"
 #include "texture_shader.h"
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
-                       float clip_dist);
-static void render(Shader *self, Camera camera);
+static void pre_render(Shader *self);
+static void render(Shader *self);
 static void post_render(Shader *self);
 
 TextureShader *texture_shader_new(AssetManager *asset_manager) {
@@ -45,10 +44,6 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  self->projection_matrix_location =
-      glGetUniformLocation(self->base_shader.program, "projection_matrix");
-  self->view_matrix_location =
-      glGetUniformLocation(self->base_shader.program, "view_matrix");
   self->texture_location =
       glGetUniformLocation(self->base_shader.program, "tex");
   return self;
@@ -56,19 +51,18 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
 
 void texture_shader_free(TextureShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
-                       float clip_dist) {
+static void pre_render(Shader *shader) {
   TextureShader *self = (TextureShader *)shader;
-  glUseProgram(self->base_shader.program);
-  glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
-                     &camera.projection_matrix.data[0]);
-  glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
-                     &camera.view_matrix.data[0]);
+  glUseProgram(shader->program);
+  glUniformMatrix4fv(shader->projection_matrix_location, 1, GL_TRUE,
+                     &shader->projection_matrix->data[0]);
+  glUniformMatrix4fv(shader->view_matrix_location, 1, GL_TRUE,
+                     &shader->view_matrix->data[0]);
   glUniform1i(self->texture_location, 0);
   glActiveTexture(GL_TEXTURE0);
 }
 
-static void render(Shader *shader, Camera camera) {
+static void render(Shader *shader) {
   TextureShader *self = (TextureShader *)shader;
   int i;
   for (i = 0; i < self->num_textures; i++) {

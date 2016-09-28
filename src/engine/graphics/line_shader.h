@@ -12,13 +12,11 @@ typedef struct LineShader {
   int num_lines;
   Line lines[MAX_LINES];
   unsigned int vbo, vao;
-
-  int projection_matrix_location;
-  int view_matrix_location;
 } LineShader;
 
 LineShader *line_shader_new();
 void line_shader_free(LineShader *self);
+
 void line_shader_add_line(LineShader *self, Line line);
 
 #endif

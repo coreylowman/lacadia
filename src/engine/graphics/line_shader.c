@@ -4,9 +4,8 @@
 #include "engine/util/camera.h"
 #include "line_shader.h"
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
-                       float clip_dist);
-static void render(Shader *self, Camera camera);
+static void pre_render(Shader *self);
+static void render(Shader *self);
 static void post_render(Shader *self);
 
 LineShader *line_shader_new() {
@@ -32,27 +31,20 @@ LineShader *line_shader_new() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  self->projection_matrix_location =
-      glGetUniformLocation(self->base_shader.program, "projection_matrix");
-  self->view_matrix_location =
-      glGetUniformLocation(self->base_shader.program, "view_matrix");
-
   return self;
 }
 
 void line_shader_free(LineShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
-                       float clip_dist) {
-  LineShader *self = (LineShader *)shader;
-  glUseProgram(self->base_shader.program);
-  glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
-                     &camera.projection_matrix.data[0]);
-  glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
-                     &camera.view_matrix.data[0]);
+static void pre_render(Shader *shader) {
+  glUseProgram(shader->program);
+  glUniformMatrix4fv(shader->projection_matrix_location, 1, GL_TRUE,
+                     &shader->projection_matrix->data[0]);
+  glUniformMatrix4fv(shader->view_matrix_location, 1, GL_TRUE,
+                     &shader->view_matrix->data[0]);
 }
 
-static void render(Shader *shader, Camera camera) {
+static void render(Shader *shader) {
   LineShader *self = (LineShader *)shader;
   glBindBuffer(GL_ARRAY_BUFFER, self->vbo);
   glBufferData(GL_ARRAY_BUFFER, 2 * 3 * self->num_lines * sizeof(float),

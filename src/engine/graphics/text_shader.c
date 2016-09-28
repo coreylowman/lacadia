@@ -5,9 +5,8 @@
 #include "text_shader.h"
 #include "engine/util/camera.h"
 
-static void pre_render(Shader *self, Camera camera, Vec3 clip_plane,
-                       float clip_dist);
-static void render(Shader *self, Camera camera);
+static void pre_render(Shader *self);
+static void render(Shader *self);
 static void post_render(Shader *self);
 
 TextShader *text_shader_new() {
@@ -100,8 +99,7 @@ TextShader *text_shader_new() {
 
 void text_shader_free(TextShader *self) { free(self); }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
-                       float clip_dist) {
+static void pre_render(Shader *shader) {
   TextShader *self = (TextShader *)shader;
   glUseProgram(self->base_shader.program);
 
@@ -109,7 +107,7 @@ static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
   glActiveTexture(GL_TEXTURE0);
 }
 
-static void render(Shader *shader, Camera camera) {
+static void render(Shader *shader) {
   TextShader *self = (TextShader *)shader;
   int i;
   for (i = 0; i < 128; i++) {

@@ -9,6 +9,10 @@
 #define MAX_WATER_CHUNKS 32
 #define MAX_WATER_VERTICES (MAX_WATER_CHUNKS * 6)
 
+typedef struct Renderer Renderer;
+
+typedef void (*WaterShaderRenderCallback)(Renderer *renderer);
+
 typedef struct WaterVertex {
   Vec3 position;
   float u, v;
@@ -32,8 +36,6 @@ typedef struct WaterShader {
   unsigned int refraction_texture;
   unsigned int refraction_depth_texture;
 
-  int projection_matrix_location;
-  int view_matrix_location;
   int reflection_texture_location;
   int refraction_texture_location;
   int distortion_texture_location;
@@ -41,7 +43,8 @@ typedef struct WaterShader {
   int normal_texture_location;
   int move_factor_location;
   int camera_position_location;
-  int light_position_location;
+
+  Vec3 *camera_position;
 } WaterShader;
 
 WaterShader *water_shader_new(AssetManager *asset_manager);
@@ -49,10 +52,9 @@ void water_shader_free(WaterShader *self);
 void water_shader_add_chunk(WaterShader *self, Vec3 center, float width,
                             float length);
 
-void water_shader_pre_reflection_render(WaterShader *self, Camera camera);
-void water_shader_post_reflection_render(WaterShader *self, Camera camera);
-
-void water_shader_pre_refraction_render(WaterShader *self, Camera camera);
-void water_shader_post_refraction_render(WaterShader *self, Camera camera);
+void water_shader_render_reflection(WaterShader *self, Renderer *renderer,
+                                    WaterShaderRenderCallback renderCallback);
+void water_shader_render_refraction(WaterShader *self, Renderer *renderer,
+                                    WaterShaderRenderCallback renderCallback);
 
 #endif

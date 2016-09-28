@@ -6,9 +6,8 @@
 
 extern Vec3 light_position;
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
-                       float dist);
-static void render(Shader *self, Camera camera);
+static void pre_render(Shader *shader);
+static void render(Shader *self);
 static void post_render(Shader *self);
 
 ModelShader *model_shader_new(AssetManager *asset_manager) {
@@ -71,15 +70,6 @@ ModelShader *model_shader_new(AssetManager *asset_manager) {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  self->projection_matrix_location =
-      glGetUniformLocation(self->base_shader.program, "projection_matrix");
-  self->view_matrix_location =
-      glGetUniformLocation(self->base_shader.program, "view_matrix");
-  self->light_position_location =
-      glGetUniformLocation(self->base_shader.program, "light_position");
-  self->clip_plane_location =
-      glGetUniformLocation(self->base_shader.program, "clip_plane");
-
   return self;
 }
 
@@ -92,21 +82,19 @@ void model_shader_free(ModelShader *self) {
   free(self);
 }
 
-static void pre_render(Shader *shader, Camera camera, Vec3 clip_plane,
-                       float dist) {
-  ModelShader *self = (ModelShader *)shader;
-  glUseProgram(self->base_shader.program);
-  glUniformMatrix4fv(self->projection_matrix_location, 1, GL_TRUE,
-                     &camera.projection_matrix.data[0]);
-  glUniformMatrix4fv(self->view_matrix_location, 1, GL_TRUE,
-                     &camera.view_matrix.data[0]);
-  glUniform3f(self->light_position_location, light_position.x, light_position.y,
-              light_position.z);
-  glUniform4f(self->clip_plane_location, clip_plane.x, clip_plane.y,
-              clip_plane.z, dist);
+static void pre_render(Shader *shader) {
+  glUseProgram(shader->program);
+  glUniformMatrix4fv(shader->projection_matrix_location, 1, GL_TRUE,
+                     &shader->projection_matrix->data[0]);
+  glUniformMatrix4fv(shader->view_matrix_location, 1, GL_TRUE,
+                     &shader->view_matrix->data[0]);
+  glUniform3f(shader->light_position_location, shader->light_position->x,
+              shader->light_position->y, shader->light_position->z);
+  glUniform4f(shader->clip_plane_location, shader->clip_plane->x,
+              shader->clip_plane->y, shader->clip_plane->z, shader->clip_dist);
 }
 
-static void render(Shader *shader, Camera camera) {
+static void render(Shader *shader) {
   ModelShader *self = (ModelShader *)shader;
   int i;
   for (i = 0; i < self->num_models; i++) {

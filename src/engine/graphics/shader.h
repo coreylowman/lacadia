@@ -1,16 +1,14 @@
 #ifndef SHADERS_H
 #define SHADERS_H
 
+#include "engine/util/mat4.h"
 #include "engine/util/vec3.h"
 
 // forward decls
-typedef struct Camera Camera;
-
 struct Shader;
 
-typedef void (*ShaderPreRenderCallback)(struct Shader *self, Camera camera,
-                                        Vec3 clip_plane, float clip_dist);
-typedef void (*ShaderRenderCallback)(struct Shader *self, Camera camera);
+typedef void (*ShaderPreRenderCallback)(struct Shader *self);
+typedef void (*ShaderRenderCallback)(struct Shader *self);
 typedef void (*ShaderPostRenderCallback)(struct Shader *self);
 
 typedef struct Shader {
@@ -21,6 +19,18 @@ typedef struct Shader {
   ShaderPreRenderCallback on_pre_render;
   ShaderRenderCallback on_render;
   ShaderPostRenderCallback on_post_render;
+
+  int projection_matrix_location;
+  int view_matrix_location;
+  int light_position_location;
+  int clip_plane_location;
+
+  // pointers to common uniform values
+  Mat4 *projection_matrix;
+  Mat4 *view_matrix;
+  Vec3 *light_position;
+  Vec3 *clip_plane;
+  float clip_dist;
 } Shader;
 
 int shader_init(Shader *shader, const char *vertex_shader_loc,
@@ -28,8 +38,7 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
                 ShaderPreRenderCallback on_pre_render,
                 ShaderRenderCallback on_render,
                 ShaderPostRenderCallback on_post_render);
-void shader_render(Shader *shader, Camera camera, Vec3 clip_plane,
-                   float clip_dist);
+void shader_render(Shader *shader);
 void shader_post_render(Shader *shader);
 
 #endif
