@@ -79,7 +79,7 @@ static void frost_on_apply(Effect *self, AffectableComponent *affectable) {
       // show burst of particles indicating permafrost has hit
       Enemy *enemy = (Enemy *)affectable->base_component.container;
       ParticleSystem *ps = particle_system_new(
-          enemy->base_object.world, enemy->collidable.bounding_box.center,
+          enemy->base_object.world, enemy->collidable->bounding_box.center,
           "./assets/frost_particle", 64, 0.0, 0.75);
       particle_system_set_particle_init(ps, fizzle_particle_init);
       game_world_add_object(enemy->base_object.world, (GameObject *)ps);
