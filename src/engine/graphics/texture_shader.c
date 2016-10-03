@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glew.h>
+#include "renderer.h"
 #include "engine/util/camera.h"
 #include "texture_shader.h"
 
-static void pre_render(Shader *self);
+static void pre_render(Shader *self, Renderer *renderer);
 static void render(Shader *self);
 static void post_render(Shader *self);
 
@@ -51,13 +52,13 @@ TextureShader *texture_shader_new(AssetManager *asset_manager) {
 
 void texture_shader_free(TextureShader *self) { free(self); }
 
-static void pre_render(Shader *shader) {
+static void pre_render(Shader *shader, Renderer *renderer) {
   TextureShader *self = (TextureShader *)shader;
   glUseProgram(shader->program);
   glUniformMatrix4fv(shader->projection_matrix_location, 1, GL_TRUE,
-                     &shader->projection_matrix->data[0]);
+                     &renderer->projection_matrix.data[0]);
   glUniformMatrix4fv(shader->view_matrix_location, 1, GL_TRUE,
-                     &shader->view_matrix->data[0]);
+                     &renderer->view_matrix.data[0]);
   glUniform1i(self->texture_location, 0);
   glActiveTexture(GL_TEXTURE0);
 }

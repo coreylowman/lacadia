@@ -3,6 +3,7 @@
 
 #include "engine/util/camera.h"
 #include "engine/util/object_model.h"
+#include "engine/util/vec4.h"
 #include "engine/graphics/model_shader.h"
 #include "engine/graphics/line_shader.h"
 #include "engine/graphics/text_shader.h"
@@ -35,6 +36,12 @@ typedef struct Renderer {
   TerrainShader *terrain_shader;
   TextureShader *texture_shader;
   WaterShader *water_shader;
+
+  Mat4 projection_matrix;
+  Mat4 view_matrix;
+  Vec3 light_position;
+  Vec3 camera_position;
+  Vec4 clip_plane;
 } Renderer;
 
 Renderer *renderer_new(AssetManager *asset_manager);

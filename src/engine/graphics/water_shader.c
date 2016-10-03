@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glew.h>
+#include "renderer.h"
 #include "engine/util/camera.h"
 #include "water_shader.h"
 
@@ -12,7 +13,7 @@
 
 extern int width, height;
 
-static void pre_render(Shader *self);
+static void pre_render(Shader *self, Renderer *renderer);
 static void render(Shader *self);
 static void post_render(Shader *self);
 
@@ -154,7 +155,7 @@ static float wave_speed = 0.015f;
 static float move_factor = 0.0f;
 extern double DELTA_TIME;
 
-static void pre_render(Shader *shader) {
+static void pre_render(Shader *shader, Renderer *renderer) {
   WaterShader *self = (WaterShader *)shader;
   move_factor += wave_speed * DELTA_TIME;
   if (move_factor >= 1.0) {
@@ -163,13 +164,13 @@ static void pre_render(Shader *shader) {
 
   glUseProgram(shader->program);
   glUniformMatrix4fv(shader->projection_matrix_location, 1, GL_TRUE,
-                     &shader->projection_matrix->data[0]);
+                     &renderer->projection_matrix.data[0]);
   glUniformMatrix4fv(shader->view_matrix_location, 1, GL_TRUE,
-                     &shader->view_matrix->data[0]);
-  glUniform3f(shader->light_position_location, shader->light_position->x,
-              shader->light_position->y, shader->light_position->z);
-  glUniform3f(self->camera_position_location, self->camera_position->x,
-              self->camera_position->y, self->camera_position->z);
+                     &renderer->view_matrix.data[0]);
+  glUniform3f(shader->light_position_location, renderer->light_position.x,
+              renderer->light_position.y, renderer->light_position.z);
+  glUniform3f(self->camera_position_location, renderer->camera_position.x,
+              renderer->camera_position.y, renderer->camera_position.z);
   glUniform1f(self->move_factor_location, move_factor);
 
   glUniform1i(self->reflection_texture_location, 0);

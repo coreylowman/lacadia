@@ -6,8 +6,10 @@
 
 // forward decls
 struct Shader;
+typedef struct Renderer Renderer;
 
-typedef void (*ShaderPreRenderCallback)(struct Shader *self);
+typedef void (*ShaderPreRenderCallback)(struct Shader *self,
+                                        Renderer *renderer);
 typedef void (*ShaderRenderCallback)(struct Shader *self);
 typedef void (*ShaderPostRenderCallback)(struct Shader *self);
 
@@ -24,13 +26,6 @@ typedef struct Shader {
   int view_matrix_location;
   int light_position_location;
   int clip_plane_location;
-
-  // pointers to common uniform values
-  Mat4 *projection_matrix;
-  Mat4 *view_matrix;
-  Vec3 *light_position;
-  Vec3 *clip_plane;
-  float clip_dist;
 } Shader;
 
 int shader_init(Shader *shader, const char *vertex_shader_loc,
@@ -38,7 +33,7 @@ int shader_init(Shader *shader, const char *vertex_shader_loc,
                 ShaderPreRenderCallback on_pre_render,
                 ShaderRenderCallback on_render,
                 ShaderPostRenderCallback on_post_render);
-void shader_render(Shader *shader);
+void shader_render(Shader *shader, Renderer *renderer);
 void shader_post_render(Shader *shader);
 
 #endif

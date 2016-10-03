@@ -55,60 +55,48 @@ Obb renderer_get_model_obb(Renderer *self, int model_id) {
 }
 
 static void render_entities(Renderer *self) {
-  shader_render(self->shaders[TERRAIN_SHADER]);
-  shader_render(self->shaders[MODEL_SHADER]);
-  shader_render(self->shaders[LINE_SHADER]);
+  shader_render(self->shaders[TERRAIN_SHADER], self);
+  shader_render(self->shaders[MODEL_SHADER], self);
+  shader_render(self->shaders[LINE_SHADER], self);
 }
 
 static float water_height;
 
-static void load_base_uniforms(Renderer *self, Mat4 *projection_matrix,
-                               Mat4 *view_matrix, Vec3 *light_position,
-                               Vec3 *clip_plane, float clip_dist) {
-  int i;
-  for (i = 0; i < MAX_SHADERS; i++) {
-    self->shaders[i]->projection_matrix = projection_matrix;
-    self->shaders[i]->view_matrix = view_matrix;
-    self->shaders[i]->light_position = light_position;
-    self->shaders[i]->clip_plane = clip_plane;
-    self->shaders[i]->clip_dist = clip_dist;
-  }
-}
-
 void renderer_render(Renderer *self, Camera camera) {
   glEnable(GL_CLIP_DISTANCE0);
 
+  self->light_position = light_position;
+
   {
     // capture reflection of stuff above water
-    Vec3 clip_plane = VEC3_UNIT_Y;
-    float clip_dist = -water_height + 0.01;
+    camera_invert_pitch(&camera, water_height);
+    self->clip_plane =
+        (Vec4){.x = 0, .y = 1, .z = 0, .w = -water_height + 0.01};
+    self->camera_position = camera.position;
+    self->view_matrix = camera.view_matrix;
+    self->projection_matrix = camera.projection_matrix;
+
+    water_shader_render_reflection(self->water_shader, self, render_entities);
 
     camera_invert_pitch(&camera, water_height);
-    load_base_uniforms(self, &camera.projection_matrix, &camera.view_matrix,
-                       &light_position, &clip_plane, clip_dist);
-    water_shader_render_reflection(self->water_shader, self, render_entities);
-    camera_invert_pitch(&camera, water_height);
+    self->camera_position = camera.position;
+    self->view_matrix = camera.view_matrix;
+    self->projection_matrix = camera.projection_matrix;
   }
 
   {
     // capture refraction of stuff below water
-    Vec3 clip_plane = VEC3_UNIT_NY;
-    float clip_dist = water_height + 0.01;
-    load_base_uniforms(self, &camera.projection_matrix, &camera.view_matrix,
-                       &light_position, &clip_plane, clip_dist);
+    self->clip_plane =
+        (Vec4){.x = 0, .y = -1, .z = 0, .w = water_height + 0.01};
     water_shader_render_refraction(self->water_shader, self, render_entities);
   }
 
   {
     // render everything
-    Vec3 clip_plane = VEC3_UNIT_Y;
-    float clip_dist = 1000000;
-
-    load_base_uniforms(self, &camera.projection_matrix, &camera.view_matrix,
-                       &light_position, &clip_plane, clip_dist);
+    self->clip_plane = (Vec4){.x = 0, .y = 1, .z = 0, .w = 1000000};
     int i;
     for (i = 0; i < MAX_SHADERS; i++) {
-      shader_render(self->shaders[i]);
+      shader_render(self->shaders[i], self);
       shader_post_render(self->shaders[i]);
     }
   }

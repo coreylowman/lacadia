@@ -2,10 +2,11 @@
 #include <GL/glew.h>
 #include "ft2build.h"
 #include FT_FREETYPE_H
+#include "renderer.h"
 #include "text_shader.h"
 #include "engine/util/camera.h"
 
-static void pre_render(Shader *self);
+static void pre_render(Shader *self, Renderer *renderer);
 static void render(Shader *self);
 static void post_render(Shader *self);
 
@@ -99,7 +100,7 @@ TextShader *text_shader_new() {
 
 void text_shader_free(TextShader *self) { free(self); }
 
-static void pre_render(Shader *shader) {
+static void pre_render(Shader *shader, Renderer *renderer) {
   TextShader *self = (TextShader *)shader;
   glUseProgram(self->base_shader.program);
 

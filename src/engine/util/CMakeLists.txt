@@ -17,6 +17,7 @@ list(APPEND UTIL_SOURCES
     string_helpers.h
     vec3.c
     vec3.h
+    vec4.h
     line.h
     obb.c
     obb.h
