@@ -15,10 +15,10 @@
 typedef enum ShaderIndex {
   MODEL_SHADER = 0,
   LINE_SHADER,
-  TEXT_SHADER,
   TERRAIN_SHADER,
   TEXTURE_SHADER,
   WATER_SHADER,
+  TEXT_SHADER,
   MAX_SHADERS,
 } ShaderIndex;
 
