@@ -4,6 +4,7 @@
 #include <math.h>
 #include "game_object.h"
 #include "component.h"
+#include "collidable_component.h"
 
 GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectUpdateCallback on_update,
@@ -31,7 +32,8 @@ GameObject game_object_init(GameWorld *world, const char *tag,
   return self;
 }
 
-Component *game_object_add_component(GameObject *self, Component *component) {
+void *game_object_add_component(Component *component) {
+  GameObject *self = component->container;
   if (self->num_components < MAX_COMPONENTS) {
     self->components[self->num_components++] = component;
     return component;
@@ -41,10 +43,10 @@ Component *game_object_add_component(GameObject *self, Component *component) {
   }
 }
 
-Component *game_object_add_collidable(GameObject *self,
-                                      CollidableComponent *collidable) {
+void *game_object_add_collidable(CollidableComponent *collidable) {
+  GameObject *self = collidable->base_component.container;
   self->collidable_index = self->num_components;
-  return game_object_add_component(self, (Component *)collidable);
+  return game_object_add_component((Component *)collidable);
 }
 
 float game_object_get_y_rotation(GameObject *self) {

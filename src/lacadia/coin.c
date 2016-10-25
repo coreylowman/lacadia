@@ -12,12 +12,9 @@ GameObject *coin_new(GameWorld *world, Vec3 position) {
 
   *self = game_object_init(world, "collectable", on_update, NULL, on_free);
 
-  RenderableComponent *renderable =
-      (RenderableComponent *)game_object_add_component(
-          self,
+  RenderableComponent *renderable = game_object_add_component(
           (Component *)renderable_component_new(self, "coin", world->renderer));
-  game_object_add_collidable(
-      self, collidable_component_new(
+  game_object_add_collidable(collidable_component_new(
                 self, game_world_get_model_obb(world, renderable->model_id),
                 on_collide));
 

@@ -17,14 +17,11 @@ Player *player_new(GameWorld *world, const char *asset_name) {
   self->base_object.position = VEC3_ZERO;
   self->base_object.direction = (Vec3){.data = {0, 0, -1}};
 
-  self->affectable = (AffectableComponent *)game_object_add_component(
-      &self->base_object, (Component *)affectable_component_new(
+  self->affectable = game_object_add_component((Component *)affectable_component_new(
                               &self->base_object, 20, 5.0, 0.1, 0, 0));
-  self->renderable = (RenderableComponent *)game_object_add_component(
-      &self->base_object, (Component *)renderable_component_new(
+  self->renderable = game_object_add_component((Component *)renderable_component_new(
                               &self->base_object, asset_name, world->renderer));
-  self->collidable = (CollidableComponent *)game_object_add_collidable(
-      &self->base_object,
+  self->collidable = game_object_add_collidable(
       collidable_component_new(
           &self->base_object,
           game_world_get_model_obb(world, self->renderable->model_id),

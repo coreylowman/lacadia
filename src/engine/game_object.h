@@ -47,9 +47,8 @@ GameObject game_object_init(GameWorld *world, const char *tag,
                             GameObjectFreeCallback on_free);
 float game_object_get_y_rotation(GameObject *self);
 
-Component *game_object_add_component(GameObject *self, Component *component);
-Component *game_object_add_collidable(GameObject *self,
-                                      CollidableComponent *collidable);
+void *game_object_add_component(Component *component);
+void *game_object_add_collidable(CollidableComponent *collidable);
 
 void game_object_rotate_by(GameObject *self, float radians);
 

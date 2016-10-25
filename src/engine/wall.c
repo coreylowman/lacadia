@@ -31,7 +31,7 @@ Wall *wall_new(GameWorld *world, Vec3 position, Vec3 grow_direction,
         renderable_component_new(&self->base_object, "wall", world->renderer);
     renderable->base_component.on_update = NULL;
     renderable_component_set_model_matrix(renderable, model_matrix);
-    game_object_add_component(&self->base_object, (Component *)renderable);
+    game_object_add_component((Component *)renderable);
   }
 
   Obb bounding_box = game_world_get_model_obb(world, model_id);
