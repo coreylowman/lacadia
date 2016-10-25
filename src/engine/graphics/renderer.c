@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include "renderer.h"
-#include "engine/util/string_helpers.h"
 
 Vec3 light_position = {.data = {200, 100, 0}};
 

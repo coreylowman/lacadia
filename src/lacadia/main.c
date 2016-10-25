@@ -21,7 +21,6 @@
 #include "enemies/enemy.h"
 #include "enemies/bug.h"
 #include "enemies/bug_spawner.h"
-#include "engine/level.h"
 #include "coin.h"
 
 static GLFWwindow *window;

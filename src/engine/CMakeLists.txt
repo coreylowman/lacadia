@@ -9,8 +9,6 @@ list(APPEND ENGINE_SOURCES
     game_object.h
     game_world.c
     game_world.h
-    level.c
-    level.h
     particle_system.c
     particle_system.h
     wall.c

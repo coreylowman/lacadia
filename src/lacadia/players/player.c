@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "engine/level.h"
 #include "player.h"
 #include "engine/wall.h"
 #include "engine/colors.h"
@@ -81,7 +80,7 @@ void player_update(GameObject *obj, double dt) {
     player_strafe(self, dt, -1.0);
 
   self->base_object.position.y = terrain_get_height(
-      &self->base_object.world->level->terrain, self->base_object.position.x,
+      &self->base_object.world->terrain, self->base_object.position.x,
       self->base_object.position.z);
 }
 

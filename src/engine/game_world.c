@@ -3,10 +3,8 @@
 #include <stdlib.h>
 #include <GL/glew.h>
 
-#include "level.h"
 #include "engine/util/array_list.h"
 #include "engine/util/obb.h"
-#include "engine/util/string_helpers.h"
 #include "game_object.h"
 #include "game_world.h"
 #include "engine/collidable_component.h"
@@ -16,6 +14,9 @@
 #include "engine/util/inputs.h"
 #include "colors.h"
 
+#define VEC3(_x, _y, _z)                                                       \
+  { .x = _x, .y = _y, .z = _z }
+
 extern int width, height;
 
 double DELTA_TIME;
@@ -24,6 +25,34 @@ Vec3 light_position;
 
 static void free_obj(void *ptr) { game_object_free((GameObject *)ptr); }
 
+static Vec3 snowy = VEC3(245.0f / 255.0f, 245.0f / 255.0f, 245.0f / 255.0f);
+static Vec3 grassy = VEC3(0, 179.0f / 255.0f, 0);
+static Vec3 rocky = VEC3(156.0f / 255.0f, 143.0f / 255.0f, 124.0f / 255.0f);
+static Vec3 sandy = VEC3(242.0f / 255.0f, 245.0f / 255.0f, 198.0f / 255.0f);
+
+void terrain_callback(TerrainVertex *vert) {
+  if (vert->position[1] >= 40) {
+    // snowy
+    vert->color[0] = snowy.x;
+    vert->color[1] = snowy.y;
+    vert->color[2] = snowy.z;
+  } else if (vert->position[1] >= 25) {
+    vert->color[0] = rocky.x;
+    vert->color[1] = rocky.y;
+    vert->color[2] = rocky.z;
+  } else if (vert->position[1] >= 5) {
+    Vec3 color = vec3_mix(rocky, grassy, (vert->position[1] - 5) / 20);
+    vert->color[0] = color.x;
+    vert->color[1] = color.y;
+    vert->color[2] = color.z;
+  } else {
+    // sandy
+    vert->color[0] = sandy.x;
+    vert->color[1] = sandy.y;
+    vert->color[2] = sandy.z;
+  }
+}
+
 GameWorld *game_world_new() {
   GameWorld *self = malloc(sizeof(*self));
   self->game_objects = sparse_array_new(free_obj);
@@ -31,9 +60,10 @@ GameWorld *game_world_new() {
   self->asset_manager = asset_manager_new("./assets/");
   self->renderer = renderer_new(self->asset_manager);
 
+  self->terrain = terrain_new(terrain_callback, 100, 50, 100, 5);
+
   self->inputs = inputs_init();
   camera_init(&self->camera, width, height);
-  self->level = level_new(self);
 
   return self;
 }
@@ -44,7 +74,7 @@ void game_world_free(GameWorld *self) {
   renderer_free(self->renderer);
   asset_manager_free(self->asset_manager);
 
-  level_free(self->level);
+  terrain_free(self->terrain);
 
   free(self);
 }
@@ -67,7 +97,7 @@ void game_world_update(GameWorld *self, double dt) {
   DELTA_TIME = dt;
 
   if (self->inputs.r_pressed) {
-    terrain_regen(&self->level->terrain, level_terrain_callback);
+    terrain_regen(&self->terrain, terrain_callback);
   }
 
   camera_handle_inputs(&self->camera, dt, self->inputs);
@@ -133,8 +163,8 @@ void game_world_render(GameWorld *self) {
 
   // gather updates to the various things
   SPARSE_ARRAY_FOREACH(GameObject *, obj, self->game_objects,
-                       { game_object_render(obj, self->renderer); })
-  level_render(self->level, self->renderer);
+  { game_object_render(obj, self->renderer); })
+  renderer_render_terrain(self->renderer, self->terrain);
 
   renderer_render_text(self->renderer, "lacadia", 7,
                        (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);

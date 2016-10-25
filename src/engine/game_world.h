@@ -21,14 +21,14 @@ typedef struct GameObject GameObject;
 typedef enum GameObjectType GameObjectType;
 
 typedef struct GameWorld {
-  Level *level;
-
   double dt;
 
   SparseArray *game_objects; // SparseArray<GameObject *>
 
   AssetManager *asset_manager;
   Renderer *renderer;
+
+  Terrain terrain;
 
   // matrix for converting world to screen
   // this is just projection * view

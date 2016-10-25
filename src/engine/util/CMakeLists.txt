@@ -13,8 +13,6 @@ list(APPEND UTIL_SOURCES
     rect.h
     sparse_array.c
     sparse_array.h
-    string_helpers.c
-    string_helpers.h
     vec3.c
     vec3.h
     vec4.h
