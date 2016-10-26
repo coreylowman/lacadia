@@ -23,9 +23,7 @@ target_include_directories(lacadia
     PUBLIC ${LACADIA_INCLUDE_DIRS}
 )
 target_link_libraries(lacadia
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
-    ${GLFW_LIBRARIES}
+    ${EXTERNAL_LIBRARIES}
 )
 if(UNIX)
 target_link_libraries(lacadia
@@ -45,10 +43,3 @@ add_custom_command(TARGET lacadia
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LACADIA_SOURCE_DIR}/assets $<TARGET_FILE_DIR:lacadia>/assets
 )
-
-if(WIN32)
-add_custom_command(TARGET lacadia
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${LACADIA_SOURCE_DIR}/external/glew/bin/Release/Win32/glew32.dll $<TARGET_FILE_DIR:lacadia>
-)
-endif(WIN32)
