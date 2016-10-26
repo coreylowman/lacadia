@@ -56,10 +56,8 @@ void game_world_render(GameWorld *self);
 int game_world_get_model_id(GameWorld *self, const char *name);
 Obb game_world_get_model_obb(GameWorld *self, int asset_id);
 
-Vec3 game_world_world_coords_to_screen_coords(GameWorld *self,
-                                              Vec3 world_coords);
-Vec3 game_world_screen_coords_to_world_coords(GameWorld *self,
-                                              Vec3 screen_coords);
+Vec3 game_world_world_to_screen(GameWorld *self, Vec3 world_coords);
+Vec3 game_world_screen_to_world(GameWorld *self, float mousex, float mousey);
 
 void game_world_apply(GameWorld *self, const char *tag, GameObject *user,
                       float radius,

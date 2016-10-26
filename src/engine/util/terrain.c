@@ -201,7 +201,8 @@ static int get_vert_index(Terrain *self, float x, float y) {
   int j = ty;
 
   if (i >= self->width || i < 0 || j >= self->length || j < 0) {
-    return 0;
+	  //printf("OFF MAP! %f %f\n",x ,y);
+    return -1;
   }
 
   float x_fac = tx - i;
@@ -230,16 +231,22 @@ static int get_vert_index(Terrain *self, float x, float y) {
 void terrain_apply_at(Terrain *self, TerrainVertexCallback cb, float x,
                       float y) {
   int vert_ind = get_vert_index(self, x, y);
-  cb(self->vertices + vert_ind);
-  cb(self->vertices + vert_ind + 1);
-  cb(self->vertices + vert_ind + 2);
+
+  if( vert_ind >= 0){
+    cb(self->vertices + vert_ind);
+    cb(self->vertices + vert_ind + 1);
+    cb(self->vertices + vert_ind + 2);
+  }
 }
 
 // reference:
 // https://www.opengl.org/discussion_boards/showthread.php/138914-Terrain-Renderer-How-to-Get-Height-at-x-y
 float terrain_get_height(Terrain *self, float x, float y) {
-
   int vert_ind = get_vert_index(self, x, y);
+  if (vert_ind == -1) {
+    return FLT_MAX;
+  }
+
   int k;
   float normal[3] = {0};
   float position[3] = {0};

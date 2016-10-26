@@ -64,7 +64,7 @@ void player_update(GameObject *obj, double dt) {
   // double mousex = (inputs.mouse_pos[0] - width_2) / width_2;
   // double mousey = -(inputs.mouse_pos[1] - height_2) / height_2;
   // Vec3 mouse_screen = (Vec3){.data = {mousex, mousey, 1}};
-  // Vec3 mouse_world = game_world_screen_coords_to_world_coords(
+  // Vec3 mouse_world = game_world_screen_to_world(
   //     self->base_object.world, mouse_screen);
   // self->base_object.direction =
   //     vec3_sub(mouse_world, self->base_object.position);

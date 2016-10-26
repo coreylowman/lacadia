@@ -98,8 +98,7 @@ void affectable_component_render(Component *component, Renderer *renderer) {
 
   // this is assuming position is moved to GameObject
   Vec3 screen_pos = vec3_add(container->position, vec3_scale(VEC3_UNIT_Y, 5));
-  screen_pos =
-      game_world_world_coords_to_screen_coords(container->world, screen_pos);
+  screen_pos = game_world_world_to_screen(container->world, screen_pos);
 
   Rect2 healthbar;
   healthbar.x = screen_pos.x - 0.05;

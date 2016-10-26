@@ -15,6 +15,7 @@ static Vec3 VEC3_UNIT_NX = {.data = {-1, 0, 0}};
 static Vec3 VEC3_UNIT_NY = {.data = {0, -1, 0}};
 static Vec3 VEC3_UNIT_NZ = {.data = {0, 0, -1}};
 static Vec3 VEC3_ZERO = {.data = {0, 0, 0}};
+static Vec3 VEC3_ONE = {.data = {1, 1, 1}};
 
 typedef union {
   int data[3];

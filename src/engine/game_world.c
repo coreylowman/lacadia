@@ -1,6 +1,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <float.h>
 #include <GL/glew.h>
 
 #include "engine/util/array_list.h"
@@ -30,7 +33,7 @@ static Vec3 grassy = VEC3(0, 179.0f / 255.0f, 0);
 static Vec3 rocky = VEC3(156.0f / 255.0f, 143.0f / 255.0f, 124.0f / 255.0f);
 static Vec3 sandy = VEC3(242.0f / 255.0f, 245.0f / 255.0f, 198.0f / 255.0f);
 
-void terrain_callback(TerrainVertex *vert) {
+static void terrain_callback(TerrainVertex *vert) {
   if (vert->position[1] >= 40) {
     // snowy
     vert->color[0] = snowy.x;
@@ -51,6 +54,12 @@ void terrain_callback(TerrainVertex *vert) {
     vert->color[1] = sandy.y;
     vert->color[2] = sandy.z;
   }
+}
+
+static void color_terrain_red(TerrainVertex *vert) {
+  vert->color[0] = 1.0;
+  vert->color[1] = 0.0;
+  vert->color[2] = 0.0;
 }
 
 GameWorld *game_world_new() {
@@ -98,6 +107,10 @@ void game_world_update(GameWorld *self, double dt) {
 
   if (self->inputs.r_pressed) {
     terrain_regen(&self->terrain, terrain_callback);
+  }
+
+  if (self->inputs.l_pressed) {
+    camera_set_follow(&self->camera, NULL, VEC3_ZERO);
   }
 
   camera_handle_inputs(&self->camera, dt, self->inputs);
@@ -161,6 +174,19 @@ void game_world_render(GameWorld *self) {
 
   renderer_render_sphere(self->renderer, light_position);
 
+  {
+	  double width_d = (double)width;
+	  double height_d = (double)height;
+	  double mousex = 2 * self->inputs.mouse_pos[0] / width_d - 1;
+	  double mousey = 2 * (height_d - self->inputs.mouse_pos[1]) / height_d - 1;
+
+	  Vec3 mouse_world = game_world_screen_to_world(self, mousex, mousey, 0.0001);
+
+    if (self->inputs.right_mouse_down) {
+      terrain_apply_at(&self->terrain, color_terrain_red, mouse_world.x, mouse_world.z);
+    }
+  }
+
   // gather updates to the various things
   SPARSE_ARRAY_FOREACH(GameObject *, obj, self->game_objects,
   { game_object_render(obj, self->renderer); })
@@ -168,8 +194,7 @@ void game_world_render(GameWorld *self) {
 
   renderer_render_text(self->renderer, "lacadia", 7,
                        (Vec3){.x = 0, .y = 0, .z = 1}, VEC3_ZERO);
-  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 500,
-                        500);
+  renderer_render_water(self->renderer, (Vec3){.x = 0, .y = 6, .z = 0}, 500, 500);
 
   // actually draw stuff
   renderer_render(self->renderer, self->camera);
@@ -196,27 +221,79 @@ void game_world_apply(GameWorld *self, const char *tag, GameObject *user,
   })
 }
 
-Vec3 game_world_world_coords_to_screen_coords(GameWorld *self,
-                                              Vec3 world_coords) {
-  Vec3 output;
-  float w = mat4_mul_vec3(&output, self->world_to_screen, world_coords);
-  output.x /= w;
-  output.y /= w;
-  output.z /= w;
-  return output;
+Vec3 game_world_world_to_screen(GameWorld *self, Vec3 world_coords) {
+  Vec3 screen;
+  float w = mat4_mul_vec3(&screen, self->world_to_screen, world_coords);
+  screen.x /= w;
+  screen.y /= w;
+  screen.z /= w;
+  return screen;
 }
 
-Vec3 game_world_screen_coords_to_world_coords(GameWorld *self,
-                                              Vec3 screen_coords) {
-  Vec3 direction;
-  float w = mat4_mul_vec3(&direction, self->screen_to_world, screen_coords);
-  direction.x /= w;
-  direction.y /= w;
-  direction.z /= w;
+#define SIGN(a) ((a) < 0 ? -1 : ((a) > 0 ? 1 : 0))
+
+Vec3 game_world_screen_to_world(GameWorld *self, float mousex, float mousey, double eps) {
+  Vec3 world;
+  float w = mat4_mul_vec3(&world, self->screen_to_world, (Vec3){ .data = { mousex, mousey, 1 } });
+  world.x /= w;
+  world.y /= w;
+  world.z /= w;
+
+  // note if we didn't want to get terrain height we could return here
+
+  Vec3 direction = vec3_sub(world, self->camera.position);
   vec3_normalize(&direction);
 
-  double t = -self->camera.position.y / direction.y;
-  Vec3 position = vec3_add(self->camera.position, vec3_scale(direction, t));
+  double min_t = 0, max_t = 0;
+  double terrain_height;
+  Vec3 position = VEC3_ZERO;
+  int sign;
 
-  return position;
+  bool found = false;
+
+  position = vec3_add(self->camera.position, self->camera.forward);
+  terrain_height = terrain_get_height(&self->terrain, position.x, position.z);
+  sign = SIGN(position.y - terrain_height);
+
+  double t;
+  for (t = 2; t < 1000; t += 1) {
+	  position = vec3_add(self->camera.position, vec3_scale(direction, t));
+	  terrain_height = terrain_get_height(&self->terrain, position.x, position.z);
+
+	  if (terrain_height == FLT_MAX) {
+		  // we are off the terrain... we won't find it
+		  break;
+	  }
+
+	  if (sign != SIGN(position.y - terrain_height)) {
+		  // if the sign has changed that means we went through the terrain... we found it
+		  max_t = t;
+		  found = true;
+		  break;
+	  } else {
+		  min_t = t;
+		  sign = SIGN(position.y - terrain_height);
+	  }
+  }
+
+  if (!found) {
+	  return VEC3_ZERO;
+  }
+
+  // narrow down the exact t value
+  while (max_t - min_t > eps) {
+	  t = (max_t + min_t) * 0.5;
+	  position = vec3_add(self->camera.position, vec3_scale(direction, t));
+	  terrain_height = terrain_get_height(&self->terrain, position.x, position.z);
+
+	  if (sign != SIGN(position.y - terrain_height)) {
+		  // if sign doesn't equal then we are still through the terrain... make max_t less to try to get it before the terrain
+		  max_t = t;
+	  } else {
+		  min_t = t;
+	  }
+  }
+
+  t = (max_t + min_t) * 0.5;
+  return vec3_add(self->camera.position, vec3_scale(direction, t));
 }
