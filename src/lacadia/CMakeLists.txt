@@ -6,6 +6,8 @@ add_subdirectory(players)
 list(APPEND LACADIA_SOURCES
     coin.c
     coin.h
+    cloud.h
+    cloud.c
     main.c
 
     ${EXTERNAL_OBJECT_LIBRARIES}

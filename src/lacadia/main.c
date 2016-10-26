@@ -22,6 +22,7 @@
 #include "enemies/bug.h"
 #include "enemies/bug_spawner.h"
 #include "coin.h"
+#include "cloud.h"
 
 static GLFWwindow *window;
 int width = 1280, height = 960;
@@ -143,6 +144,14 @@ int main(int argc, char *argv[]) {
   //                   (GameObject *)bug_spawner_new(world, VEC3_ZERO, 5.0));
   game_world_add_object(world,
                         coin_new(world, (Vec3){.x = 5, .y = 15, .z = -15}));
+
+  int i;
+  Vec3 pos;
+  for(i = 0;i < 25;i++) {
+    pos = random_flat_vec3(random_in_rangef(0, 300));
+    pos.y = random_in_rangef(50, 70);
+    game_world_add_object(world, cloud_new(world, pos));
+  }
 
   total_time = glfwGetTime();
   last_update_seconds = total_time;
