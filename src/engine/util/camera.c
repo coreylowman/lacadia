@@ -37,6 +37,16 @@ int camera_is_following(Camera camera) {
 void camera_set_follow(Camera *camera, Vec3 *follow_position, Vec3 offset) {
   camera->follow_position = follow_position;
   camera->follow_offset = offset;
+
+  if (follow_position != NULL) {
+	  camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
+	  camera->up.x = camera->forward.x;
+	  camera->up.y = -(camera->forward.x * camera->forward.x +
+		  camera->forward.z * camera->forward.z) /
+		  camera->forward.y;
+	  camera->up.z = camera->forward.z;
+	  vec3_normalize(&camera->up);
+  }
 }
 
 void camera_follow(Camera *camera, double dt, Inputs inputs) {
@@ -44,13 +54,6 @@ void camera_follow(Camera *camera, double dt, Inputs inputs) {
     return;
 
   camera->position = vec3_add(*camera->follow_position, camera->follow_offset);
-  camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
-  camera->up.x = camera->forward.x;
-  camera->up.y = -(camera->forward.x * camera->forward.x +
-                   camera->forward.z * camera->forward.z) /
-                 camera->forward.y;
-  camera->up.z = camera->forward.z;
-  vec3_normalize(&camera->up);
 
   camera_update_view_matrix(camera);
 }
@@ -93,6 +96,7 @@ void camera_rotate_view(Camera *camera, float dx_radians, float dy_radians) {
 
   {
     Vec3 sideways = vec3_normalized(vec3_cross(camera->forward, camera->up));
+
     Mat4 rotation_matrix = MAT4_IDENT;
     mat4_rotate(&rotation_matrix, dy_radians, sideways);
 
@@ -107,22 +111,24 @@ void camera_rotate_view(Camera *camera, float dx_radians, float dy_radians) {
 // todo make sure you can't rotate too low/high?
 void camera_rotate_around_follow(Camera *camera, float dx_radians,
                                  float dy_radians) {
-  {
-    Mat4 rotation_matrix = MAT4_IDENT;
-    mat4_rotate(&rotation_matrix, dx_radians, VEC3_UNIT_Y);
+   {
+     Mat4 rotation_matrix = MAT4_IDENT;
+     mat4_rotate(&rotation_matrix, dx_radians, VEC3_UNIT_Y);
 
-    mat4_mul_vec3(&camera->follow_offset, rotation_matrix,
-                  camera->follow_offset);
+     mat4_mul_vec3(&camera->follow_offset, rotation_matrix,
+                   camera->follow_offset);
 
-    camera->position =
-        vec3_add(*camera->follow_position, camera->follow_offset);
-    camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
+     camera->position =
+         vec3_add(*camera->follow_position, camera->follow_offset);
+     camera->forward = vec3_normalized(vec3_scale(camera->follow_offset, -1));
 
-    mat4_mul_vec3(&camera->up, rotation_matrix, camera->up);
-    vec3_normalize(&camera->up);
-  }
+     mat4_mul_vec3(&camera->up, rotation_matrix, camera->up);
+     vec3_normalize(&camera->up);
+   }
+
   {
     Vec3 sideways = vec3_normalized(vec3_cross(camera->forward, camera->up));
+
     Mat4 rotation_matrix = MAT4_IDENT;
     mat4_rotate(&rotation_matrix, dy_radians, sideways);
 
@@ -166,7 +172,7 @@ void camera_handle_inputs(Camera *camera, double dt, Inputs inputs) {
     if (inputs.left_mouse_down) {
       double dx = (inputs.mouse_pos[0] - inputs.mouse_down_start_pos[0]);
       double dy = (inputs.mouse_pos[1] - inputs.mouse_down_start_pos[1]);
-      camera_rotate_around_follow(camera, dt * dx, dt * dy);
+      camera_rotate_around_follow(camera, dt * dx * 0.5, dt * dy * 0.5);
     }
   } else {
     if (inputs.space_down) { // move vertically

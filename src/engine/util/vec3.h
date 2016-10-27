@@ -1,6 +1,8 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#define VEC3_UNPACK(v) (v).x, (v).y, (v).z
+
 typedef union {
   float data[3];
   struct {
